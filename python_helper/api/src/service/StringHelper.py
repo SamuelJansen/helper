@@ -1,4 +1,4 @@
-from helper.api.src.domain import Constant as c
+from python_helper.api.src.domain import Constant as c
 
 def filterJson(json) :
     charactereList = [c.NEW_LINE,c.SPACE,c.BAR_N]

@@ -1,5 +1,5 @@
-from helper.api.src.domain import Constant
-from helper.api.src.service import StringHelper
+from python_helper.api.src.domain import Constant
+from python_helper.api.src.service import StringHelper
 
 def equal(responseAsDict,expectedResponseAsDict) :
     filteredResponse = StringHelper.filterJson(str(responseAsDict))
