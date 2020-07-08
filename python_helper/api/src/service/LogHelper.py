@@ -15,23 +15,26 @@ def hardLog(cls,message,exception,level) :
     if not exception or exception == c.NOTHING :
         errorPortion = c.NOTHING
     else :
-        errorPortion = f'{c.DOT_SPACE}{c.LOG_CAUSE}{c.COLON_SPACE}{str(exception)}'
+        errorPortion = f'{c.DOT_SPACE}{c.LOG_CAUSE}{str(exception)}'
     print(f'{level}{classPortion}{message}{errorPortion}')
 
-def success(cls,message) :
+def logSuccess(cls,message) :
     softLog(cls,message,c.SUCCESS)
 
-def setting(cls,message) :
+def logSetting(cls,message) :
     softLog(cls,message,c.SETTING)
 
-def debug(cls,message) :
+def logDebug(cls,message) :
     softLog(cls,message,c.DEBUG)
 
-def warning(cls,message) :
+def logWarning(cls,message) :
     softLog(cls,message,c.WARNING)
 
-def failure(cls,message,exception) :
+def logFailure(cls,message,exception) :
     hardLog(cls,message,exception,c.FAILURE)
 
-def error(cls,message,exception) :
+def logWraper(cls,message,exception) :
+    hardLog(cls,message,exception,c.WRAPPER)
+
+def logError(cls,message,exception) :
     hardLog(cls,message,exception,c.ERROR)

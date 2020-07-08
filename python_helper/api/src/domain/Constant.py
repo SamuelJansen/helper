@@ -1,10 +1,10 @@
-WRAPPER =   '[WRAPPER] '
-DEBUG =     '[DEBUG  ] '
-ERROR =     '[ERROR  ] '
-WARNING =   '[WARNING] '
 SUCCESS =   '[SUCCESS] '
-FAILURE =   '[FAILURE] '
 SETTING =   '[SETTING] '
+DEBUG =     '[DEBUG  ] '
+WARNING =   '[WARNING] '
+FAILURE =   '[FAILURE] '
+WRAPPER =   '[WRAPPER] '
+ERROR =     '[ERROR  ] '
 
 NEW_LINE = '''\n'''
 BAR_N = '''\\n'''
@@ -27,7 +27,7 @@ UNDERSCORE = '''_'''
 DOT_SPACE = '''. '''
 COLON_SPACE = ''': '''
 SPACE_COLON_SPACE = ''' : '''
-LOG_CAUSE = '''Cause'''
+LOG_CAUSE = f'''Cause{COLON_SPACE}'''
 
 TAB_UNITS = 4
 TAB = TAB_UNITS * SPACE
