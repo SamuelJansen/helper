@@ -1,7 +1,7 @@
 Globals:
     print-status: False
     api:
-        name: Globals
+        name: Helper
         extension: yml
         dependency:
             update: False
