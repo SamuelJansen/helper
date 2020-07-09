@@ -38,3 +38,28 @@ def wraper(cls,message,exception) :
 
 def error(cls,message,exception) :
     hardLog(cls,message,exception,c.ERROR)
+
+def printMessageLog(self,level,message,condition=False) :
+    if condition :
+        print(f'{Constant.TAB}{level}{message}')
+
+def printSuccess(message,condition=False) :
+    printMessage(Constant.SUCCESS,message,condition=condition)
+
+def printSetting(message,condition=False) :
+    printMessage(Constant.SETTING,message,condition=condition)
+
+def printDebug(message,condition=False) :
+    printMessage(Constant.DEBUG,message,condition=condition)
+
+def printWarning(message,condition=False) :
+    printMessage(Constant.WARNING,message,condition=condition)
+
+def printFailure(message,condition=False) :
+    printMessage(Constant.FAILURE,message,condition=condition)
+
+def printWarper(message,condition=False) :
+    printMessage(Constant.WRAPPER,message,condition=condition)
+
+def printError(message,condition=False) :
+    printMessage(Constant.ERROR,message,condition=condition)
