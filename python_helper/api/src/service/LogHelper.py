@@ -15,7 +15,7 @@ def hardLog(cls,message,exception,level) :
     if not exception or exception == c.NOTHING :
         errorPortion = c.NOTHING
     else :
-        errorPortion = f'{c.DOT_SPACE_LOG_CAUSE}{str(exception)}'
+        errorPortion = f'{c.DOT_SPACE_CAUSE}{str(exception)}'
     print(f'{level}{classPortion}{message}{errorPortion}')
 
 def success(cls,message) :
