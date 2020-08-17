@@ -1,5 +1,7 @@
 from python_helper.api.src.domain import Constant as c
 
+NULL_VALUE = 'null'
+
 def filterJson(json) :
     charactereList = [c.NEW_LINE,c.SPACE,c.BAR_N]
     filteredJson = json
@@ -24,3 +26,44 @@ def getFilteredString(string,globals) :
         else :
             charactereToFilter = c.DOUBLE_QUOTE
     return string.replace(charactereToFilter,c.NOTHING)
+
+
+def newLine(strReturn, charactere):
+    if charactere == strReturn[-1] :
+        return f'{c.NEW_LINE}'
+    else :
+        return f'{c.COMA}{c.NEW_LINE}'
+
+def stringfyThisDictionary(outterValue, tabCount=0, nullValue=NULL_VALUE) :
+    strReturn = c.NOTHING
+    if isinstance(outterValue, list) :
+        if len(outterValue) == 0 :
+            strReturn += f'{c.OPEN_LIST}{c.CLOSE_LIST}'
+        else :
+            strReturn += c.OPEN_LIST
+            tabCount += 1
+            for value in outterValue :
+                strReturn += newLine(strReturn, c.OPEN_LIST)
+                strReturn += f'{tabCount * c.TAB}{stringfyThisDictionary(value, tabCount=tabCount)}'
+            strReturn += c.NEW_LINE
+            tabCount -= 1
+            strReturn += f'{tabCount * c.TAB}{c.CLOSE_LIST}'
+    elif isinstance(outterValue, dict) :
+        if len(outterValue) == 0 :
+            strReturn += f'{c.OPEN_DICTIONARY}{c.CLOSE_DICTIONARY}'
+        else :
+            strReturn += c.OPEN_DICTIONARY
+            tabCount += 1
+            for key, value in outterValue.items() :
+                strReturn += newLine(strReturn, c.OPEN_DICTIONARY)
+                strReturn += f'{tabCount * c.TAB}"{key}": {stringfyThisDictionary(value, tabCount=tabCount)}'
+            strReturn += c.NEW_LINE
+            tabCount -= 1
+            strReturn += f'{tabCount * c.TAB}{c.CLOSE_DICTIONARY}'
+    elif isinstance(outterValue, int) or isinstance(outterValue, float) :
+        strReturn += str(outterValue)
+    elif outterValue is None :
+        strReturn += nullValue
+    else :
+        strReturn += f'"{str(outterValue)}"'
+    return strReturn
