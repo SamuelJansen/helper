@@ -62,9 +62,9 @@ def stringfyThisDictionary(outterValue, tabCount=0, nullValue=c.NULL_VALUE, true
         strReturn += str(outterValue)
     elif outterValue is None :
         strReturn += nullValue
-    elif outterValue is True :
+    elif True == outterValue :
         strReturn += trueValue
-    elif outterValue is False :
+    elif False == outterValue :
         strReturn += falseValue
     else :
         strReturn += f'"{str(outterValue)}"'
