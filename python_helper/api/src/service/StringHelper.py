@@ -1,7 +1,5 @@
 from python_helper.api.src.domain import Constant as c
 
-NULL_VALUE = 'null'
-
 def filterJson(json) :
     charactereList = [c.NEW_LINE,c.SPACE,c.BAR_N]
     filteredJson = json
@@ -34,7 +32,7 @@ def newLine(strReturn, charactere):
     else :
         return f'{c.COMA}{c.NEW_LINE}'
 
-def stringfyThisDictionary(outterValue, tabCount=0, nullValue=NULL_VALUE) :
+def stringfyThisDictionary(outterValue, tabCount=0, nullValue=c.NULL_VALUE, trueValue=c.TRUE_VALUE, falseValue=c.FALSE_VALUE) :
     strReturn = c.NOTHING
     if isinstance(outterValue, list) :
         if len(outterValue) == 0 :
@@ -64,6 +62,10 @@ def stringfyThisDictionary(outterValue, tabCount=0, nullValue=NULL_VALUE) :
         strReturn += str(outterValue)
     elif outterValue is None :
         strReturn += nullValue
+    elif outterValue is True :
+        strReturn += trueValue
+    elif outterValue is False :
+        strReturn += falseValue
     else :
         strReturn += f'"{str(outterValue)}"'
     return strReturn
