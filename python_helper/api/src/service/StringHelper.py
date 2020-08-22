@@ -25,7 +25,6 @@ def getFilteredString(string,globals) :
             charactereToFilter = c.DOUBLE_QUOTE
     return string.replace(charactereToFilter,c.NOTHING)
 
-
 def newLine(strReturn, charactere):
     if charactere == strReturn[-1] :
         return f'{c.NEW_LINE}'
@@ -58,14 +57,15 @@ def stringfyThisDictionary(outterValue, tabCount=0, nullValue=c.NULL_VALUE, true
             strReturn += c.NEW_LINE
             tabCount -= 1
             strReturn += f'{tabCount * c.TAB}{c.CLOSE_DICTIONARY}'
-    elif isinstance(outterValue, int) or isinstance(outterValue, float) :
+    elif (isinstance(outterValue, int) or isinstance(outterValue, float)) and not isinstance(outterValue, bool) :
         strReturn += str(outterValue)
+    elif isinstance(outterValue, bool) :
+        if True == outterValue:
+            strReturn += trueValue
+        elif False == outterValue:
+            strReturn += falseValue
     elif outterValue is None :
         strReturn += nullValue
-    elif True == outterValue :
-        strReturn += trueValue
-    elif False == outterValue :
-        strReturn += falseValue
     else :
         strReturn += f'"{str(outterValue)}"'
     return strReturn
