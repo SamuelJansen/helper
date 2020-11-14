@@ -71,11 +71,11 @@ def stringfyThisDictionary(outterValue, tabCount=0, nullValue=c.NULL_VALUE, true
     return strReturn
 
 def filterString(string) :
-    if string[-1] == Constant.NEW_LINE :
+    if string[-1] == c.NEW_LINE :
         string = string[:-1]
     strippedString = string.strip()
-    surroundedBySingleQuote = strippedString[0] == Constant.SINGLE_QUOTE and strippedString[-1] == Constant.SINGLE_QUOTE
-    surroundedByDoubleQuote = strippedString[0] == Constant.DOUBLE_QUOTE and strippedString[-1] == Constant.DOUBLE_QUOTE
-    if Constant.HASH_TAG in strippedString and not (surroundedBySingleQuote or surroundedByDoubleQuote) :
-        string = string.split(Constant.HASH_TAG)[0].strip()
+    surroundedBySingleQuote = strippedString[0] == c.SINGLE_QUOTE and strippedString[-1] == c.SINGLE_QUOTE
+    surroundedByDoubleQuote = strippedString[0] == c.DOUBLE_QUOTE and strippedString[-1] == c.DOUBLE_QUOTE
+    if c.HASH_TAG in strippedString and not (surroundedBySingleQuote or surroundedByDoubleQuote) :
+        string = string.split(c.HASH_TAG)[0].strip()
     return string
