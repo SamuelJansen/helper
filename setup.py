@@ -1,6 +1,6 @@
 from distutils.core import setup
 
-version = '0.1.0-01'
+version = '0.1.0-02'
 name = 'python_helper'
 url = f'https://github.com/SamuelJansen/{name}/'
 

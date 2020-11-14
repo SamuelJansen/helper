@@ -1,4 +1,4 @@
-from python_helper.api.src.service import StringHelper
+from python_helper.api.src.service import StringHelper, LogHelper
 from python_helper.api.src.domain import Constant as c
 
 def getFilteredSetting(setting,globals) :
@@ -10,7 +10,7 @@ def getSetting(nodeKey,settingTree) :
     try :
         return accessTree(nodeKey,settingTree)
     except Exception as exception :
-        log.debug(getSetting,f'Not possible to get {nodeKey} node key. Cause: {str(exception)}')
+        LogHelper.debug(getSetting,f'Not possible to get {nodeKey} node key. Cause: {str(exception)}')
         return None
 
 def accessTree(nodeKey,tree) :
