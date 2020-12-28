@@ -5,7 +5,7 @@ name = 'python_helper'
 url = f'https://github.com/SamuelJansen/{name}/'
 
 setup(
-    name = name,
+    name = name, 
     packages = [
         name,
         f'{name}/api',
