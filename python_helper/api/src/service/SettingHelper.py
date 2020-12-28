@@ -111,7 +111,7 @@ def printSettings(tree,name,depth=1,withColors=activeEnvironmentIsLocal()):
     withColors = activeEnvironmentIsLocal()
     settingKeyColor = SettingHelperHelper.getSettingKeyPrompColor(withColors)
     colonColor = SettingHelperHelper.getSettingColonPrompColor(withColors)
-    print(f'{c.NEW_LINE}{settingKeyColor}{c.OPEN_LIST}{name.upper()}{c.CLOSE_LIST} - settings{colonColor}{c.SPACE}{c.COLON}')
+    print(f'{c.NEW_LINE}{settingKeyColor}{c.OPEN_LIST}{name.upper()}{c.CLOSE_LIST}{colonColor}{c.SPACE}{c.COLON}')
     SettingHelperHelper.printNodeTree(
         tree,
         depth,

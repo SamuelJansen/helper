@@ -94,3 +94,11 @@ it:
             to-a-late-definition: ABCD -- ${very-late.definition} -- EFGH
 very-late:
     definition: very late definiton value
+handle:
+    late:
+        integer: ${handle.integer}
+        float: ${handle.float}
+        boolean: ${handle.boolean}
+    integer: 222233444
+    float: 2.3
+    boolean: True

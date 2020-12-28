@@ -62,12 +62,12 @@ def accessTree(nodeKey,tree) :
             nextNodeKey = c.DOT.join(nodeKeyList[1:])
         return accessTree(nextNodeKey,tree[nodeKeyList[0]])
 
-def safellyAccessTree(nodeKey, settingTree) :
+def safelyAccessTree(nodeKey, settingTree) :
     setting = None
     try :
         setting = accessTree(nodeKey,settingTree)
     except Exception as exception :
-        LogHelper.log(safellyAccessTree, f'Not possible to access "{nodeKey}" node key while looping through setting tree. Returning "{setting}" by default', exception=exception)
+        LogHelper.log(safelyAccessTree, f'Not possible to safely access "{nodeKey}" node key while looping through setting tree. Returning "{setting}" by default', exception=exception)
     return setting
 
 def updateSettingTree(settingKey,settingValue,nodeKey,settingTree) :
@@ -92,7 +92,7 @@ def settingTreeInnerLoop(
         longStringList,
         settingInjectionList
     ) :
-    settingKey,settingValue = getAttributeKeyValue(settingLine)
+    settingKey, settingValue = getAttributeKeyValue(settingLine)
 
     if containsSettingInjection(settingValue) :
         try :
@@ -157,7 +157,6 @@ def handleSettingInjection(
     )
 
 def handleSettingInjectionList(settingInjectionList, settingTree) :
-    # print(f'settingInjectionList: {StringHelper.prettyPython(settingInjectionList)}')
     try :
         done = False
         strugled = False
@@ -167,7 +166,6 @@ def handleSettingInjectionList(settingInjectionList, settingTree) :
             containsSettingInjectionCount = 0
             settingInjectionListCopy = [] + settingInjectionList
             for settingInjection in settingInjectionListCopy :
-                # print(f'settingInjectionList: {StringHelper.prettyPython(settingInjectionList)}')
                 try :
                     if isSettingInjection(settingInjection[SETTING_VALUE]) :
                         settingInjection[SETTING_VALUE] = getSettingInjection(
@@ -182,10 +180,8 @@ def handleSettingInjectionList(settingInjectionList, settingTree) :
                         isSettingInjectionCount += 1
                         strugled = False
                     elif containsSettingInjection(settingInjection[SETTING_VALUE]) :
-                        # LogHelper.debug(handleSettingInjectionList, f'getSettingInjectionListFromSettingValue({settingInjection[SETTING_VALUE]}): {getSettingInjectionListFromSettingValue(settingInjection[SETTING_VALUE])}')
                         settingInjectionListFromSettingValue = getSettingInjectionListFromSettingValue(settingInjection[SETTING_VALUE])
                         newSettingInjection = settingInjection[SETTING_VALUE]
-                        # print(f'newSettingInjection: {newSettingInjection}')
                         for settingValue in settingInjectionListFromSettingValue :
                             newSettingValue = getSettingInjection(
                                 settingInjection[SETTING_KEY],
@@ -193,11 +189,8 @@ def handleSettingInjectionList(settingInjectionList, settingTree) :
                                 settingInjection[NODE_KEY],
                                 settingTree
                             )
-                            # print(f'settingValue: {settingValue}')
-                            # print(f'newSettingValue: {newSettingValue}')
                             newSettingInjection = newSettingInjection.replace(settingValue,newSettingValue)
                         settingInjection[SETTING_VALUE] = newSettingInjection
-                        # print(f'settingInjection[SETTING_VALUE]: {settingInjection[SETTING_VALUE]}')
                         if not containsSettingInjection(settingInjection[SETTING_VALUE]) :
                             settingInjectionList.remove(settingInjection)
                         settingInjectionArgs = list(settingInjection.values()) + [settingTree]
@@ -207,7 +200,6 @@ def handleSettingInjectionList(settingInjectionList, settingTree) :
                 except Exception as exception :
                     LogHelper.log(handleSettingInjectionList, f'Ignored exception while handling setting injection list', exception=exception)
             if strugled :
-                # print('strugled')
                 LogHelper.debug(handleSettingInjectionList, f'Parsed settings: {StringHelper.prettyJson(settingTree)}')
                 notParsedSettingInjectionList = []
                 for setting in settingInjectionList :
@@ -217,9 +209,7 @@ def handleSettingInjectionList(settingInjectionList, settingTree) :
                 else :
                     raise Exception(f'Not possible to parse the following setting injection list: {StringHelper.prettyPython(notParsedSettingInjectionList)}')
             elif 0 == len(settingInjectionList) :
-                # print('done')
                 done = True
-            # print(f'done: {done}, strugled: {strugled}\n')
     except Exception as exception :
         LogHelper.error(handleSettingInjectionList,'Not possible to load setting injections properly',exception)
         raise exception
@@ -268,7 +258,7 @@ def isSettingKey(possibleSettingKey) :
     )
 
 def isSettingValue(settingValue) :
-    return StringHelper.isNotBlank(settingValue) or ObjectHelper.isCollection(settingValue)
+    return ObjectHelper.isNotEmpty(settingValue) or ObjectHelper.isCollection(settingValue)
 
 def getSettingValueOrNewNode(settingValue) :
     return settingValue if isSettingValue(settingValue) else dict()
@@ -360,7 +350,7 @@ def getSettingInjectionListFromSettingValue(settingValue) :
     return []
 
 def containsValidSettingInjection(settingValue) :
-    if 0 < settingValue.count(OPEN_SETTING_INJECTION) and settingValue.count(c.OPEN_DICTIONARY) == settingValue.count(c.CLOSE_DICTIONARY) :
+    if StringHelper.isNotBlank(settingValue) and 0 < settingValue.count(OPEN_SETTING_INJECTION) and settingValue.count(c.OPEN_DICTIONARY) == settingValue.count(c.CLOSE_DICTIONARY) :
         splitedSettingValue = settingValue.split(OPEN_SETTING_INJECTION)
         settingValueList = []
         completeSettingValue = c.NOTHING
@@ -376,7 +366,7 @@ def containsValidSettingInjection(settingValue) :
     return False
 
 def isSettingInjection(settingValue) :
-    return settingValue and (
+    return ObjectHelper.isNotNone(settingValue) and (
         isinstance(settingValue, str) and
         settingValue.startswith(OPEN_SETTING_INJECTION) and
         settingValue.endswith(CLOSE_SETTING_INJECTION) and
@@ -389,7 +379,7 @@ def containsSettingInjection(settingValue) :
 def getSettingInjection(settingKey,settingValue,nodeKey,settingTree) :
     unwrapedSettingInjectionValue = getUnwrappedSettingInjection(settingValue)
     if isSettingKey(unwrapedSettingInjectionValue) :
-        selfReferenceSettingValue = safellyAccessTree(unwrapedSettingInjectionValue, settingTree)
+        selfReferenceSettingValue = safelyAccessTree(unwrapedSettingInjectionValue, settingTree)
         if not selfReferenceSettingValue :
             raise Exception(f'Not possible to associate "{nodeKey}{c.DOT}{settingKey}" key to "{unwrapedSettingInjectionValue}" value. "{unwrapedSettingInjectionValue}" value is probably not defined')
         return selfReferenceSettingValue
