@@ -151,7 +151,7 @@ def isLongString(thing) :
     else :
         return False
 
-def getStringWithoutColors(thing) :
+def removeColors(thing) :
     if isNotBlank(thing) :
         for color in c.IMPLEMENTED_PROMP_COLORS :
             if color in thing :

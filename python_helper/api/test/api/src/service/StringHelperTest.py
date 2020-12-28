@@ -173,7 +173,7 @@ def prettyJson_withSucces() :
     log.debug(prettyJson_withSucces, toAssert)
 
     # Assert
-    toAssert = StringHelper.getStringWithoutColors(toAssert)
+    toAssert = StringHelper.removeColors(toAssert)
     assert expected == toAssert
 
 @EnvironmentVariable(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
@@ -237,7 +237,7 @@ def prettyPython_withSucces() :
     log.debug(prettyPython_withSucces, 'does it works ' + toAssert + ' correctly?')
 
     # Assert
-    toAssert = StringHelper.getStringWithoutColors(toAssert)
+    toAssert = StringHelper.removeColors(toAssert)
     assert expected == toAssert
 
 @EnvironmentVariable(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
@@ -253,8 +253,8 @@ def filterJson_withSucces() :
     toAssertWithoutSpace = StringHelper.filterJson(filteredJson, extraCharacterList=[' '])
 
     # Assert
-    toAssertWithSpace = StringHelper.getStringWithoutColors(toAssertWithSpace)
-    toAssertWithoutSpace = StringHelper.getStringWithoutColors(toAssertWithoutSpace)
+    toAssertWithSpace = StringHelper.removeColors(toAssertWithSpace)
+    toAssertWithoutSpace = StringHelper.removeColors(toAssertWithoutSpace)
     assert expectedWithSpace == toAssertWithSpace
     assert expectedWithoutSpace == toAssertWithoutSpace
 
