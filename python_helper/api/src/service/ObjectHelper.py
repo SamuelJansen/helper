@@ -1,18 +1,115 @@
+from numbers import Number
 from python_helper.api.src.domain import Constant
 from python_helper.api.src.service import StringHelper
+from python_helper.api.src.helper import ObjectHelperHelper
 
-def equal(responseAsDict,expectedResponseAsDict) :
-    filteredResponse = StringHelper.filterJson(str(responseAsDict))
-    filteredExpectedResponse = StringHelper.filterJson(str(expectedResponseAsDict))
+GENERATOR_CLASS_NAME = 'generator'
+UNKNOWN_OBJECT_CLASS_NAME = 'unknown'
+
+METADATA_NAME = 'metadata'
+
+NATIVE_CLASS_LIST = [
+    bool,
+    int,
+    str,
+    float,
+    bytes,
+    type(ObjectHelperHelper.generatorInstance())
+]
+
+COLLECTION_CLASS_LIST = [
+    list,
+    dict,
+    tuple,
+    set
+]
+
+def equal(responseAsDict,expectedResponseAsDict,ignoreKeyList=None,ignoreCharactereList=None) :
+    innerIgnoreCharactereList = [Constant.SPACE]
+    if isNotNone(ignoreCharactereList) :
+        innerIgnoreCharactereList += ignoreCharactereList
+    filteredResponse = StringHelper.filterJson(
+        str(sortIt(filterIgnoreKeyList(responseAsDict,ignoreKeyList))),
+        extraCharacterList=innerIgnoreCharactereList
+    )
+    filteredExpectedResponse = StringHelper.filterJson(
+        str(sortIt(filterIgnoreKeyList(expectedResponseAsDict,ignoreKeyList))),
+        extraCharacterList=innerIgnoreCharactereList
+    )
     return filteredResponse == filteredExpectedResponse
 
+def sortIt(thing) :
+    if isDictionary(thing) :
+        sortedDictionary = {}
+        for key in getSortedCollection(thing) :
+            sortedDictionary[key] = sortIt(thing[key])
+        return sortedDictionary
+    elif isCollection(thing) :
+        newCollection = []
+        for innerValue in thing :
+            newCollection.append(sortIt(innerValue))
+        return getSortedCollection(newCollection)
+    else :
+        return thing
+
+def getSortedCollection(thing) :
+    return thing if isNotCollection(thing) else sorted(
+        thing,
+        key=lambda x: (
+            x is not None, Constant.NOTHING if isinstance(x, Number) else type(x).__name__, x
+        )
+    )
+
 def filterIgnoreKeyList(objectAsDictionary,ignoreKeyList):
-    if objectAsDictionary and ignoreKeyList :
+    if isDictionary(objectAsDictionary) and isNotNone(ignoreKeyList) :
         filteredObjectAsDict = {}
-        for key in sorted(objectAsDictionary):
+        for key, value in objectAsDictionary.items() :
             if key not in ignoreKeyList :
-                if objectAsDictionary[key].__class__.__name__ == Constant.DICT :
-                    objectAsDictionary[key] = filterIgnoreKeyList(objectAsDictionary[key],ignoreKeyList)
-                filteredObjectAsDict[key] = objectAsDictionary[key]
+                if isDictionary(value) :
+                    filteredObjectAsDict[key] = filterIgnoreKeyList(value,ignoreKeyList)
+                else :
+                    filteredObjectAsDict[key] = objectAsDictionary[key]
         return filteredObjectAsDict
     return objectAsDictionary
+
+def isList(thing) :
+    return isinstance(thing, list)
+
+def isNotList(thing) :
+    return not isList(thing)
+
+def isDictionary(thing) :
+    return isinstance(thing, dict)
+
+def isNotDictionary(thing) :
+    return not isDictionary(thing)
+
+def isDictionaryClass(thingClass) :
+    return dict == thingClass
+
+def isNotDictionaryClass(thingClass) :
+    return not isDictionaryClass(thingClass)
+
+def isNone(instance) :
+    return instance is None
+
+def isNotNone(instance) :
+    return not isNone(instance)
+
+def isNativeClass(instanceClass) :
+    return isNotNone(instanceClass) and instanceClass in NATIVE_CLASS_LIST
+
+def isNotNativeClass(instanceClass) :
+    return not isNativeClass(instanceClass)
+
+def isNativeClassIsntance(instance) :
+    return isNotNone(instance) and isNativeClass(instance.__class__)
+
+def isNotNativeClassIsntance(instance) :
+    return not isNativeClassIsntance(instance)
+
+def isCollection(instance) :
+    return isNotNone(instance.__class__) and instance.__class__ in COLLECTION_CLASS_LIST
+
+def isNotCollection(instance) :
+    return not isCollection(instance)

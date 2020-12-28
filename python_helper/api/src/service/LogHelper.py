@@ -1,65 +1,127 @@
+import colorama
 from python_helper.api.src.domain import Constant as c
+from python_helper.api.src.service import SettingHelper, StringHelper, EnvironmentHelper
 
-def softLog(cls,message,level) :
-    if not cls or cls == c.NOTHING :
-        classPortion = c.NOTHING
-    else :
-        classPortion = f'{cls.__name__}{c.COLON_SPACE}'
-    print(f'{level}{classPortion}{message}')
+LOG = 'LOG'
+SUCCESS = 'SUCCESS'
+SETTING = 'SETTING'
+DEBUG = 'DEBUG'
+WARNING = 'WARNING'
+WRAPPER = 'WRAPPER'
+FAILURE = 'FAILURE'
+ERROR = 'ERROR'
 
-def hardLog(cls,message,exception,level) :
-    if not cls or cls == c.NOTHING :
-        classPortion = c.NOTHING
-    else :
-        classPortion = f'{cls.__name__}{c.COLON_SPACE}'
-    if not exception or exception == c.NOTHING :
-        errorPortion = c.NOTHING
-    else :
-        errorPortion = f'{c.DOT_SPACE_CAUSE}{str(exception)}'
-    print(f'{level}{classPortion}{message}{errorPortion}')
+RESET_ALL_COLORS = colorama.Style.RESET_ALL
 
-def success(cls,message) :
-    softLog(cls,message,c.SUCCESS)
+from python_helper.api.src.helper import LogHelperHelper
 
-def setting(cls,message) :
-    softLog(cls,message,c.SETTING)
+global LOG_HELPER_SETTINGS
+def loadSettings() :
+    global LOG_HELPER_SETTINGS
+    settings = {}
+    settings[SettingHelper.ACTIVE_ENVIRONMENT] : SettingHelper.getActiveEnvironment()
+    if SettingHelper.activeEnvironmentIsLocal() :
+        colorama.init(autoreset=True)
+        print(RESET_ALL_COLORS,end=c.NOTHING)
+    for level in LogHelperHelper.LEVEL_DICTIONARY :
+        status = EnvironmentHelper.getEnvironmentValue(level)
+        settings[level] = status if not status is None else c.TRUE
+    LOG_HELPER_SETTINGS = settings
 
-def debug(cls,message) :
-    softLog(cls,message,c.DEBUG)
+loadSettings()
 
-def warning(cls,message) :
-    softLog(cls,message,c.WARNING)
+def log(origin,message,level=LOG,exception=None) :
+    LogHelperHelper.softLog(origin,message,LOG,exception=exception)
 
-def failure(cls,message,exception) :
-    hardLog(cls,message,exception,c.FAILURE)
+def success(origin,message) :
+    LogHelperHelper.softLog(origin,message,SUCCESS)
 
-def wraper(cls,message,exception) :
-    hardLog(cls,message,exception,c.WRAPPER)
+def setting(origin,message) :
+    LogHelperHelper.softLog(origin,message,SETTING)
 
-def error(cls,message,exception) :
-    hardLog(cls,message,exception,c.ERROR)
+def debug(origin,message) :
+    LogHelperHelper.softLog(origin,message,DEBUG)
 
-def printMessageLog(self,level,message,condition=False) :
-    if condition :
-        print(f'{Constant.TAB}{level}{message}')
+def warning(origin,message) :
+    LogHelperHelper.softLog(origin,message,WARNING)
+
+def wraper(origin,message,exception) :
+    LogHelperHelper.hardLog(origin,message,exception,WRAPPER)
+
+def failure(origin,message,exception) :
+    LogHelperHelper.hardLog(origin,message,exception,FAILURE)
+
+def error(origin,message,exception) :
+    LogHelperHelper.hardLog(origin,message,exception,ERROR)
+
+def printLog(message,condition=False) :
+    LogHelperHelper.printMessageLog(LOG,message,condition=condition)
 
 def printSuccess(message,condition=False) :
-    printMessage(Constant.SUCCESS,message,condition=condition)
+    LogHelperHelper.printMessageLog(SUCCESS,message,condition=condition)
 
 def printSetting(message,condition=False) :
-    printMessage(Constant.SETTING,message,condition=condition)
+    LogHelperHelper.printMessageLog(SETTING,message,condition=condition)
 
 def printDebug(message,condition=False) :
-    printMessage(Constant.DEBUG,message,condition=condition)
+    LogHelperHelper.printMessageLog(DEBUG,message,condition=condition)
 
 def printWarning(message,condition=False) :
-    printMessage(Constant.WARNING,message,condition=condition)
-
-def printFailure(message,condition=False) :
-    printMessage(Constant.FAILURE,message,condition=condition)
+    LogHelperHelper.printMessageLog(WARNING,message,condition=condition)
 
 def printWarper(message,condition=False) :
-    printMessage(Constant.WRAPPER,message,condition=condition)
+    LogHelperHelper.printMessageLog(WRAPPER,message,condition=condition)
+
+def printFailure(message,condition=False) :
+    LogHelperHelper.printMessageLog(FAILURE,message,condition=condition)
 
 def printError(message,condition=False) :
-    printMessage(Constant.ERROR,message,condition=condition)
+    LogHelperHelper.printMessageLog(ERROR,message,condition=condition)
+
+def prettyPython(
+        origin,
+        message,
+        dictionaryInstance,
+        quote=c.SINGLE_QUOTE,
+        tabCount=0,
+        nullValue=c.NONE,
+        trueValue=c.TRUE,
+        falseValue=c.FALSE,
+        logLevel=LOG
+    ) :
+    stdout, stderr = EnvironmentHelper.getCurrentSoutStatus()
+    prettyPythonValue = StringHelper.prettyPython(
+        dictionaryInstance,
+        quote=quote,
+        tabCount=tabCount,
+        nullValue=nullValue,
+        trueValue=trueValue,
+        falseValue=falseValue,
+        withColors=SettingHelper.activeEnvironmentIsLocal()
+    )
+    LogHelperHelper.softLog(origin, f'{message}{c.COLON_SPACE}{prettyPythonValue}', logLevel)
+    EnvironmentHelper.overrideSoutStatus(stdout, stderr)
+
+def prettyJson(
+        origin,
+        message,
+        dictionaryInstance,
+        quote=c.DOUBLE_QUOTE,
+        tabCount=0,
+        nullValue=c.NULL_VALUE,
+        trueValue=c.TRUE_VALUE,
+        falseValue=c.FALSE_VALUE,
+        logLevel=LOG
+    ) :
+    stdout, stderr = EnvironmentHelper.getCurrentSoutStatus()
+    prettyJsonValue = StringHelper.prettyJson(
+        dictionaryInstance,
+        quote=quote,
+        tabCount=tabCount,
+        nullValue=nullValue,
+        trueValue=trueValue,
+        falseValue=falseValue,
+        withColors=SettingHelper.activeEnvironmentIsLocal()
+    )
+    LogHelperHelper.softLog(origin, f'{message}{c.COLON_SPACE}{prettyJsonValue}', logLevel)
+    EnvironmentHelper.overrideSoutStatus(stdout, stderr)

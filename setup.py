@@ -1,6 +1,6 @@
 from distutils.core import setup
 
-version = '0.1.0-02'
+version = '0.1.1'
 name = 'python_helper'
 url = f'https://github.com/SamuelJansen/{name}/'
 
@@ -21,7 +21,9 @@ setup(
     url = url,
     download_url = f'{url}archive/v{version}.tar.gz',
     keywords = ['helper', 'python helper package', 'python helper', 'helper package'],
-    install_requires = [],
+    install_requires = [
+        'colorama==0.4.3'
+    ],
     classifiers = [
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',

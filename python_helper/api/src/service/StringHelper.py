@@ -1,81 +1,159 @@
 from python_helper.api.src.domain import Constant as c
+from python_helper.api.src.service import ObjectHelper
+from python_helper.api.src.helper import StringHelperHelper
 
-def filterJson(json) :
-    charactereList = [c.NEW_LINE,c.SPACE,c.BAR_N]
+def isBlank(thing) :
+    return isinstance(thing, str) and c.NOTHING == thing
+
+def isNotBlank(thing) :
+    return isinstance(thing, str) and not c.NOTHING == thing
+
+def filterJson(json, extraCharacterList=None) :
+    charactereList = [c.NEW_LINE,c.BAR_N]
+    if isinstance(extraCharacterList, list) :
+        charactereList += extraCharacterList
     filteredJson = json
     for charactere in charactereList :
         filteredJson = removeCharactere(charactere,filteredJson)
-    return filteredJson
+    return filteredJson.replace(c.SYSTEM_TAB,c.TAB)
 
 def removeCharactere(charactere,string) :
     filteredString = c.NOTHING.join(string.strip().split(charactere))
     return filteredString.replace(charactere,c.NOTHING)
 
 def getFilteredString(string,globals) :
-    charactereToFilter = c.NOTHING
-    if c.TRIPLE_SINGLE_QUOTE in string or c.TRIPLE_DOUBLE_QUOTE in string :
-        if string.strip()[0:3] == c.TRIPLE_SINGLE_QUOTE :
-            charactereToFilter = c.TRIPLE_SINGLE_QUOTE
-        else :
-            charactereToFilter = c.TRIPLE_DOUBLE_QUOTE
-    elif string.strip().startswith(c.SINGLE_QUOTE) or string.strip().startswith(c.DOUBLE_QUOTE) :
-        if string.strip()[0] == c.SINGLE_QUOTE :
-            charactereToFilter = c.SINGLE_QUOTE
-        else :
-            charactereToFilter = c.DOUBLE_QUOTE
-    return string.replace(charactereToFilter,c.NOTHING)
+    return filterString(string)
 
-def newLine(strReturn, charactere):
-    if charactere == strReturn[-1] :
-        return f'{c.NEW_LINE}'
-    else :
-        return f'{c.COMA}{c.NEW_LINE}'
-
-def stringfyThisDictionary(outterValue, tabCount=0, nullValue=c.NULL_VALUE, trueValue=c.TRUE_VALUE, falseValue=c.FALSE_VALUE) :
+def prettyPython(
+        outterValue,
+        quote=c.SINGLE_QUOTE,
+        tabCount=0,
+        nullValue=c.NONE,
+        trueValue=c.TRUE,
+        falseValue=c.FALSE,
+        withColors=False
+    ) :
+    '''It always sort sets'''
     strReturn = c.NOTHING
-    if isinstance(outterValue, list) :
-        if len(outterValue) == 0 :
-            strReturn += f'{c.OPEN_LIST}{c.CLOSE_LIST}'
+    if ObjectHelper.isCollection(outterValue) :
+        if isinstance(outterValue, list) :
+            collectionType = c.TYPE_LIST
+        elif isinstance(outterValue, set) :
+            collectionType = c.TYPE_SET
+        elif isinstance(outterValue, tuple):
+            collectionType = c.TYPE_TUPLE
+        elif isinstance(outterValue, dict) :
+            collectionType = c.TYPE_DICT
         else :
-            strReturn += c.OPEN_LIST
-            tabCount += 1
-            for value in outterValue :
-                strReturn += newLine(strReturn, c.OPEN_LIST)
-                strReturn += f'{tabCount * c.TAB}{stringfyThisDictionary(value, tabCount=tabCount)}'
-            strReturn += c.NEW_LINE
-            tabCount -= 1
-            strReturn += f'{tabCount * c.TAB}{c.CLOSE_LIST}'
-    elif isinstance(outterValue, dict) :
-        if len(outterValue) == 0 :
-            strReturn += f'{c.OPEN_DICTIONARY}{c.CLOSE_DICTIONARY}'
-        else :
-            strReturn += c.OPEN_DICTIONARY
-            tabCount += 1
-            for key, value in outterValue.items() :
-                strReturn += newLine(strReturn, c.OPEN_DICTIONARY)
-                strReturn += f'{tabCount * c.TAB}"{key}": {stringfyThisDictionary(value, tabCount=tabCount)}'
-            strReturn += c.NEW_LINE
-            tabCount -= 1
-            strReturn += f'{tabCount * c.TAB}{c.CLOSE_DICTIONARY}'
-    elif (isinstance(outterValue, int) or isinstance(outterValue, float)) and not isinstance(outterValue, bool) :
-        strReturn += str(outterValue)
-    elif isinstance(outterValue, bool) :
-        if True == outterValue:
-            strReturn += trueValue
-        elif False == outterValue:
-            strReturn += falseValue
-    elif outterValue is None :
-        strReturn += nullValue
+            raise Exception(f'Unexpected collection in python_helper.StringHelper.prettyPython(): {outterValue}')
+        return StringHelperHelper.prettyCollection(
+            StringHelperHelper.getValueCollection(outterValue),
+            collectionType,
+            quote,
+            prettyPython,
+            tabCount,
+            nullValue,
+            trueValue,
+            falseValue,
+            withColors=withColors
+        )
     else :
-        strReturn += f'"{str(outterValue)}"'
-    return strReturn
+        return StringHelperHelper.prettyInstance(
+            outterValue,
+            quote,
+            prettyPython,
+            tabCount,
+            nullValue,
+            trueValue,
+            falseValue,
+            withColors=withColors
+        )
+
+def prettyJson(
+        outterValue,
+        quote=c.DOUBLE_QUOTE,
+        tabCount=0,
+        nullValue=c.NULL_VALUE,
+        trueValue=c.TRUE_VALUE,
+        falseValue=c.FALSE_VALUE,
+        withColors=False
+    ) :
+    '''It always sort sets'''
+    if ObjectHelper.isCollection(outterValue) :
+        if isinstance(outterValue, list) or isinstance(outterValue, set) or isinstance(outterValue, tuple) :
+            collectionType = c.TYPE_LIST
+        elif isinstance(outterValue, dict) :
+            collectionType = c.TYPE_DICT
+        else :
+            raise Exception(f'Unexpected collection in python_helper.StringHelper.prettyJson(): {outterValue}')
+        return StringHelperHelper.prettyCollection(
+            StringHelperHelper.getValueCollection(outterValue),
+            collectionType,
+            quote,
+            prettyJson,
+            tabCount,
+            nullValue,
+            trueValue,
+            falseValue,
+            withColors=withColors
+        )
+    else :
+        return StringHelperHelper.prettyInstance(
+            outterValue,
+            quote,
+            prettyJson,
+            tabCount,
+            nullValue,
+            trueValue,
+            falseValue,
+            withColors=withColors
+        )
 
 def filterString(string) :
-    if string[-1] == c.NEW_LINE :
-        string = string[:-1]
+    if string is None or not isinstance(string, str) :
+        return string
     strippedString = string.strip()
-    surroundedBySingleQuote = strippedString[0] == c.SINGLE_QUOTE and strippedString[-1] == c.SINGLE_QUOTE
-    surroundedByDoubleQuote = strippedString[0] == c.DOUBLE_QUOTE and strippedString[-1] == c.DOUBLE_QUOTE
+    if c.NOTHING == strippedString :
+        return strippedString
+    if strippedString[-1] == c.NEW_LINE :
+        strippedString = strippedString[:-1]
+    surroundedBySingleQuote = strippedString.startswith(c.SINGLE_QUOTE) and strippedString.endswith(c.SINGLE_QUOTE) and not (c.SINGLE_QUOTE*2 == strippedString or c.TRIPLE_SINGLE_QUOTE == strippedString)
+    surroundedByDoubleQuote = strippedString.startswith(c.DOUBLE_QUOTE) and strippedString.endswith(c.DOUBLE_QUOTE) and not (c.DOUBLE_QUOTE*2 == strippedString or c.TRIPLE_DOUBLE_QUOTE == strippedString)
     if c.HASH_TAG in strippedString and not (surroundedBySingleQuote or surroundedByDoubleQuote) :
-        string = string.split(c.HASH_TAG)[0].strip()
-    return string
+        strippedString = filterString(c.HASH_TAG.join(strippedString.split(c.HASH_TAG)[:-1]))
+    if strippedString and (
+            (
+                strippedString.startswith(c.TRIPLE_SINGLE_QUOTE) and
+                strippedString.endswith(c.TRIPLE_SINGLE_QUOTE) and
+                not c.TRIPLE_SINGLE_QUOTE == strippedString
+            ) or
+            (
+                strippedString.startswith(c.TRIPLE_DOUBLE_QUOTE) and
+                strippedString.endswith(c.TRIPLE_DOUBLE_QUOTE) and
+                not c.TRIPLE_DOUBLE_QUOTE == strippedString
+            )
+        ) :
+        return filterString(strippedString[3:-3])
+    else :
+        return strippedString if not (surroundedBySingleQuote or surroundedByDoubleQuote) else filterString(strippedString[1:-1])
+
+def isLongString(thing) :
+    if not thing is None and isinstance(thing, str) :
+        return (
+            (
+                thing.startswith(c.TRIPLE_SINGLE_QUOTE) or
+                thing.endswith(c.TRIPLE_SINGLE_QUOTE)
+            ) and StringHelperHelper.isNotOneLineLongString(c.TRIPLE_SINGLE_QUOTE, thing) or (
+                thing.startswith(c.TRIPLE_DOUBLE_QUOTE) or
+                thing.endswith(c.TRIPLE_DOUBLE_QUOTE)
+            ) and StringHelperHelper.isNotOneLineLongString(c.TRIPLE_DOUBLE_QUOTE, thing)
+        )
+    else :
+        return False
+
+def getStringWithoutColors(thing) :
+    if isNotBlank(thing) :
+        for color in c.IMPLEMENTED_PROMP_COLORS :
+            if color in thing :
+                thing = thing.replace(color,c.NOTHING)
+    return thing if isinstance(thing, str) else str(string)
