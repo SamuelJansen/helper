@@ -1,6 +1,6 @@
 from distutils.core import setup
 
-version = '0.1.1'
+version = '0.1.2'
 name = 'python_helper'
 url = f'https://github.com/SamuelJansen/{name}/'
 
@@ -11,7 +11,10 @@ setup(
         f'{name}/api',
         f'{name}/api/src',
         f'{name}/api/src/service',
-        f'{name}/api/src/domain'
+        f'{name}/api/src/domain',
+        f'{name}/api/src/helper',
+        f'{name}/api/test/api/resourse',
+        f'{name}/api/test/api/src/service'
     ],
     version = version,
     license = 'MIT',
