@@ -8,7 +8,7 @@ def EnvironmentVariable(*outerArgs, environmentVariables=None, **outerKwargs) :
             if environmentVariables :
                 for key,value in environmentVariables.items() :
                     originalEnvironmentVariables[key] = EnvironmentHelper.replaceEnvironmentVariable(key, value)
-            LogHelper.loadSettings()
+            LogHelper.loadSettings() 
             try :
                 methodReturn = resourceInstanceMethod(*innerArgs,**innerKwargs)
             except Exception as exception :

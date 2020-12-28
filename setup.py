@@ -1,11 +1,11 @@
 from distutils.core import setup
 
-version = '0.1.2'
+version = '0.1.3'
 name = 'python_helper'
 url = f'https://github.com/SamuelJansen/{name}/'
 
 setup(
-    name = name, 
+    name = name,
     packages = [
         name,
         f'{name}/api',
