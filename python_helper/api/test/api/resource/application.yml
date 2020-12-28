@@ -102,3 +102,7 @@ handle:
     integer: 222233444
     float: 2.3
     boolean: True
+    empty:
+        list: []
+        dictionary-or-set: {}
+        tuple: ()

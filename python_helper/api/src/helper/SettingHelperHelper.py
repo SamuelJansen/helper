@@ -300,7 +300,7 @@ def getList(value) :
     valueList = list()
     for value in roughtValueList :
         gottenValue = getValue(value)
-        if ObjectHelper.isNotNone(gottenValue) :
+        if ObjectHelper.isNotEmpty(gottenValue) :
             valueList.append(gottenValue)
     return valueList
 
@@ -419,7 +419,7 @@ def printNodeTree(
         depthSpace += f'{c.TAB_UNITS * c.SPACE}'
     depth += 1
     for node in list(tree) :
-        if ObjectHelper.isDictionary(tree[node]) :
+        if ObjectHelper.isDictionary(tree[node]) and ObjectHelper.isNotEmptyCollection(tree[node]) :
             print(f'{depthSpace}{settingKeyColor}{node}{colonColor}{c.SPACE}{c.COLON}')
             printNodeTree(
                 tree[node],

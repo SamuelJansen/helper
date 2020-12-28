@@ -88,6 +88,15 @@ def mustReadSettingFile() :
     assert 'ABCD -- only environment variable value -- EFGH' == SettingHelper.getSetting('it.contains.environment-variable.surrounded-by-default-values', readdedSettingTree)
     assert 'ABCD -- "some value followed by: "only environment variable value\' and some following default value\' -- EFGH' == SettingHelper.getSetting('it.contains.environment-variable.in-between-default-values', readdedSettingTree)
     assert 'ABCD -- very late definiton value -- EFGH' == SettingHelper.getSetting('it.contains.refference.to-a-late-definition', readdedSettingTree)
+    assert 222233444 == SettingHelper.getSetting('handle.integer', readdedSettingTree)
+    assert 2.3 == SettingHelper.getSetting('handle.float', readdedSettingTree)
+    assert True == SettingHelper.getSetting('handle.boolean', readdedSettingTree)
+    assert 222233444 == SettingHelper.getSetting('handle.late.integer', readdedSettingTree)
+    assert 2.3 == SettingHelper.getSetting('handle.late.float', readdedSettingTree)
+    assert True == SettingHelper.getSetting('handle.late.boolean', readdedSettingTree)
+    assert [] == SettingHelper.getSetting('handle.empty.list', readdedSettingTree)
+    assert {} == SettingHelper.getSetting('handle.empty.dictionary-or-set', readdedSettingTree)
+    assert (()) == SettingHelper.getSetting('handle.empty.tuple', readdedSettingTree)
 
 @EnvironmentVariable(environmentVariables={
     **{},
