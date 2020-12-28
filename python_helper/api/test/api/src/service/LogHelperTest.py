@@ -139,7 +139,8 @@ def mustLogWithoutColors() :
     log.WARNING : True,
     log.WRAPPER : True,
     log.FAILURE : True,
-    log.ERROR : True
+    log.ERROR : True,
+    SettingHelper.ACTIVE_ENVIRONMENT : None
 })
 def mustLogWithoutColorsAsWell() :
     # Arrange
@@ -198,7 +199,8 @@ def mustLogEnvironmentSettings() :
     log.WARNING : False,
     log.WRAPPER : False,
     log.FAILURE : True,
-    log.ERROR : False
+    log.ERROR : False,
+    SettingHelper.ACTIVE_ENVIRONMENT : None
 })
 def mustLogPretyPythonWithoutColors() :
     # Arrange

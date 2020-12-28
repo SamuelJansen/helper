@@ -12,20 +12,21 @@ def getEnvironmentValue(environmentKey, default=None) :
     environmentValue = OS.environ.get(environmentKey) if not environmentKey is None else default
     return environmentValue if not environmentValue is None else default
 
-def setEnvironmentValue(environmentKey, environmentValue, default=None):
+def setEnvironmentValue(environmentKey, environmentValue, default=None) :
     if ObjectHelper.isNotEmpty(environmentKey) :
         associatedValue = None
         if not environmentValue is None :
             associatedValue = str(StringHelper.filterString(environmentValue))
             OS.environ[environmentKey] = associatedValue
-            return associatedValue
         elif not default is None :
             associatedValue = str(StringHelper.filterString(default))
             OS.environ[environmentKey] = associatedValue
-            return associatedValue
         else :
-            deleteEnvironmentValue(environmentKey)
-            return associatedValue
+            try:
+                deleteEnvironmentValue(environmentKey)
+            except Exception as exception :
+                LogHelper.log(setEnvironmentValue, f'Failed to delete "{environmentKey}" enviroment variable key', exception=exception)
+        return associatedValue
     else :
         LogHelper.debug(setEnvironmentValue, f'arguments: environmentKey: {environmentKey}, environmentValue: {environmentValue}, default: {default}')
         raise Exception(f'Error associating environment variable "{environmentKey}" key to environment variable "{environmentValue}" value')
@@ -34,6 +35,12 @@ def replaceEnvironmentVariable(environmentKey, environmentValue, default=None) :
     originalEnvironmentValue = getEnvironmentValue(environmentKey, default=default)
     setEnvironmentValue(environmentKey, environmentValue, default=default)
     return originalEnvironmentValue
+
+def resetEnvironmentVariables(environmentVariables, originalEnvironmentVariables) :
+    if environmentVariables :
+        for key in environmentVariables.keys() :
+            if key in originalEnvironmentVariables :
+                setEnvironmentValue(key, originalEnvironmentVariables[key])
 
 def deleteEnvironmentValue(environmentKey) :
     if not environmentKey is None :

@@ -202,13 +202,13 @@ def handleSettingInjectionList(settingInjectionList, settingTree) :
                         LogHelper.log(handleSettingInjectionList, f'Ignored exception while handling setting injection list', exception=exception)
                 if strugled :
                     LogHelper.debug(handleSettingInjectionList, f'Parsed settings: {StringHelper.prettyJson(settingTree)}')
-                    notParsedSettingInjectionList = []
+                    notParsedSettingInjectionDictionary = {}
                     for setting in settingInjectionList :
-                        notParsedSettingInjectionList.append(f'{setting[NODE_KEY]}{c.DOT}{setting[SETTING_KEY]}{c.COLON_SPACE}{setting[SETTING_VALUE]}')
+                        notParsedSettingInjectionDictionary[f'{setting[NODE_KEY]}{c.DOT}{setting[SETTING_KEY]}'] = setting[SETTING_VALUE]
                     if 0 == isSettingInjectionCount :
-                        raise Exception(f'Circular reference detected in following setting injection list: {StringHelper.prettyPython(notParsedSettingInjectionList)}')
+                        raise Exception(f'Circular reference detected in following setting injections: {StringHelper.prettyPython(notParsedSettingInjectionDictionary)}')
                     else :
-                        raise Exception(f'Not possible to parse the following setting injection list: {StringHelper.prettyPython(notParsedSettingInjectionList)}')
+                        raise Exception(f'Not possible to parse the following setting injections: {StringHelper.prettyPython(notParsedSettingInjectionDictionary)}')
                 elif 0 == len(settingInjectionList) :
                     done = True
         except Exception as exception :
@@ -395,6 +395,16 @@ def getUnwrappedSettingInjection(settingValue) :
     if isSettingInjection(settingValue) :
         return settingValue[2:-1]
     return settingValue
+
+def keepSearching(keywordSearch,history,tree,treeList):
+    if ObjectHelper.isDictionary(tree) :
+        for key in tree.keys() :
+            newHistory = f'{history}.{key}'
+            if keywordSearch and keywordSearch in newHistory :
+                treeList.append(newHistory)
+            keepSearching(keywordSearch,newHistory,tree[key], treeList)
+    else :
+        log.debug(keepSearching,f'"{tree}" is not a dictionary')
 
 def printNodeTree(
         tree,

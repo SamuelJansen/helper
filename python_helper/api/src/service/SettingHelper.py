@@ -107,6 +107,11 @@ def getSetting(nodeKey,settingTree) :
         LogHelper.failure(getSetting,f'Not possible to get {nodeKey} node key. Returning "{setting}" by default', exception)
     return StringHelper.filterString(setting) if isinstance(setting, str) else setting
 
+def searchSetting(keywordSearch,tree) :
+    treeList = []
+    SettingHelperHelper.keepSearching(keywordSearch,'root',tree,treeList)
+    return treeList
+
 def printSettings(tree,name,depth=1,withColors=activeEnvironmentIsLocal()):
     withColors = activeEnvironmentIsLocal()
     settingKeyColor = SettingHelperHelper.getSettingKeyPrompColor(withColors)

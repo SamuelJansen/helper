@@ -104,15 +104,26 @@ def mustNotReadSettingFile() :
         readdedSettingTree = SettingHelper.getSettingTree(settingFilePath, keepDepthInLongString=True)
     except Exception as exception :
         ext = exception
+        print(exception)
 
     # Assert
     assert {} == readdedSettingTree
-    assert f"""Circular reference detected in following setting injection list: [
-        'circular.reference.on.key: ${Constant.OPEN_DICTIONARY}circular.reference.on.other-key{Constant.CLOSE_DICTIONARY}',
-        'circular.reference.on.other-key: ${Constant.OPEN_DICTIONARY}circular.reference.on.key{Constant.CLOSE_DICTIONARY}',
-        'circular.key: ${Constant.OPEN_DICTIONARY}circular.other-key{Constant.CLOSE_DICTIONARY}',
-        'circular.other-key: ${Constant.OPEN_DICTIONARY}circular.key{Constant.CLOSE_DICTIONARY}'
-    ]""".replace(' ', '') == str(ext).replace(' ', '')
+
+    assert f"""Circular reference detected in following setting injections: {Constant.OPEN_DICTIONARY}
+        'circular.reference.on.key': '${Constant.OPEN_DICTIONARY}circular.reference.on.other-key{Constant.CLOSE_DICTIONARY}',
+        'circular.reference.on.other-key': '${Constant.OPEN_DICTIONARY}circular.reference.on.key{Constant.CLOSE_DICTIONARY}',
+        'circular.key': '${Constant.OPEN_DICTIONARY}circular.other-key{Constant.CLOSE_DICTIONARY}',
+        'circular.other-key': '${Constant.OPEN_DICTIONARY}circular.key{Constant.CLOSE_DICTIONARY}'
+    {Constant.CLOSE_DICTIONARY}
+    """.replace('\n','').replace('\t',Constant.TAB).replace(' ', '') == str(ext).replace(' ', '').replace('\t',Constant.TAB).replace('\n','')
+
+
+    # assert f"""Circular reference detected in following setting injection list: [
+    #     'circular.reference.on.key: ${Constant.OPEN_DICTIONARY}circular.reference.on.other-key{Constant.CLOSE_DICTIONARY}',
+    #     'circular.reference.on.other-key: ${Constant.OPEN_DICTIONARY}circular.reference.on.key{Constant.CLOSE_DICTIONARY}',
+    #     'circular.key: ${Constant.OPEN_DICTIONARY}circular.other-key{Constant.CLOSE_DICTIONARY}',
+    #     'circular.other-key: ${Constant.OPEN_DICTIONARY}circular.key{Constant.CLOSE_DICTIONARY}'
+    # ]""".replace(' ', '') == str(ext).replace(' ', '')
 
 @EnvironmentVariable(environmentVariables={
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
