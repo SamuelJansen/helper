@@ -1,6 +1,6 @@
 from distutils.core import setup
 
-version = '0.1.3'
+version = '0.1.4'
 name = 'python_helper'
 url = f'https://github.com/SamuelJansen/{name}/'
 
@@ -32,6 +32,6 @@ setup(
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3.8'
+        'Programming Language :: Python :: 3.9'
     ]
 )
