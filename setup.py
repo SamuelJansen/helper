@@ -13,7 +13,7 @@ setup(
         f'{name}/api/src/service',
         f'{name}/api/src/domain',
         f'{name}/api/src/helper',
-        f'{name}/api/test/api/resourse',
+        f'{name}/api/test/api/resource',
         f'{name}/api/test/api/src/service'
     ],
     version = version,
