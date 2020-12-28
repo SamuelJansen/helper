@@ -74,13 +74,19 @@ def filterIgnoreKeyList(objectAsDictionary,ignoreKeyList):
 
 def isEmpty(thing) :
     if isCollection(thing) :
-        return 0 == len(thing)
+        return isEmptyCollection(thing)
     return StringHelper.isBlank(thing) if isinstance(thing, str) else isNone(thing)
 
 def isNotEmpty(thing) :
     if isCollection(thing) :
-        return 0 < len(thing)
+        return isNotEmptyCollection(thing)
     return StringHelper.isNotBlank(thing) if isinstance(thing, str) else isNotNone(thing)
+
+def isEmptyCollection(thing) :
+    return isCollection(thing) and 0 == len(thing)
+
+def isNotEmptyCollection(thing) :
+    return isCollection(thing) and 0 < len(thing)
 
 def isList(thing) :
     return isinstance(thing, list)

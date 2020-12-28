@@ -157,62 +157,63 @@ def handleSettingInjection(
     )
 
 def handleSettingInjectionList(settingInjectionList, settingTree) :
-    try :
-        done = False
-        strugled = False
-        while not done and not strugled :
-            strugled = True
-            isSettingInjectionCount = 0
-            containsSettingInjectionCount = 0
-            settingInjectionListCopy = [] + settingInjectionList
-            for settingInjection in settingInjectionListCopy :
-                try :
-                    if isSettingInjection(settingInjection[SETTING_VALUE]) :
-                        settingInjection[SETTING_VALUE] = getSettingInjection(
-                            settingInjection[SETTING_KEY],
-                            settingInjection[SETTING_VALUE],
-                            settingInjection[NODE_KEY],
-                            settingTree
-                        )
-                        settingInjectionList.remove(settingInjection)
-                        settingInjectionArgs = list(settingInjection.values()) + [settingTree]
-                        updateSettingTree(*settingInjectionArgs)
-                        isSettingInjectionCount += 1
-                        strugled = False
-                    elif containsSettingInjection(settingInjection[SETTING_VALUE]) :
-                        settingInjectionListFromSettingValue = getSettingInjectionListFromSettingValue(settingInjection[SETTING_VALUE])
-                        newSettingInjection = settingInjection[SETTING_VALUE]
-                        for settingValue in settingInjectionListFromSettingValue :
-                            newSettingValue = getSettingInjection(
+    if ObjectHelper.isNotEmptyCollection(settingInjectionList) and ObjectHelper.isNotNone(settingTree) :
+        try :
+            done = False
+            strugled = False
+            while not done and not strugled :
+                strugled = True
+                isSettingInjectionCount = 0
+                containsSettingInjectionCount = 0
+                settingInjectionListCopy = [] + settingInjectionList
+                for settingInjection in settingInjectionListCopy :
+                    try :
+                        if isSettingInjection(settingInjection[SETTING_VALUE]) :
+                            settingInjection[SETTING_VALUE] = getSettingInjection(
                                 settingInjection[SETTING_KEY],
-                                settingValue,
+                                settingInjection[SETTING_VALUE],
                                 settingInjection[NODE_KEY],
                                 settingTree
                             )
-                            newSettingInjection = newSettingInjection.replace(settingValue,newSettingValue)
-                        settingInjection[SETTING_VALUE] = newSettingInjection
-                        if not containsSettingInjection(settingInjection[SETTING_VALUE]) :
                             settingInjectionList.remove(settingInjection)
-                        settingInjectionArgs = list(settingInjection.values()) + [settingTree]
-                        updateSettingTree(*settingInjectionArgs)
-                        containsSettingInjectionCount += 1
-                        strugled = False
-                except Exception as exception :
-                    LogHelper.log(handleSettingInjectionList, f'Ignored exception while handling setting injection list', exception=exception)
-            if strugled :
-                LogHelper.debug(handleSettingInjectionList, f'Parsed settings: {StringHelper.prettyJson(settingTree)}')
-                notParsedSettingInjectionList = []
-                for setting in settingInjectionList :
-                    notParsedSettingInjectionList.append(f'{setting[NODE_KEY]}{c.DOT}{setting[SETTING_KEY]}{c.COLON_SPACE}{setting[SETTING_VALUE]}')
-                if 0 == isSettingInjectionCount :
-                    raise Exception(f'Circular reference detected in following setting injection list: {StringHelper.prettyPython(notParsedSettingInjectionList)}')
-                else :
-                    raise Exception(f'Not possible to parse the following setting injection list: {StringHelper.prettyPython(notParsedSettingInjectionList)}')
-            elif 0 == len(settingInjectionList) :
-                done = True
-    except Exception as exception :
-        LogHelper.error(handleSettingInjectionList,'Not possible to load setting injections properly',exception)
-        raise exception
+                            settingInjectionArgs = list(settingInjection.values()) + [settingTree]
+                            updateSettingTree(*settingInjectionArgs)
+                            isSettingInjectionCount += 1
+                            strugled = False
+                        elif containsSettingInjection(settingInjection[SETTING_VALUE]) :
+                            settingInjectionListFromSettingValue = getSettingInjectionListFromSettingValue(settingInjection[SETTING_VALUE])
+                            newSettingInjection = settingInjection[SETTING_VALUE]
+                            for settingValue in settingInjectionListFromSettingValue :
+                                newSettingValue = getSettingInjection(
+                                    settingInjection[SETTING_KEY],
+                                    settingValue,
+                                    settingInjection[NODE_KEY],
+                                    settingTree
+                                )
+                                newSettingInjection = newSettingInjection.replace(settingValue,newSettingValue)
+                            settingInjection[SETTING_VALUE] = newSettingInjection
+                            if not containsSettingInjection(settingInjection[SETTING_VALUE]) :
+                                settingInjectionList.remove(settingInjection)
+                            settingInjectionArgs = list(settingInjection.values()) + [settingTree]
+                            updateSettingTree(*settingInjectionArgs)
+                            containsSettingInjectionCount += 1
+                            strugled = False
+                    except Exception as exception :
+                        LogHelper.log(handleSettingInjectionList, f'Ignored exception while handling setting injection list', exception=exception)
+                if strugled :
+                    LogHelper.debug(handleSettingInjectionList, f'Parsed settings: {StringHelper.prettyJson(settingTree)}')
+                    notParsedSettingInjectionList = []
+                    for setting in settingInjectionList :
+                        notParsedSettingInjectionList.append(f'{setting[NODE_KEY]}{c.DOT}{setting[SETTING_KEY]}{c.COLON_SPACE}{setting[SETTING_VALUE]}')
+                    if 0 == isSettingInjectionCount :
+                        raise Exception(f'Circular reference detected in following setting injection list: {StringHelper.prettyPython(notParsedSettingInjectionList)}')
+                    else :
+                        raise Exception(f'Not possible to parse the following setting injection list: {StringHelper.prettyPython(notParsedSettingInjectionList)}')
+                elif 0 == len(settingInjectionList) :
+                    done = True
+        except Exception as exception :
+            LogHelper.error(handleSettingInjectionList,'Not possible to load setting injections properly',exception)
+            raise exception
 
 def handleLongStringOrSetting(
         settingKey,

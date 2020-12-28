@@ -1,5 +1,5 @@
 import os, sys, json
-from python_helper.api.src.service import StringHelper, LogHelper
+from python_helper.api.src.service import StringHelper, LogHelper, ObjectHelper
 from python_helper.api.src.domain import Constant as c
 
 OS = os
@@ -13,16 +13,22 @@ def getEnvironmentValue(environmentKey, default=None) :
     return environmentValue if not environmentValue is None else default
 
 def setEnvironmentValue(environmentKey, environmentValue, default=None):
-    if not environmentKey is None :
+    if ObjectHelper.isNotEmpty(environmentKey) :
+        associatedValue = None
         if not environmentValue is None :
-            OS.environ[environmentKey] = str(StringHelper.filterString(environmentValue))
+            associatedValue = str(StringHelper.filterString(environmentValue))
+            OS.environ[environmentKey] = associatedValue
+            return associatedValue
         elif not default is None :
-            OS.environ[environmentKey] = str(StringHelper.filterString(default))
+            associatedValue = str(StringHelper.filterString(default))
+            OS.environ[environmentKey] = associatedValue
+            return associatedValue
         else :
             deleteEnvironmentValue(environmentKey)
+            return associatedValue
     else :
         LogHelper.debug(setEnvironmentValue, f'arguments: environmentKey: {environmentKey}, environmentValue: {environmentValue}, default: {default}')
-        raise Exception(f'Environment key cannot be {environmentKey}')
+        raise Exception(f'Error associating environment variable "{environmentKey}" key to environment variable "{environmentValue}" value')
 
 def replaceEnvironmentVariable(environmentKey, environmentValue, default=None) :
     originalEnvironmentValue = getEnvironmentValue(environmentKey, default=default)
