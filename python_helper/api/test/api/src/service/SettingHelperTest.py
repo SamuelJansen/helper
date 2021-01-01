@@ -147,3 +147,81 @@ def mustPrintSettingTree() :
 
     # Assert
     assert ObjectHelper.isNotNone(readdedSettingTree)
+
+def querySetting_withSuccess() :
+    # Arrange
+    tree = {
+        'key' : {
+            'key' : {
+                'some-query-key' : {
+                    'key' : {
+                        'key' : {
+                            'some-query-key' : 'value',
+                            'key' : 'value'
+                        }
+                    },
+                    'other-key' : {
+                        'key' : {
+                            'other-key' : 'value',
+                            'key' : 'value'
+                        }
+                    }
+                },
+                'key' : {
+                    'key' : {
+                        'key' : {
+                            'other-key' : 'value',
+                            'key' : 'value'
+                        }
+                    },
+                    'other-key' : {
+                        'key' : {
+                            'other-key' : 'value',
+                            'key' : 'value'
+                        }
+                    }
+                },
+                'other-key' : {
+                    'key' : {
+                        'key' : {
+                            'other-key' : 'value',
+                            'key' : 'value'
+                        }
+                    },
+                    'other-key' : {
+                        'key' : {
+                            'other-key' : 'value',
+                            'key' : {
+                                'some-query-key' : 'value',
+                                'key' : 'value'
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        'other-key' : 'value'
+    }
+
+    # Act
+    queryTree = SettingHelper.querySetting('some-query-key',tree)
+
+    # Assert
+    assert {
+        'root.key.key.some-query-key': {
+            'key': {
+                'key': {
+                    'some-query-key': 'value',
+                    'key': 'value'
+                }
+            },
+            'other-key': {
+                'key': {
+                    'other-key': 'value',
+                    'key': 'value'
+                }
+            }
+        },
+        'root.key.key.some-query-key.key.key.some-query-key': 'value',
+        'root.key.key.other-key.other-key.key.key.some-query-key': 'value'
+    } == queryTree

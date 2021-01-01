@@ -14,6 +14,7 @@ StringHelperTest.isLongString_withSuccess()
 SettingHelperTest.mustReadSettingFile()
 SettingHelperTest.mustNotReadSettingFile()
 SettingHelperTest.mustPrintSettingTree()
+SettingHelperTest.querySetting_withSuccess()
 
 LogHelperTest.mustLogWithColors()
 LogHelperTest.mustLogWithoutColors()

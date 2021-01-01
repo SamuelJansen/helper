@@ -107,10 +107,12 @@ def getSetting(nodeKey,settingTree) :
         LogHelper.failure(getSetting,f'Not possible to get {nodeKey} node key. Returning "{setting}" by default', exception)
     return StringHelper.filterString(setting) if isinstance(setting, str) else setting
 
-def searchSetting(keywordSearch,tree) :
-    treeList = []
-    SettingHelperHelper.keepSearching(keywordSearch,'root',tree,treeList)
-    return treeList
+def querySetting(keywordQuery,tree) :
+    if StringHelper.isBlank(keywordQuery) or ObjectHelper.isNotDictionary(tree) :
+        LogHelper.debug(querySetting,f'''Not possible to parse "{tree}". It's either is not a dictionary or "{keywordQuery}" keyword query is blank''')
+    querySet = {}
+    SettingHelperHelper.keepSearching(keywordQuery,'root',tree,querySet)
+    return querySet
 
 def printSettings(tree,name,depth=1,withColors=activeEnvironmentIsLocal()):
     withColors = activeEnvironmentIsLocal()
