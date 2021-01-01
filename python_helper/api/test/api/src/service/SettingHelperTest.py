@@ -97,6 +97,9 @@ def mustReadSettingFile() :
     assert [] == SettingHelper.getSetting('handle.empty.list', readdedSettingTree)
     assert {} == SettingHelper.getSetting('handle.empty.dictionary-or-set', readdedSettingTree)
     assert (()) == SettingHelper.getSetting('handle.empty.tuple', readdedSettingTree)
+    assert 'ABCD -- 222233444 -- EFGH' == SettingHelper.getSetting('some-not-string-selfreference.integer', readdedSettingTree)
+    assert 'ABCD -- 2.3 -- EFGH' == SettingHelper.getSetting('some-not-string-selfreference.float', readdedSettingTree)
+    assert 'ABCD -- True -- EFGH' == SettingHelper.getSetting('some-not-string-selfreference.boolean', readdedSettingTree)
 
 @EnvironmentVariable(environmentVariables={
     **{},

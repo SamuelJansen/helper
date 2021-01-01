@@ -182,7 +182,7 @@ def handleSettingInjectionList(settingInjectionList, settingTree) :
                             strugled = False
                         elif containsSettingInjection(settingInjection[SETTING_VALUE]) :
                             settingInjectionListFromSettingValue = getSettingInjectionListFromSettingValue(settingInjection[SETTING_VALUE])
-                            newSettingInjection = settingInjection[SETTING_VALUE]
+                            newSettingInjection = str(settingInjection[SETTING_VALUE])
                             for settingValue in settingInjectionListFromSettingValue :
                                 newSettingValue = getSettingInjection(
                                     settingInjection[SETTING_KEY],
@@ -190,7 +190,7 @@ def handleSettingInjectionList(settingInjectionList, settingTree) :
                                     settingInjection[NODE_KEY],
                                     settingTree
                                 )
-                                newSettingInjection = newSettingInjection.replace(settingValue,newSettingValue)
+                                newSettingInjection = newSettingInjection.replace(settingValue,str(newSettingValue))
                             settingInjection[SETTING_VALUE] = newSettingInjection
                             if not containsSettingInjection(settingInjection[SETTING_VALUE]) :
                                 settingInjectionList.remove(settingInjection)

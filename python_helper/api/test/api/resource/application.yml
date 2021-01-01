@@ -106,3 +106,7 @@ handle:
         list: []
         dictionary-or-set: {}
         tuple: ()
+some-not-string-selfreference:
+    integer: ABCD -- ${handle.integer} -- EFGH
+    float: ABCD -- ${handle.float} -- EFGH
+    boolean: ABCD -- ${handle.boolean} -- EFGH
