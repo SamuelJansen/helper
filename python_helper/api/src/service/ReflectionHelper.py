@@ -1,7 +1,11 @@
 from python_helper.api.src.domain  import Constant as c
-from python_helper.api.src.service import LogHelper, ObjectHelper, StringHelper
+from python_helper.api.src.service import LogHelper, ObjectHelper, StringHelper, RandomHelper
 
 MAXIMUN_ARGUMENTS = 20
+METHOD_TYPE_NAME_LIST = [
+    'method',
+    'builtin_function_or_method'
+]
 
 def getAttributeOrMethod(instance, name) :
     attributeOrMethodInstance = None
@@ -19,12 +23,15 @@ def getAttributeAndMethodNameList(instanceClass) :
         if isNotPrivate(attributeOrMethodName)
     ]
 
+def isAttributeName(attributeName, objectNullArgsInstance) :
+    return isNotPrivate(attributeName) and isNotMethod(objectNullArgsInstance, attributeName)
+
 def getAttributeNameList(instanceClass) :
     objectNullArgsInstance = instanciateItWithNoArgsConstructor(instanceClass)
     return [
         attributeName
         for attributeName in dir(objectNullArgsInstance)
-        if isNotPrivate(attributeName) and isNotMethod(objectNullArgsInstance, attributeName)
+        if isAttributeName(attributeName, objectNullArgsInstance)
     ]
 
 def getMethodNameList(instanceClass) :
@@ -36,10 +43,7 @@ def getMethodNameList(instanceClass) :
     ]
 
 def isMethodInstance(methodInstance) :
-    return methodInstance.__class__.__name__ in [
-        'method',
-        'builtin_function_or_method'
-    ] if ObjectHelper.isNotNone(methodInstance) and ObjectHelper.isNotNone(methodInstance.__class__) else False
+    return methodInstance.__class__.__name__ in METHOD_TYPE_NAME_LIST if ObjectHelper.isNotNone(methodInstance) else False
 
 def isNotMethodInstance(methodInstance) :
     return not isMethodInstance(methodInstance)
@@ -54,18 +58,56 @@ def isNotMethod(objectInstance, name) :
         return False
     return isNotMethodInstance(getAttributeOrMethod(objectInstance, name))
 
-def instanciateItWithNoArgsConstructor(instanceClass) :
-    args = []
+def instanciateItWithNoArgsConstructor(targetClass, amountOfNoneArgs=0, args=None) :
+    if ObjectHelper.isNone(args) :
+        args = []
+    for _ in range(amountOfNoneArgs) :
+        args.append(None)
     objectInstance = None
     for _ in range(MAXIMUN_ARGUMENTS) :
         try :
-            objectInstance = instanceClass(*args)
+            objectInstance = targetClass(*args)
             break
         except :
             args.append(None)
-    if not isinstance(objectInstance, instanceClass) :
-        raise Exception(f'Not possible to instanciate {instanceClass} class in instanciateItWithNoArgsConstructor() method with None as args constructor')
+    if not isinstance(objectInstance, targetClass) :
+        raise Exception(f'Not possible to instanciate {targetClass} class in instanciateItWithNoArgsConstructor() method with None as args constructor')
     return objectInstance
+
+def getArgsOrder(targetClass) :
+    noneArgs = []
+    noneInstance = instanciateItWithNoArgsConstructor(targetClass, amountOfNoneArgs=0, args=noneArgs)
+    strArgs = []
+    for arg in range(len(noneArgs)) :
+        strArgs.append(RandomHelper.string(minimum=10))
+    try :
+        instance = targetClass(*strArgs)
+        instanceDataDictionary = getAttributeDataDictionary(instance)
+        argsOrderDictionary = {}
+        for key,value in instanceDataDictionary.items() :
+            if StringHelper.isNotBlank(value) :
+                argsOrderDictionary[strArgs.index(value)] = key
+        argsOrder = [argsOrderDictionary[key] for key in sorted(argsOrderDictionary)]
+    except Exception as exception :
+        errorMessage = f'Not possible to get args order from "{targetClass.__name__}" target class'
+        LogHelper.error(getArgsOrder, errorMessage, exception)
+        raise Exception(errorMessage)
+    return argsOrder
+
+    #
+    #
+    #
+    # args = []
+    # objectInstance = None
+    # for _ in range(MAXIMUN_ARGUMENTS) :
+    #     try :
+    #         objectInstance = instanceClass(*args)
+    #         break
+    #     except :
+    #         args.append(None)
+    # if not isinstance(objectInstance, instanceClass) :
+    #     raise Exception(f'Not possible to instanciate {instanceClass} class in instanciateItWithNoArgsConstructor() method with None as args constructor')
+    return targetClass
 
 def isNotPrivate(attributeOrMethodName) :
     return StringHelper.isNotBlank(attributeOrMethodName) and (
@@ -78,15 +120,22 @@ def getAttributePointerList(instance) :
     return [
         getattr(instance, instanceAttributeName)
         for instanceAttributeName in dir(instance)
-        if (not instanceAttributeName.startswith('__') and not instanceAttributeName.startswith('_'))
+        if isNotPrivate(attributeOrMethodName)
     ]
 
 def getAttributeDataList(instance) :
     return [
         (getattr(instance, instanceAttributeName), instanceAttributeName)
         for instanceAttributeName in dir(instance)
-        if (not instanceAttributeName.startswith('__') and not instanceAttributeName.startswith('_'))
+        if isAttributeName(instanceAttributeName, instance)
     ]
+
+def getAttributeDataDictionary(instance) :
+    instanceDataDictionary = {}
+    for name in dir(instance) :
+        if isAttributeName(name, instance) :
+            instanceDataDictionary[name] = getattr(instance, name)
+    return instanceDataDictionary
 
 def setAttributeOrMethod(instance, attributeOrMethodName, attributeOrMethodInstance) :
     setattr(instance, attributeOrMethodName, attributeOrMethodInstance)

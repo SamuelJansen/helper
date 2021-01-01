@@ -90,6 +90,18 @@ def isList(thing) :
 def isNotList(thing) :
     return not isList(thing)
 
+def isSet(thing) :
+    return isinstance(thing, set)
+
+def isNotSet(thing) :
+    return not isSet(thing)
+
+def isTuple(thing) :
+    return isinstance(thing, tuple)
+
+def isNotTuple(thing) :
+    return not isTuple(thing)
+
 def isDictionary(thing) :
     return isinstance(thing, dict)
 

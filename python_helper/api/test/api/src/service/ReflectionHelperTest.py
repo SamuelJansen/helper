@@ -138,3 +138,74 @@ def overrideSignatures_withSuccess() :
     assert f'{True}{NOT_OVERRIDED}' == myObject.myInBetweenWrapperFunction(True)
     assert f'{False}{NOT_OVERRIDED}' == myObject.myInBetweenWrapperFunction(False)
     assert f'{ABCD}{NOT_OVERRIDED}' == myObject.myInBetweenWrapperFunction(ABCD)
+
+@EnvironmentVariable(environmentVariables={
+    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+    **LOG_HELPER_SETTINGS
+})
+def getArgsOrder_withSuccess() :
+    # Arrange
+    class MyClass :
+        def __init__(
+            self,
+            attributeValue,
+            otherAttributeValue,
+            otherAttributeValueAgain,
+            someOtherAttributeValue,
+            otherAttributeValueOnceAgain
+        ):
+            self.attributeKey = attributeValue
+            self.otherAttributeKey = otherAttributeValue
+            self.otherAttributeKeyAgain = otherAttributeValueAgain
+            self.someOtherAttributeKey = someOtherAttributeValue
+            self.otherAttributeKeyOnceAgain = otherAttributeValueOnceAgain
+    class MyClassWithoutAttributes :
+        def __init__(self):
+            ...
+    class MyClassWithMoreAttributesThanArgs :
+        def __init__(self,attributeValue):
+            self.attributeKey = attributeValue
+            self.otherAttributeKey = None
+            self.otherAttributeKeyAgain = None
+            self.someOtherAttributeKey = None
+            self.otherAttributeKeyOnceAgain = None
+    class MyClassWithLessAttributesThanArgs :
+        def __init__(
+            self,
+            attributeValue,
+            otherAttributeValue,
+            otherAttributeValueAgain,
+            someOtherAttributeValue,
+            otherAttributeValueOnceAgain
+        ):
+            self.attributeKey = attributeValue
+    class MyClassWithoutInitMethod :
+        attributeKey = None
+        otherAttributeKey = None
+        otherAttributeKeyAgain = None
+        someOtherAttributeKey = None
+        otherAttributeKeyOnceAgain = None
+
+    # Act
+    myClassArgsOrder = ReflectionHelper.getArgsOrder(MyClass)
+    myClassWithoutAttributesArgsOrder = ReflectionHelper.getArgsOrder(MyClassWithoutAttributes)
+    myClassWithMoreAttributesThanArgsArgsOrder = ReflectionHelper.getArgsOrder(MyClassWithMoreAttributesThanArgs)
+    myClassWithLessAttributesThanArgsArgsOrder = ReflectionHelper.getArgsOrder(MyClassWithLessAttributesThanArgs)
+    myClassWithoutInitMethodArgsOrder = ReflectionHelper.getArgsOrder(MyClassWithoutInitMethod)
+
+    # Assert
+    assert [
+        'attributeKey',
+        'otherAttributeKey',
+        'otherAttributeKeyAgain',
+        'someOtherAttributeKey',
+        'otherAttributeKeyOnceAgain'
+    ] == myClassArgsOrder
+    assert [] == myClassWithoutAttributesArgsOrder
+    assert [
+        'attributeKey'
+    ] == myClassWithLessAttributesThanArgsArgsOrder
+    assert [
+        'attributeKey'
+    ] == myClassWithMoreAttributesThanArgsArgsOrder
+    assert [] == myClassWithoutInitMethodArgsOrder
