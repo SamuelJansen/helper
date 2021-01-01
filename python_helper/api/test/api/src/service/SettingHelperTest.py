@@ -208,7 +208,7 @@ def querySetting_withSuccess() :
 
     # Assert
     assert {
-        'root.key.key.some-query-key': {
+        'key.key.some-query-key': {
             'key': {
                 'key': {
                     'some-query-key': 'value',
@@ -222,6 +222,6 @@ def querySetting_withSuccess() :
                 }
             }
         },
-        'root.key.key.some-query-key.key.key.some-query-key': 'value',
-        'root.key.key.other-key.other-key.key.key.some-query-key': 'value'
+        'key.key.some-query-key.key.key.some-query-key': 'value',
+        'key.key.other-key.other-key.key.key.some-query-key': 'value'
     } == queryTree

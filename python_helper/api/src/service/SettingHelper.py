@@ -111,7 +111,7 @@ def querySetting(keywordQuery,tree) :
     if StringHelper.isBlank(keywordQuery) or ObjectHelper.isNotDictionary(tree) :
         LogHelper.debug(querySetting,f'''Not possible to parse "{tree}". It's either is not a dictionary or "{keywordQuery}" keyword query is blank''')
     querySet = {}
-    SettingHelperHelper.keepSearching(keywordQuery,'root',tree,querySet)
+    SettingHelperHelper.keepSearching(keywordQuery,tree,querySet)
     return querySet
 
 def printSettings(tree,name,depth=1,withColors=activeEnvironmentIsLocal()):

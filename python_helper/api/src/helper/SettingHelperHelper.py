@@ -396,13 +396,16 @@ def getUnwrappedSettingInjection(settingValue) :
         return settingValue[2:-1]
     return settingValue
 
-def keepSearching(keywordQuery,history,tree,querySet):
+def keepSearching(keywordQuery,tree,querySet,history=None):
     if ObjectHelper.isDictionary(tree) :
         for key in tree.keys() :
-            newHistory = f'{history}.{key}'
-            if keywordQuery and key == keywordQuery :
+            if StringHelper.isNotBlank(history) :
+                newHistory = f'{history}.{key}'
+            else :
+                newHistory = f'{key}'
+            if StringHelper.isNotBlank(keywordQuery) and key == keywordQuery :
                 querySet[newHistory] = tree[key]
-            keepSearching(keywordQuery,newHistory,tree[key],querySet)
+            keepSearching(keywordQuery,tree[key],querySet,history=newHistory)
 
 def printNodeTree(
         tree,
