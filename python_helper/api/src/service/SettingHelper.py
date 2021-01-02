@@ -2,6 +2,9 @@ from python_helper.api.src.service import StringHelper, LogHelper, ObjectHelper,
 from python_helper.api.src.domain import Constant as c
 from python_helper.api.src.helper import StringHelperHelper, SettingHelperHelper
 
+global ACTIVE_ENVIRONMENT_VALUE
+ACTIVE_ENVIRONMENT_VALUE = None
+
 ACTIVE_ENVIRONMENT = 'ACTIVE_ENVIRONMENT'
 DEFAULT_ENVIRONMENT = 'default'
 LOCAL_ENVIRONMENT = 'local'
@@ -13,9 +16,18 @@ def logEnvironmentSettings() :
         LogHelper.failure(logEnvironmentSettings, 'Not possible do get a pretty json from EnvironmentHelper.getActiveEnvironmentVariableSet()', exception)
         LogHelper.setting(logEnvironmentSettings, EnvironmentHelper.getActiveEnvironmentVariableSet())
 
+def updateActiveEnvironment(activeEnvironment) :
+    global ACTIVE_ENVIRONMENT_VALUE
+    ACTIVE_ENVIRONMENT_VALUE = activeEnvironment if ObjectHelper.isNotNone(activeEnvironment) else DEFAULT_ENVIRONMENT
+    EnvironmentHelper.updateEnvironmentValue(ACTIVE_ENVIRONMENT, ACTIVE_ENVIRONMENT_VALUE, avoidRecursiveCall=True)
+    return ACTIVE_ENVIRONMENT_VALUE
+
 def getActiveEnvironment() :
-    activeEnvironment = EnvironmentHelper.getEnvironmentValue(ACTIVE_ENVIRONMENT)
-    return activeEnvironment if not activeEnvironment is None else DEFAULT_ENVIRONMENT
+    global ACTIVE_ENVIRONMENT_VALUE
+    if StringHelper.isBlank(ACTIVE_ENVIRONMENT_VALUE) :
+        activeEnvironment = EnvironmentHelper.getEnvironmentValue(ACTIVE_ENVIRONMENT)
+        ACTIVE_ENVIRONMENT_VALUE = activeEnvironment if ObjectHelper.isNotNone(activeEnvironment) else DEFAULT_ENVIRONMENT
+    return ACTIVE_ENVIRONMENT_VALUE
 
 def activeEnvironmentIsDefault() :
     return DEFAULT_ENVIRONMENT == getActiveEnvironment()
@@ -23,7 +35,7 @@ def activeEnvironmentIsDefault() :
 def activeEnvironmentIsLocal() :
     return LOCAL_ENVIRONMENT == getActiveEnvironment()
 
-def getSettingTree(settingFilePath, settingTree=None, keepDepthInLongString=False, depthStep=c.TAB_UNITS, fallbackSetingTree=None) :
+def getSettingTree(settingFilePath, settingTree=None, keepDepthInLongString=False, depthStep=c.TAB_UNITS, fallbackSettingTree=None) :
     with open(settingFilePath,c.READ,encoding=c.ENCODING) as settingsFile :
         allSettingLines = settingsFile.readlines()
     settingInjectionList = []
@@ -95,7 +107,7 @@ def getSettingTree(settingFilePath, settingTree=None, keepDepthInLongString=Fals
                         settingInjectionList
                     )
                     depth = currentDepth
-    SettingHelperHelper.handleSettingInjectionList(settingInjectionList, settingTree, fallbackSetingTree=fallbackSetingTree)
+    SettingHelperHelper.handleSettingInjectionList(settingInjectionList, settingTree, fallbackSettingTree=fallbackSettingTree)
     return settingTree
 
 def getSetting(nodeKey,settingTree) :
@@ -108,7 +120,7 @@ def getSetting(nodeKey,settingTree) :
 
 def querySetting(keywordQuery,tree) :
     if StringHelper.isBlank(keywordQuery) or ObjectHelper.isNotDictionary(tree) :
-        LogHelper.debug(querySetting,f'''Not possible to parse "{tree}". It's either is not a dictionary or "{keywordQuery}" keyword query is blank''')
+        LogHelper.warning(querySetting,f'''Not possible to parse "{tree}". It's either is not a dictionary or "{keywordQuery}" keyword query is blank''')
     querySet = {}
     SettingHelperHelper.keepSearching(keywordQuery,tree,querySet)
     return querySet

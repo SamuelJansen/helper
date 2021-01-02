@@ -1,4 +1,4 @@
-from python_helper import log, SettingHelper, StringHelper, EnvironmentVariable, EnvironmentHelper
+from python_helper import log, SettingHelper, StringHelper, EnvironmentVariable, EnvironmentHelper, ObjectHelper
 
 DICTIONARY_INSTANCE = {
     'my_none_value' : None,
@@ -64,7 +64,7 @@ def mustLogWithColors() :
         try :
             raise Exception(someExceptionMessage)
         except Exception as e :
-            if log.log == logType :
+            if logType in [log.log, log.debug, log.warning] :
                 logType(logType, someLogMessage, exception=e)
             else :
                 logType(logType, someLogMessage, e)
@@ -74,6 +74,9 @@ def mustLogWithColors() :
     log.setting(log.setting, someLogMessage)
     log.debug(log.debug, someLogMessage)
     log.warning(log.warning, someLogMessage)
+    controlableException(log.log)
+    controlableException(log.debug)
+    controlableException(log.warning)
     controlableException(log.wraper)
     controlableException(log.failure)
     controlableException(log.error)
@@ -81,7 +84,6 @@ def mustLogWithColors() :
     log.failure(log.failure, noExceptionThrown, None)
     log.error(log.error, noExceptionThrown, None)
     log.log(log.log, someLogMessage, None)
-    controlableException(log.log)
 
     # Assert
     assert True == SettingHelper.activeEnvironmentIsLocal()
@@ -109,7 +111,7 @@ def mustLogWithoutColors() :
         try :
             raise Exception(someExceptionMessage)
         except Exception as e :
-            if log.log == logType :
+            if logType in [log.log, log.debug, log.warning] :
                 logType(logType, someLogMessage, exception=e)
             else :
                 logType(logType, someLogMessage, e)
@@ -119,6 +121,9 @@ def mustLogWithoutColors() :
     log.setting(log.setting, someLogMessage)
     log.debug(log.debug, someLogMessage)
     log.warning(log.warning, someLogMessage)
+    controlableException(log.log)
+    controlableException(log.debug)
+    controlableException(log.warning)
     controlableException(log.wraper)
     controlableException(log.failure)
     controlableException(log.error)
@@ -126,7 +131,6 @@ def mustLogWithoutColors() :
     log.failure(log.failure, noExceptionThrown, None)
     log.error(log.error, noExceptionThrown, None)
     log.log(log.log, someLogMessage, None)
-    controlableException(log.log)
 
     # Assert
     assert 'my environment' == EnvironmentHelper.getEnvironmentValue(SettingHelper.ACTIVE_ENVIRONMENT)
@@ -152,21 +156,27 @@ def mustLogWithoutColorsAsWell() :
         try :
             raise Exception(someExceptionMessage)
         except Exception as exception :
-            logType(logType, someLogMessage, exception)
+            if logType in [log.log, log.debug, log.warning] :
+                logType(logType, someLogMessage, exception=exception)
+            else :
+                logType(logType, someLogMessage, exception)
 
     # Act
     log.success(log.success, someLogMessage)
     log.setting(log.setting, someLogMessage)
     log.debug(log.debug, someLogMessage)
     log.warning(log.warning, someLogMessage)
+    controlableException(log.log)
+    controlableException(log.debug)
+    controlableException(log.warning)
     controlableException(log.wraper)
     controlableException(log.failure)
     controlableException(log.error)
 
     # Assert
     assert True == SettingHelper.activeEnvironmentIsDefault()
-    assert EnvironmentHelper.getEnvironmentValue(SettingHelper.ACTIVE_ENVIRONMENT) is None
-    assert 'default' == SettingHelper.getActiveEnvironment()
+    assert SettingHelper.DEFAULT_ENVIRONMENT == EnvironmentHelper.getEnvironmentValue(SettingHelper.ACTIVE_ENVIRONMENT)
+    assert SettingHelper.DEFAULT_ENVIRONMENT == SettingHelper.getActiveEnvironment()
 
 @EnvironmentVariable(environmentVariables={
     log.LOG : False,
@@ -215,7 +225,7 @@ def mustLogPretyPythonWithoutColors() :
         exception = e
 
     # Assert
-    assert exception is None
+    assert ObjectHelper.isNone(exception)
 
 @EnvironmentVariable(environmentVariables={
     log.LOG : True,
@@ -241,7 +251,7 @@ def mustLogPretyPythonWithColors() :
         exception = e
 
     # Assert
-    assert exception is None
+    assert ObjectHelper.isNone(exception)
 
 @EnvironmentVariable(environmentVariables={
     log.LOG : True,

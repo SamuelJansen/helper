@@ -39,11 +39,11 @@ def success(origin,message) :
 def setting(origin,message) :
     LogHelperHelper.softLog(origin,message,SETTING)
 
-def debug(origin,message) :
-    LogHelperHelper.softLog(origin,message,DEBUG)
+def debug(origin,message,exception=None) :
+    LogHelperHelper.softLog(origin,message,DEBUG,exception=exception)
 
-def warning(origin,message) :
-    LogHelperHelper.softLog(origin,message,WARNING)
+def warning(origin,message,exception=None) :
+    LogHelperHelper.softLog(origin,message,WARNING,exception=exception)
 
 def wraper(origin,message,exception) :
     LogHelperHelper.hardLog(origin,message,exception,WRAPPER)
@@ -54,8 +54,8 @@ def failure(origin,message,exception) :
 def error(origin,message,exception) :
     LogHelperHelper.hardLog(origin,message,exception,ERROR)
 
-def printLog(message,condition=False) :
-    LogHelperHelper.printMessageLog(LOG,message,condition=condition)
+def printLog(message,exception=None,condition=False) :
+    LogHelperHelper.printMessageLog(LOG,message,exception=exception,condition=condition)
 
 def printSuccess(message,condition=False) :
     LogHelperHelper.printMessageLog(SUCCESS,message,condition=condition)
@@ -63,20 +63,20 @@ def printSuccess(message,condition=False) :
 def printSetting(message,condition=False) :
     LogHelperHelper.printMessageLog(SETTING,message,condition=condition)
 
-def printDebug(message,condition=False) :
-    LogHelperHelper.printMessageLog(DEBUG,message,condition=condition)
+def printDebug(message,exception=None,condition=False) :
+    LogHelperHelper.printMessageLog(DEBUG,message,exception=exception,condition=condition)
 
-def printWarning(message,condition=False) :
-    LogHelperHelper.printMessageLog(WARNING,message,condition=condition)
+def printWarning(message,exception=None,condition=False) :
+    LogHelperHelper.printMessageLog(WARNING,message,exception=exception,condition=condition)
 
-def printWarper(message,condition=False) :
-    LogHelperHelper.printMessageLog(WRAPPER,message,condition=condition)
+def printWarper(message,exception=None,condition=False) :
+    LogHelperHelper.printMessageLog(WRAPPER,message,exception=exception,condition=condition)
 
-def printFailure(message,condition=False) :
-    LogHelperHelper.printMessageLog(FAILURE,message,condition=condition)
+def printFailure(message,exception=None,condition=False) :
+    LogHelperHelper.printMessageLog(FAILURE,message,exception=exception,condition=condition)
 
-def printError(message,condition=False) :
-    LogHelperHelper.printMessageLog(ERROR,message,condition=condition)
+def printError(message,exception=None,condition=False) :
+    LogHelperHelper.printMessageLog(ERROR,message,exception=exception,condition=condition)
 
 def prettyPython(
         origin,

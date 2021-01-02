@@ -4,6 +4,7 @@ from python_helper.api.test.api.src.service import LogHelperTest
 from python_helper.api.test.api.src.service import ObjectHelperTest
 from python_helper.api.test.api.src.service import ReflectionHelperTest
 from python_helper.api.test.api.src.service import RandomHelperTest
+from python_helper.api.test.api.src.service import MethodAnnotationTest
 
 StringHelperTest.mustFilterSetting()
 StringHelperTest.prettyJson_withSucces()
@@ -16,6 +17,7 @@ SettingHelperTest.mustNotReadSettingFile()
 SettingHelperTest.mustPrintSettingTree()
 SettingHelperTest.querySetting_withSuccess()
 SettingHelperTest.mustHandleSettingValueInFallbackSettingTree()
+SettingHelperTest.updateActiveEnvironment_withSuccess()
 
 LogHelperTest.mustLogWithColors()
 LogHelperTest.mustLogWithoutColors()
@@ -35,3 +37,7 @@ ReflectionHelperTest.getArgsOrder_withSuccess()
 
 RandomHelperTest.sample_withSuccess()
 RandomHelperTest.randomValues()
+
+MethodAnnotationTest.Function_withSuccess()
+MethodAnnotationTest.Method_withSuccess()
+MethodAnnotationTest.FunctionThrough_withSuccess()

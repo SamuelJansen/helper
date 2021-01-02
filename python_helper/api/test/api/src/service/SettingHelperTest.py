@@ -111,25 +111,47 @@ def mustNotReadSettingFile() :
 
     # Act
     readdedSettingTree = {}
-    ext = None
+    exception = None
     try :
         readdedSettingTree = SettingHelper.getSettingTree(settingFilePath, keepDepthInLongString=True)
-    except Exception as exception :
-        ext = exception
+    except Exception as ext :
+        exception = ext
 
     # Assert
     assert {} == readdedSettingTree
 
-    assert f"""Circular reference detected in following setting injections: {Constant.OPEN_DICTIONARY}
-        'circular.reference.on.key': '${Constant.OPEN_DICTIONARY}circular.reference.on.other-key{Constant.CLOSE_DICTIONARY}',
-        'circular.reference.on.other-key': '${Constant.OPEN_DICTIONARY}circular.reference.on.key{Constant.CLOSE_DICTIONARY}',
-        'circular.key': '${Constant.OPEN_DICTIONARY}circular.other-key{Constant.CLOSE_DICTIONARY}',
-        'circular.other-key': '${Constant.OPEN_DICTIONARY}circular.key{Constant.CLOSE_DICTIONARY}'
-    {Constant.CLOSE_DICTIONARY}
-    """.replace('\n','').replace('\t',Constant.TAB).replace(' ', '') == str(ext).replace(' ', '').replace('\t',Constant.TAB).replace('\n','')
+    circularReferenceSettingInjectionDictionary = {
+        'circular.reference.on.key': {
+            'SETTING_KEY': 'key',
+            'SETTING_VALUE': '${circular.reference.on.other-key}',
+            'SETTING_NODE_KEY': 'circular.reference.on'
+        },
+        'circular.reference.on.other-key': {
+            'SETTING_KEY': 'other-key',
+            'SETTING_VALUE': '${circular.reference.on.key}',
+            'SETTING_NODE_KEY': 'circular.reference.on'
+        },
+        'circular.key': {
+            'SETTING_KEY': 'key',
+            'SETTING_VALUE': '${circular.other-key}',
+            'SETTING_NODE_KEY': 'circular'
+        },
+        'circular.other-key': {
+            'SETTING_KEY': 'other-key',
+            'SETTING_VALUE': '${circular.key}',
+            'SETTING_NODE_KEY': 'circular'
+        }
+    }
+
+    exceptionMessage = f'Circular reference detected in following setting injections: {StringHelper.prettyPython(circularReferenceSettingInjectionDictionary)}'
+
+    assert exceptionMessage == str(exception)
+
+
 
 @EnvironmentVariable(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
+    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+    **LOG_HELPER_SETTINGS
 })
 def mustPrintSettingTree() :
     # Arrange
@@ -231,7 +253,7 @@ def mustHandleSettingValueInFallbackSettingTree() :
 
     # Act
     readdedSettingFallbackFilePath = SettingHelper.getSettingTree(settingFallbackFilePath)
-    readdedSettingTree = SettingHelper.getSettingTree(settingFilePath, keepDepthInLongString=True, fallbackSetingTree=readdedSettingFallbackFilePath)
+    readdedSettingTree = SettingHelper.getSettingTree(settingFilePath, keepDepthInLongString=True, fallbackSettingTree=readdedSettingFallbackFilePath)
     # log.prettyPython(mustHandleSettingValueInFallbackSettingTree, '', readdedSettingTree)
 
     # Assert
@@ -276,3 +298,30 @@ def mustHandleSettingValueInFallbackSettingTree() :
 
     assert 'None' == SettingHelper.getSetting('reffer-to.fallback-settings.none', readdedSettingTree)
     assert "ABCD -- None -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.none-in-between', readdedSettingTree)
+
+@EnvironmentVariable(environmentVariables={
+    SettingHelper.ACTIVE_ENVIRONMENT : None,
+    **LOG_HELPER_SETTINGS
+})
+def updateActiveEnvironment_withSuccess() :
+    # Arrange
+    originalActiveEnvironment = EnvironmentHelper.getEnvironmentValue(SettingHelper.ACTIVE_ENVIRONMENT)
+    originalActiveEnvironmentIsDefault = SettingHelper.activeEnvironmentIsDefault()
+    originalGottenActiveEnvironment = SettingHelper.getActiveEnvironment()
+    myNewActiveEnvironment = 'my new artive environment'
+    originalACTIVE_ENVIRONMENT_VALUE = SettingHelper.ACTIVE_ENVIRONMENT_VALUE
+
+    # Act
+    myGottenNewActiveEnvironment = SettingHelper.updateActiveEnvironment(myNewActiveEnvironment)
+
+    # Assert
+    assert SettingHelper.DEFAULT_ENVIRONMENT == originalActiveEnvironment
+    assert True == originalActiveEnvironmentIsDefault
+    assert SettingHelper.DEFAULT_ENVIRONMENT == originalGottenActiveEnvironment
+    assert myNewActiveEnvironment == EnvironmentHelper.getEnvironmentValue(SettingHelper.ACTIVE_ENVIRONMENT)
+    assert False == SettingHelper.activeEnvironmentIsDefault()
+    assert myNewActiveEnvironment == SettingHelper.getActiveEnvironment()
+    assert ObjectHelper.isNotEmpty(myGottenNewActiveEnvironment)
+    assert myGottenNewActiveEnvironment == myNewActiveEnvironment
+    assert SettingHelper.DEFAULT_ENVIRONMENT == originalACTIVE_ENVIRONMENT_VALUE
+    assert SettingHelper.ACTIVE_ENVIRONMENT_VALUE == myNewActiveEnvironment

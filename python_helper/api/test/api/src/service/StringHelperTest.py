@@ -170,7 +170,6 @@ def prettyJson_withSucces() :
 
     # Act
     toAssert = StringHelper.prettyJson(simpleDictionaryInstance, tabCount=1, withColors=True)
-    log.debug(prettyJson_withSucces, toAssert)
 
     # Assert
     toAssert = StringHelper.removeColors(toAssert)
@@ -234,7 +233,7 @@ def prettyPython_withSucces() :
 
     # Act
     toAssert = StringHelper.prettyPython(simpleDictionaryInstance, tabCount=1, withColors=True)
-    log.debug(prettyPython_withSucces, 'does it works ' + toAssert + ' correctly?')
+    # log.debug(prettyPython_withSucces, 'does it works ' + toAssert + ' correctly?')
 
     # Assert
     toAssert = StringHelper.removeColors(toAssert)
