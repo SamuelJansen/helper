@@ -1,0 +1,15 @@
+fallback:
+    string: 'fallback value'
+    integer: 222233444
+    float: 2.3
+    boolean: True
+    none: None
+    empty:
+        list: []
+        set-or-dictionary: {}
+        tuple: ()
+    not-empty:
+        list: [a,b,c]
+        dictionary: {1:20,2:10,3:30}
+        set: {1.4,2.7,0.3}
+        tuple: (True, False, None)

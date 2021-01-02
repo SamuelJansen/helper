@@ -119,7 +119,7 @@ def prettyJson_withSucces() :
     expected = '''{
         "11": "yolo",
         "10": 2.2,
-        "True": false,
+        "true": false,
         "key": "value",
         "anotherKey": {
             "key": "value"

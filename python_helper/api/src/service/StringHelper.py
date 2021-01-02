@@ -18,8 +18,10 @@ def filterJson(json, extraCharacterList=None) :
     return filteredJson.replace(c.SYSTEM_TAB,c.TAB)
 
 def removeCharactere(charactere,string) :
-    filteredString = c.NOTHING.join(string.strip().split(charactere))
-    return filteredString.replace(charactere,c.NOTHING)
+    if isNotBlank(charactere) and isNotBlank(string) :
+        filteredString = c.NOTHING.join(string.strip().split(charactere))
+        return filteredString.replace(charactere,c.NOTHING)
+    return string
 
 def getFilteredString(string,globals) :
     return filterString(string)
@@ -110,7 +112,7 @@ def prettyJson(
         )
 
 def filterString(string) :
-    if string is None or not isinstance(string, str) :
+    if ObjectHelper.isNone(string) or not isinstance(string, str) :
         return string
     strippedString = string.strip()
     if c.NOTHING == strippedString :

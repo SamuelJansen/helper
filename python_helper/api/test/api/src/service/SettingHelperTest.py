@@ -35,7 +35,7 @@ def mustReadSettingFile() :
 
     # Act
     readdedSettingTree = SettingHelper.getSettingTree(settingFilePath, keepDepthInLongString=True)
-    # print(StringHelper.prettyPython(readdedSettingTree))
+    # log.prettyPython(mustReadSettingFile, '', readdedSettingTree)
 
     # Assert
     assert 'self reference value' == SettingHelper.getSetting('my.self-reference-key', readdedSettingTree)
@@ -116,7 +116,6 @@ def mustNotReadSettingFile() :
         readdedSettingTree = SettingHelper.getSettingTree(settingFilePath, keepDepthInLongString=True)
     except Exception as exception :
         ext = exception
-        print(exception)
 
     # Assert
     assert {} == readdedSettingTree
@@ -128,14 +127,6 @@ def mustNotReadSettingFile() :
         'circular.other-key': '${Constant.OPEN_DICTIONARY}circular.key{Constant.CLOSE_DICTIONARY}'
     {Constant.CLOSE_DICTIONARY}
     """.replace('\n','').replace('\t',Constant.TAB).replace(' ', '') == str(ext).replace(' ', '').replace('\t',Constant.TAB).replace('\n','')
-
-
-    # assert f"""Circular reference detected in following setting injection list: [
-    #     'circular.reference.on.key: ${Constant.OPEN_DICTIONARY}circular.reference.on.other-key{Constant.CLOSE_DICTIONARY}',
-    #     'circular.reference.on.other-key: ${Constant.OPEN_DICTIONARY}circular.reference.on.key{Constant.CLOSE_DICTIONARY}',
-    #     'circular.key: ${Constant.OPEN_DICTIONARY}circular.other-key{Constant.CLOSE_DICTIONARY}',
-    #     'circular.other-key: ${Constant.OPEN_DICTIONARY}circular.key{Constant.CLOSE_DICTIONARY}'
-    # ]""".replace(' ', '') == str(ext).replace(' ', '')
 
 @EnvironmentVariable(environmentVariables={
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
@@ -228,3 +219,60 @@ def querySetting_withSuccess() :
         'key.key.some-query-key.key.key.some-query-key': 'value',
         'key.key.other-key.other-key.key.key.some-query-key': 'value'
     } == queryTree
+
+@EnvironmentVariable(environmentVariables={
+    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+    **LOG_HELPER_SETTINGS
+})
+def mustHandleSettingValueInFallbackSettingTree() :
+    # Arrange
+    settingFallbackFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','fallback-application.yml'])
+    settingFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','referencing-fallback-application.yml'])
+
+    # Act
+    readdedSettingFallbackFilePath = SettingHelper.getSettingTree(settingFallbackFilePath)
+    readdedSettingTree = SettingHelper.getSettingTree(settingFilePath, keepDepthInLongString=True, fallbackSetingTree=readdedSettingFallbackFilePath)
+    # log.prettyPython(mustHandleSettingValueInFallbackSettingTree, '', readdedSettingTree)
+
+    # Assert
+    assert [] == SettingHelper.getSetting('reffer-to.fallback-settings.empty.list', readdedSettingTree)
+    assert 'ABCD -- [] -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.list-in-between', readdedSettingTree)
+    assert (()) == SettingHelper.getSetting('reffer-to.fallback-settings.empty.tuple', readdedSettingTree)
+    assert 'ABCD -- () -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.tuple-in-between', readdedSettingTree)
+    assert {} == SettingHelper.getSetting('reffer-to.fallback-settings.empty.set-or-dictionary', readdedSettingTree)
+    assert 'ABCD -- {} -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.set-or-dictionary-in-between', readdedSettingTree)
+
+    assert [
+        'a',
+        'b',
+        'c'
+    ] == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.list', readdedSettingTree)
+    assert "ABCD -- ['a', 'b', 'c'] -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.list-in-between', readdedSettingTree)
+    assert (
+        True,
+        False,
+        'None'
+    ) == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.tuple', readdedSettingTree)
+    assert "ABCD -- (True, False, 'None') -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.tuple-in-between', readdedSettingTree)
+    assert {} == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.set', readdedSettingTree)
+    assert 'ABCD -- {} -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.set-in-between', readdedSettingTree)
+    assert {
+        '1': 20,
+        '2': 10,
+        '3': 30
+    } == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.dictionary', readdedSettingTree)
+    assert "ABCD -- {'1': 20, '2': 10, '3': 30} -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.dictionary-in-between', readdedSettingTree)
+    assert "fallback value" == SettingHelper.getSetting('reffer-to.fallback-settings.string', readdedSettingTree)
+    assert "ABCD -- fallback value -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.string-in-between', readdedSettingTree)
+
+    assert 222233444 == SettingHelper.getSetting('reffer-to.fallback-settings.integer', readdedSettingTree)
+    assert "ABCD -- 222233444 -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.integer-in-between', readdedSettingTree)
+
+    assert 2.3 == SettingHelper.getSetting('reffer-to.fallback-settings.float', readdedSettingTree)
+    assert "ABCD -- 2.3 -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.float-in-between', readdedSettingTree)
+
+    assert True == SettingHelper.getSetting('reffer-to.fallback-settings.boolean', readdedSettingTree)
+    assert "ABCD -- True -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.boolean-in-between', readdedSettingTree)
+
+    assert 'None' == SettingHelper.getSetting('reffer-to.fallback-settings.none', readdedSettingTree)
+    assert "ABCD -- None -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.none-in-between', readdedSettingTree)

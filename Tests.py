@@ -15,6 +15,7 @@ SettingHelperTest.mustReadSettingFile()
 SettingHelperTest.mustNotReadSettingFile()
 SettingHelperTest.mustPrintSettingTree()
 SettingHelperTest.querySetting_withSuccess()
+SettingHelperTest.mustHandleSettingValueInFallbackSettingTree()
 
 LogHelperTest.mustLogWithColors()
 LogHelperTest.mustLogWithoutColors()

@@ -42,7 +42,6 @@ DICTIONARY_INSTANCE = {
         2.4
     }
 }
-
 JSON_INSTANCE = json.loads(StringHelper.prettyJson(DICTIONARY_INSTANCE))
 
 # LOG_HELPER_SETTINGS = {

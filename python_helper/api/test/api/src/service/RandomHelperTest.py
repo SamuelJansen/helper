@@ -120,13 +120,13 @@ def randomValues() :
     floatValueInOtherCustomFloatRange = RandomHelper.float(minimum=MINIMUM_CUSTOM_FLOAT_RANGE, maximum=MAXIMUM_CUSTOM_FLOAT_RANGE)
 
     # Assert
-    assert RandomHelper.DEFAULT_MINIMUM_LENGHT < len(stringValueInDefaultRange) < RandomHelper.DEFAULT_MAXIMUM_LENGHT + 1
+    assert RandomHelper.DEFAULT_MINIMUM_LENGHT <= len(stringValueInDefaultRange) <= RandomHelper.DEFAULT_MAXIMUM_LENGHT
     assert MINIMUM_CUSTOM_RANGE == len(stringValueInCustomRange)
-    assert OTHER_MINIMUM_CUSTOM_RANGE < len(stringValueInOtherCustomRange) < OTHER_MAXIMUM_CUSTOM_RANGE + 1
-    assert RandomHelper.DEFAULT_MINIMUM_LENGHT < integerValueInDefaultRange < RandomHelper.DEFAULT_MAXIMUM_LENGHT + 1
+    assert OTHER_MINIMUM_CUSTOM_RANGE < len(stringValueInOtherCustomRange) <= OTHER_MAXIMUM_CUSTOM_RANGE
+    assert RandomHelper.DEFAULT_MINIMUM_LENGHT <= integerValueInDefaultRange <= RandomHelper.DEFAULT_MAXIMUM_LENGHT
     assert MINIMUM_CUSTOM_RANGE == integerValueInCustomRange
-    assert OTHER_MINIMUM_CUSTOM_RANGE < integerValueInOtherCustomRange < OTHER_MAXIMUM_CUSTOM_RANGE + 1
-    assert RandomHelper.DEFAULT_MINIMUM_LENGHT < floatValueInDefaultRange < RandomHelper.DEFAULT_MAXIMUM_LENGHT + 1
+    assert OTHER_MINIMUM_CUSTOM_RANGE < integerValueInOtherCustomRange <= OTHER_MAXIMUM_CUSTOM_RANGE
+    assert RandomHelper.DEFAULT_MINIMUM_LENGHT <= floatValueInDefaultRange <= RandomHelper.DEFAULT_MAXIMUM_LENGHT
     assert MINIMUM_CUSTOM_RANGE == floatValueInCustomRange
-    assert OTHER_MINIMUM_CUSTOM_RANGE < floatValueInOtherCustomRange < OTHER_MAXIMUM_CUSTOM_RANGE + 1
-    assert MINIMUM_CUSTOM_FLOAT_RANGE < floatValueInOtherCustomFloatRange < MAXIMUM_CUSTOM_FLOAT_RANGE + 1
+    assert OTHER_MINIMUM_CUSTOM_RANGE <= floatValueInOtherCustomRange < OTHER_MAXIMUM_CUSTOM_RANGE
+    assert MINIMUM_CUSTOM_FLOAT_RANGE <= floatValueInOtherCustomFloatRange <= MAXIMUM_CUSTOM_FLOAT_RANGE

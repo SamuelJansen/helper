@@ -23,7 +23,7 @@ def activeEnvironmentIsDefault() :
 def activeEnvironmentIsLocal() :
     return LOCAL_ENVIRONMENT == getActiveEnvironment()
 
-def getSettingTree(settingFilePath, settingTree=None, keepDepthInLongString=False, depthStep=c.TAB_UNITS) :
+def getSettingTree(settingFilePath, settingTree=None, keepDepthInLongString=False, depthStep=c.TAB_UNITS, fallbackSetingTree=None) :
     with open(settingFilePath,c.READ,encoding=c.ENCODING) as settingsFile :
         allSettingLines = settingsFile.readlines()
     settingInjectionList = []
@@ -95,8 +95,7 @@ def getSettingTree(settingFilePath, settingTree=None, keepDepthInLongString=Fals
                         settingInjectionList
                     )
                     depth = currentDepth
-    from python_helper import StringHelper
-    SettingHelperHelper.handleSettingInjectionList(settingInjectionList, settingTree)
+    SettingHelperHelper.handleSettingInjectionList(settingInjectionList, settingTree, fallbackSetingTree=fallbackSetingTree)
     return settingTree
 
 def getSetting(nodeKey,settingTree) :

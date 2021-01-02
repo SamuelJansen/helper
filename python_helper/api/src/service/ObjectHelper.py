@@ -133,7 +133,7 @@ def isNotNativeClassIsntance(instance) :
     return not isNativeClassIsntance(instance)
 
 def isCollection(instance) :
-    return isNotNone(instance.__class__) and instance.__class__ in COLLECTION_CLASS_LIST
+    return isNotNone(instance) and instance.__class__ in COLLECTION_CLASS_LIST
 
 def isNotCollection(instance) :
     return not isCollection(instance)

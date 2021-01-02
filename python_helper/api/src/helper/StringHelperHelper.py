@@ -2,48 +2,49 @@ from numbers import Number
 from python_helper.api.src.domain import Constant as c
 from python_helper.api.src.service import ObjectHelper, StringHelper
 
-def newLine(strReturn, charactere, withColors):
+def newLine(strReturn, charactere, prettyFunction, withColors):
     if charactere == strReturn[-len(charactere):] :
         return f'{c.NEW_LINE}'
     else :
-        return f'{getItAsColoredString(c.COMA, withColors, color=c.COMA_PROMPT_COLOR)}{c.NEW_LINE}'
+        return f'{getItAsColoredString(c.COMA, prettyFunction, withColors, color=c.COMA_PROMPT_COLOR)}{c.NEW_LINE}'
 
 def getValueCollection(outterValue) :
     return outterValue if not isinstance(outterValue, set) else ObjectHelper.getSortedCollection(outterValue)
 
-def getItAsColoredString(thing, withColors, replaceBy=None, color=None) :
+def getItAsColoredString(thing, prettyFunction, withColors, replaceBy=None, color=None) :
     thingValue = str(thing) if ObjectHelper.isNone(replaceBy) else str(replaceBy)
     colorValue = color if ObjectHelper.isNotNone(color) else c.NATIVE_PROMPT_COLOR[type(thing).__name__]
     return thingValue if not withColors else f'{colorValue}{thingValue}{c.RESET_COLOR}'
 
-def getFilteredAndColoredString(keyOrValue, string, pretyFunction, withColors, color) :
+def getFilteredAndColoredQuote(keyOrValue, string, prettyFunction, withColors, color) :
     if ObjectHelper.isNativeClassIsntance(keyOrValue) and not isinstance(keyOrValue, str) :
-        return c.NOTHING if pretyFunction == StringHelper.prettyPython else getItAsColoredString(string, withColors, color=color)
-    return getItAsColoredString(string, withColors, color=color)
+        return c.NOTHING if StringHelper.prettyPython == prettyFunction else getItAsColoredString(string, prettyFunction, withColors, color=color)
+    return getItAsColoredString(string, prettyFunction, withColors, color=color)
 
 def getStrReturn(
         key,
         value,
         collectionType,
         quote,
-        pretyFunction,
+        prettyFunction,
         tabCount,
         nullValue,
         trueValue,
         falseValue,
         withColors
     ) :
+    valueValue = prettyFunction(value, quote=quote, tabCount=tabCount, nullValue=nullValue, trueValue=trueValue, falseValue=falseValue, withColors=withColors)
     if c.TYPE_DICT == collectionType :
-        filteredAndColoredQuote = getFilteredAndColoredString(key, quote, pretyFunction, withColors, c.QUOTE_PROMPT_COLOR)
-        filteredAndColoredColonSpace = getItAsColoredString(c.COLON_SPACE, withColors, color=c.COLON_PROMPT_COLOR)
-        return f'{tabCount * c.TAB}{filteredAndColoredQuote}{getItAsColoredString(key, withColors)}{filteredAndColoredQuote}{filteredAndColoredColonSpace}{pretyFunction(value, quote=quote, tabCount=tabCount, nullValue=nullValue, trueValue=trueValue, falseValue=falseValue, withColors=withColors)}'
+        filteredAndColoredQuote = getFilteredAndColoredQuote(key, quote, prettyFunction, withColors, c.QUOTE_PROMPT_COLOR)
+        filteredAndColoredColonSpace = getItAsColoredString(c.COLON_SPACE, prettyFunction, withColors, color=c.COLON_PROMPT_COLOR)
+        return f'{tabCount * c.TAB}{filteredAndColoredQuote}{getItAsColoredString(key if StringHelper.prettyPython==prettyFunction else StringHelper.filterString(prettyFunction(key, quote=quote, tabCount=tabCount, nullValue=nullValue, trueValue=trueValue, falseValue=falseValue)), prettyFunction, withColors)}{filteredAndColoredQuote}{filteredAndColoredColonSpace}{valueValue}'
     else :
-        return f'{tabCount * c.TAB}{pretyFunction(value, quote=quote, tabCount=tabCount, nullValue=nullValue, trueValue=trueValue, falseValue=falseValue, withColors=withColors)}'
+        return f'{tabCount * c.TAB}{valueValue}'
 
 def prettyInstance(
         outterValue,
         quote,
-        pretyFunction,
+        prettyFunction,
         tabCount,
         nullValue,
         trueValue,
@@ -51,25 +52,25 @@ def prettyInstance(
         withColors=False
     ) :
     strReturn = c.NOTHING
-    filteredAndColoredQuote = getFilteredAndColoredString(outterValue, quote, pretyFunction, withColors, c.QUOTE_PROMPT_COLOR)
+    filteredAndColoredQuote = getFilteredAndColoredQuote(outterValue, quote, prettyFunction, withColors, c.QUOTE_PROMPT_COLOR)
     if (isinstance(outterValue, int) or isinstance(outterValue, float)) and not isinstance(outterValue, bool) :
-        strReturn += getItAsColoredString(outterValue, withColors)
+        strReturn += getItAsColoredString(outterValue, prettyFunction, withColors)
     elif isinstance(outterValue, bool) :
         if True == outterValue:
-            strReturn += getItAsColoredString(outterValue, withColors, replaceBy=trueValue)
+            strReturn += getItAsColoredString(outterValue, prettyFunction, withColors, replaceBy=trueValue)
         elif False == outterValue:
-            strReturn += getItAsColoredString(outterValue, withColors, replaceBy=falseValue)
-    elif outterValue is None :
-        strReturn += getItAsColoredString(outterValue, withColors, replaceBy=nullValue, color=c.NONE_PROMP_COLOR)
+            strReturn += getItAsColoredString(outterValue, prettyFunction, withColors, replaceBy=falseValue)
+    elif ObjectHelper.isNone(outterValue) :
+        strReturn += getItAsColoredString(outterValue, prettyFunction, withColors, replaceBy=nullValue, color=c.NONE_PROMP_COLOR)
     else :
-        strReturn += f'{filteredAndColoredQuote}{getItAsColoredString(outterValue, withColors)}{filteredAndColoredQuote}'
+        strReturn += f'{filteredAndColoredQuote}{getItAsColoredString(outterValue, prettyFunction, withColors)}{filteredAndColoredQuote}'
     return strReturn
 
 def prettyCollection(
         outterValue,
         collectionType,
         quote,
-        pretyFunction,
+        prettyFunction,
         tabCount,
         nullValue,
         trueValue,
@@ -84,14 +85,14 @@ def prettyCollection(
     else :
         strReturn += openCollection
         tabCount += 1
-        if isinstance(outterValue, dict) :
+        if ObjectHelper.isDictionary(outterValue) :
             for key,value in outterValue.items() :
-                strReturn += newLine(strReturn, openCollection, withColors)
-                strReturn += getStrReturn(key, value, collectionType, quote, pretyFunction, tabCount, nullValue, trueValue, falseValue, withColors)
+                strReturn += newLine(strReturn, openCollection, prettyFunction, withColors)
+                strReturn += getStrReturn(key, value, collectionType, quote, prettyFunction, tabCount, nullValue, trueValue, falseValue, withColors)
         else :
             for value in outterValue :
-                strReturn += newLine(strReturn, openCollection, withColors)
-                strReturn += getStrReturn(None, value, collectionType, quote, pretyFunction, tabCount, nullValue, trueValue, falseValue, withColors)
+                strReturn += newLine(strReturn, openCollection, prettyFunction, withColors)
+                strReturn += getStrReturn(None, value, collectionType, quote, prettyFunction, tabCount, nullValue, trueValue, falseValue, withColors)
         strReturn += c.NEW_LINE
         tabCount -= 1
         strReturn += f'{tabCount * c.TAB}{closeCollection}'
