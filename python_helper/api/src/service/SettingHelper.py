@@ -108,7 +108,22 @@ def getSettingTree(settingFilePath, settingTree=None, keepDepthInLongString=Fals
                     )
                     depth = currentDepth
     SettingHelperHelper.handleSettingInjectionList(settingInjectionList, settingTree, fallbackSettingTree=fallbackSettingTree)
+    updateSettingTree(settingTree, fallbackSettingTree)
     return settingTree
+
+def updateSettingTree(toUpdateSettingTree, gatheringSettingTree) :
+    if ObjectHelper.isNotEmpty(gatheringSettingTree) :
+        if ObjectHelper.isNone(toUpdateSettingTree) or StringHelper.isBlank(toUpdateSettingTree) :
+            toUpdateSettingTree = {}
+        if ObjectHelper.isCollection(gatheringSettingTree) and ObjectHelper.isNotEmpty(gatheringSettingTree) :
+            for key,value in gatheringSettingTree.items() :
+                if ObjectHelper.isNotEmpty(value) :
+                    if key not in toUpdateSettingTree or ObjectHelper.isEmpty(toUpdateSettingTree[key]) :
+                        toUpdateSettingTree[key] = value
+                    else :
+                        updateSettingTree(toUpdateSettingTree[key], gatheringSettingTree[key])
+                elif key not in toUpdateSettingTree :
+                    toUpdateSettingTree[key] == value
 
 def getSetting(nodeKey,settingTree) :
     setting = None
