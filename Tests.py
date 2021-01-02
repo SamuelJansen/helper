@@ -6,18 +6,18 @@ from python_helper.api.test.api.src.service import ReflectionHelperTest
 from python_helper.api.test.api.src.service import RandomHelperTest
 from python_helper.api.test.api.src.service import MethodAnnotationTest
 
-StringHelperTest.mustFilterSetting()
-StringHelperTest.prettyJson_withSucces()
-StringHelperTest.prettyPython_withSucces()
-StringHelperTest.filterJson_withSucces()
-StringHelperTest.isLongString_withSuccess()
-
+SettingHelperTest.updateActiveEnvironment_withSuccess()
 SettingHelperTest.mustReadSettingFile()
 SettingHelperTest.mustNotReadSettingFile()
 SettingHelperTest.mustPrintSettingTree()
 SettingHelperTest.querySetting_withSuccess()
 SettingHelperTest.mustHandleSettingValueInFallbackSettingTree()
-SettingHelperTest.updateActiveEnvironment_withSuccess()
+
+StringHelperTest.mustFilterSetting()
+StringHelperTest.prettyJson_withSucces()
+StringHelperTest.prettyPython_withSucces()
+StringHelperTest.filterJson_withSucces()
+StringHelperTest.isLongString_withSuccess()
 
 LogHelperTest.mustLogWithColors()
 LogHelperTest.mustLogWithoutColors()

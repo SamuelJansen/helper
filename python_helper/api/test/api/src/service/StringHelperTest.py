@@ -1,6 +1,29 @@
 from python_helper import StringHelper, SettingHelper, Constant, log, EnvironmentVariable
 from python_helper.api.src.helper import StringHelperHelper
 
+# LOG_HELPER_SETTINGS = {
+#     log.LOG : True,
+#     log.SUCCESS : True,
+#     log.SETTING : True,
+#     log.DEBUG : True,
+#     log.WARNING : True,
+#     log.FAILURE : True,
+#     log.WRAPPER : True,
+#     log.ERROR : True,
+#     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
+# }
+
+LOG_HELPER_SETTINGS = {
+    log.LOG : False,
+    log.SUCCESS : False,
+    log.SETTING : False,
+    log.DEBUG : False,
+    log.WARNING : False,
+    log.FAILURE : False,
+    log.WRAPPER : False,
+    log.ERROR : False
+}
+
 DICTIONARY_INSTANCE = {
     11: 'yolo',
     10: 2.2,
@@ -51,29 +74,6 @@ DICTIONARY_INSTANCE = {
             }
         }
     ]
-}
-
-# LOG_HELPER_SETTINGS = {
-#     log.LOG : True,
-#     log.SUCCESS : True,
-#     log.SETTING : True,
-#     log.DEBUG : True,
-#     log.WARNING : True,
-#     log.FAILURE : True,
-#     log.WRAPPER : True,
-#     log.ERROR : True,
-#     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
-# }
-
-LOG_HELPER_SETTINGS = {
-    log.LOG : False,
-    log.SUCCESS : False,
-    log.SETTING : False,
-    log.DEBUG : False,
-    log.WARNING : False,
-    log.FAILURE : False,
-    log.WRAPPER : False,
-    log.ERROR : False
 }
 
 @EnvironmentVariable(environmentVariables={**{}, **LOG_HELPER_SETTINGS})

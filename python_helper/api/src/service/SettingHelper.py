@@ -24,16 +24,18 @@ def updateActiveEnvironment(activeEnvironment) :
 
 def getActiveEnvironment() :
     global ACTIVE_ENVIRONMENT_VALUE
-    if StringHelper.isBlank(ACTIVE_ENVIRONMENT_VALUE) :
+    if ObjectHelper.isEmpty(ACTIVE_ENVIRONMENT_VALUE) :
         activeEnvironment = EnvironmentHelper.getEnvironmentValue(ACTIVE_ENVIRONMENT)
-        ACTIVE_ENVIRONMENT_VALUE = activeEnvironment if ObjectHelper.isNotNone(activeEnvironment) else DEFAULT_ENVIRONMENT
+        ACTIVE_ENVIRONMENT_VALUE = activeEnvironment if ObjectHelper.isNotEmpty(activeEnvironment) else DEFAULT_ENVIRONMENT
     return ACTIVE_ENVIRONMENT_VALUE
 
 def activeEnvironmentIsDefault() :
-    return DEFAULT_ENVIRONMENT == getActiveEnvironment()
+    global ACTIVE_ENVIRONMENT_VALUE
+    return DEFAULT_ENVIRONMENT == ACTIVE_ENVIRONMENT_VALUE
 
 def activeEnvironmentIsLocal() :
-    return LOCAL_ENVIRONMENT == getActiveEnvironment()
+    global ACTIVE_ENVIRONMENT_VALUE
+    return LOCAL_ENVIRONMENT == ACTIVE_ENVIRONMENT_VALUE
 
 def getSettingTree(settingFilePath, settingTree=None, keepDepthInLongString=False, depthStep=c.TAB_UNITS, fallbackSettingTree=None) :
     with open(settingFilePath,c.READ,encoding=c.ENCODING) as settingsFile :

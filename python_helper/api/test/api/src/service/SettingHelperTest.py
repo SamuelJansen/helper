@@ -23,6 +23,35 @@ LOG_HELPER_SETTINGS = {
 }
 
 @EnvironmentVariable(environmentVariables={
+    # SettingHelper.ACTIVE_ENVIRONMENT : None,
+    # **LOG_HELPER_SETTINGS
+})
+def updateActiveEnvironment_withSuccess() :
+    # Arrange
+    originalACTIVE_ENVIRONMENT_VALUE = SettingHelper.ACTIVE_ENVIRONMENT_VALUE
+    originalGottenActiveEnvironment = SettingHelper.getActiveEnvironment()
+    originalActiveEnvironment = EnvironmentHelper.getEnvironmentValue(SettingHelper.ACTIVE_ENVIRONMENT)
+    originalActiveEnvironmentIsDefault = SettingHelper.activeEnvironmentIsDefault()
+    originalACTIVE_ENVIRONMENT_VALUEAfterSettingAnotherOne = SettingHelper.ACTIVE_ENVIRONMENT_VALUE
+    myNewActiveEnvironment = 'my new artive environment'
+
+    # Act
+    myGottenNewActiveEnvironment = SettingHelper.updateActiveEnvironment(myNewActiveEnvironment)
+
+    # Assert
+    assert SettingHelper.DEFAULT_ENVIRONMENT == originalGottenActiveEnvironment
+    assert None == originalActiveEnvironment
+    assert True == originalActiveEnvironmentIsDefault
+    assert myNewActiveEnvironment == EnvironmentHelper.getEnvironmentValue(SettingHelper.ACTIVE_ENVIRONMENT)
+    assert False == SettingHelper.activeEnvironmentIsDefault()
+    assert myNewActiveEnvironment == SettingHelper.getActiveEnvironment()
+    assert ObjectHelper.isNotEmpty(myGottenNewActiveEnvironment)
+    assert myGottenNewActiveEnvironment == myNewActiveEnvironment
+    assert originalACTIVE_ENVIRONMENT_VALUE is None
+    assert SettingHelper.DEFAULT_ENVIRONMENT == originalACTIVE_ENVIRONMENT_VALUEAfterSettingAnotherOne
+    assert SettingHelper.ACTIVE_ENVIRONMENT_VALUE == myNewActiveEnvironment
+
+@EnvironmentVariable(environmentVariables={
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
     'MY_COMPLEX_ENV' : ' -- my complex value -- ',
     'LATE_VALUE' : '-- late environment value --',
@@ -546,30 +575,3 @@ def mustHandleSettingValueInFallbackSettingTree() :
     assert "ABCD -- True -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.boolean-in-between', readdedSettingTree)
     assert 'None' == SettingHelper.getSetting('reffer-to.fallback-settings.none', readdedSettingTree)
     assert "ABCD -- None -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.none-in-between', readdedSettingTree)
-
-@EnvironmentVariable(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : None,
-    **LOG_HELPER_SETTINGS
-})
-def updateActiveEnvironment_withSuccess() :
-    # Arrange
-    originalActiveEnvironment = EnvironmentHelper.getEnvironmentValue(SettingHelper.ACTIVE_ENVIRONMENT)
-    originalActiveEnvironmentIsDefault = SettingHelper.activeEnvironmentIsDefault()
-    originalGottenActiveEnvironment = SettingHelper.getActiveEnvironment()
-    myNewActiveEnvironment = 'my new artive environment'
-    originalACTIVE_ENVIRONMENT_VALUE = SettingHelper.ACTIVE_ENVIRONMENT_VALUE
-
-    # Act
-    myGottenNewActiveEnvironment = SettingHelper.updateActiveEnvironment(myNewActiveEnvironment)
-
-    # Assert
-    assert SettingHelper.DEFAULT_ENVIRONMENT == originalActiveEnvironment
-    assert True == originalActiveEnvironmentIsDefault
-    assert SettingHelper.DEFAULT_ENVIRONMENT == originalGottenActiveEnvironment
-    assert myNewActiveEnvironment == EnvironmentHelper.getEnvironmentValue(SettingHelper.ACTIVE_ENVIRONMENT)
-    assert False == SettingHelper.activeEnvironmentIsDefault()
-    assert myNewActiveEnvironment == SettingHelper.getActiveEnvironment()
-    assert ObjectHelper.isNotEmpty(myGottenNewActiveEnvironment)
-    assert myGottenNewActiveEnvironment == myNewActiveEnvironment
-    assert SettingHelper.DEFAULT_ENVIRONMENT == originalACTIVE_ENVIRONMENT_VALUE
-    assert SettingHelper.ACTIVE_ENVIRONMENT_VALUE == myNewActiveEnvironment
