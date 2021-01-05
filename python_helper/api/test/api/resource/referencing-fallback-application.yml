@@ -139,3 +139,18 @@ reffer-to:
             set-in-between: ABCD -- ${fallback.not-empty.set} -- EFGH
             dictionary: ${fallback.not-empty.dictionary}
             dictionary-in-between: ABCD -- ${fallback.not-empty.dictionary} -- EFGH
+
+some:
+    key: value
+    very:
+        key: value
+
+print-status: True
+
+server:
+    scheme: http
+    port: 5001
+
+swagger:
+    host: localhost:${server.port}
+    schemes: [http]

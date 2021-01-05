@@ -8,7 +8,7 @@ METHOD_TYPE_NAME = 'method'
 BUILTIN_FUNCTION_OR_METHOD_TYPE_NAME = 'builtin_function_or_method'
 FUNCTION_TYPE_NAME = 'function'
 
-UNKNOWN_TYPE_NAME = 'unknown type'
+UNKNOWN_TYPE_NAME = f'{c.UNKNOWN.lower()} type'
 NAME_NOT_PRESENT = 'name not present'
 
 METHOD_TYPE_NAME_LIST = [
@@ -112,9 +112,9 @@ def isNotPrivate(attributeOrMethodName) :
 
 def getAttributePointerList(instance) :
     return [
-        getattr(instance, instanceAttributeName)
-        for instanceAttributeName in dir(instance)
-        if isNotPrivate(attributeOrMethodName)
+        getattr(instance, instanceAttributeOrMethodName)
+        for instanceAttributeOrMethodName in dir(instance)
+        if isNotPrivate(instanceAttributeOrMethodName)
     ]
 
 def getAttributeDataList(instance) :

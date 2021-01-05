@@ -11,31 +11,48 @@ LOCAL_ENVIRONMENT = 'local'
 
 def logEnvironmentSettings() :
     try :
-        LogHelper.setting(logEnvironmentSettings, StringHelper.prettyJson(EnvironmentHelper.getActiveEnvironmentVariableSet()))
+        LogHelper.setting(logEnvironmentSettings, StringHelper.prettyJson(EnvironmentHelper.getSet()))
     except Exception as exception :
-        LogHelper.failure(logEnvironmentSettings, 'Not possible do get a pretty json from EnvironmentHelper.getActiveEnvironmentVariableSet()', exception)
-        LogHelper.setting(logEnvironmentSettings, EnvironmentHelper.getActiveEnvironmentVariableSet())
+        LogHelper.failure(logEnvironmentSettings, 'Not possible do get a pretty json from EnvironmentHelper.getSet()', exception)
+        LogHelper.setting(logEnvironmentSettings, EnvironmentHelper.getSet())
 
 def updateActiveEnvironment(activeEnvironment) :
     global ACTIVE_ENVIRONMENT_VALUE
-    ACTIVE_ENVIRONMENT_VALUE = activeEnvironment if ObjectHelper.isNotNone(activeEnvironment) else DEFAULT_ENVIRONMENT
-    EnvironmentHelper.updateEnvironmentValue(ACTIVE_ENVIRONMENT, ACTIVE_ENVIRONMENT_VALUE, avoidRecursiveCall=True)
-    return ACTIVE_ENVIRONMENT_VALUE
+    ACTIVE_ENVIRONMENT_VALUE = DEFAULT_ENVIRONMENT if ObjectHelper.isNone(activeEnvironment) else activeEnvironment
+    EnvironmentHelper.update(ACTIVE_ENVIRONMENT, ACTIVE_ENVIRONMENT_VALUE)
+    return getValueAsString(ACTIVE_ENVIRONMENT_VALUE)
+
+def softlyGetActiveEnvironment() :
+    global ACTIVE_ENVIRONMENT_VALUE
+    if ObjectHelper.isNone(ACTIVE_ENVIRONMENT_VALUE) :
+        activeEnvironment = EnvironmentHelper.get(ACTIVE_ENVIRONMENT)
+        if ObjectHelper.isNone(activeEnvironment) :
+            ACTIVE_ENVIRONMENT_VALUE = updateActiveEnvironment(DEFAULT_ENVIRONMENT)
+        else :
+            ACTIVE_ENVIRONMENT_VALUE = activeEnvironment
+    return getValueAsString(ACTIVE_ENVIRONMENT_VALUE)
 
 def getActiveEnvironment() :
     global ACTIVE_ENVIRONMENT_VALUE
-    if ObjectHelper.isEmpty(ACTIVE_ENVIRONMENT_VALUE) :
-        activeEnvironment = EnvironmentHelper.getEnvironmentValue(ACTIVE_ENVIRONMENT)
-        ACTIVE_ENVIRONMENT_VALUE = activeEnvironment if ObjectHelper.isNotEmpty(activeEnvironment) else DEFAULT_ENVIRONMENT
-    return ACTIVE_ENVIRONMENT_VALUE
+    ACTIVE_ENVIRONMENT_VALUE = updateActiveEnvironment(EnvironmentHelper.get(ACTIVE_ENVIRONMENT))
+    return getValueAsString(ACTIVE_ENVIRONMENT_VALUE)
 
 def activeEnvironmentIsDefault() :
     global ACTIVE_ENVIRONMENT_VALUE
+    # return DEFAULT_ENVIRONMENT == getActiveEnvironment()
     return DEFAULT_ENVIRONMENT == ACTIVE_ENVIRONMENT_VALUE
 
 def activeEnvironmentIsLocal() :
     global ACTIVE_ENVIRONMENT_VALUE
+    # return LOCAL_ENVIRONMENT == getActiveEnvironment()
     return LOCAL_ENVIRONMENT == ACTIVE_ENVIRONMENT_VALUE
+
+def getValueAsString(value) :
+    return c.NOTHING.join([
+        value,
+        c.NOTHING
+    ])
+    return f'{value}{c.NOTHING}'
 
 def getSettingTree(settingFilePath, settingTree=None, keepDepthInLongString=False, depthStep=c.TAB_UNITS, fallbackSettingTree=None) :
     with open(settingFilePath,c.READ,encoding=c.ENCODING) as settingsFile :
@@ -117,15 +134,16 @@ def updateSettingTree(toUpdateSettingTree, gatheringSettingTree) :
     if ObjectHelper.isNotEmpty(gatheringSettingTree) :
         if ObjectHelper.isNone(toUpdateSettingTree) or StringHelper.isBlank(toUpdateSettingTree) :
             toUpdateSettingTree = {}
-        if ObjectHelper.isCollection(gatheringSettingTree) and ObjectHelper.isNotEmpty(gatheringSettingTree) :
+        if ObjectHelper.isCollection(gatheringSettingTree) and ObjectHelper.isDictionary(gatheringSettingTree) :
             for key,value in gatheringSettingTree.items() :
-                if ObjectHelper.isNotEmpty(value) :
+                if ObjectHelper.isNotEmpty(value) and ObjectHelper.isNotNone(value) :
                     if key not in toUpdateSettingTree or ObjectHelper.isEmpty(toUpdateSettingTree[key]) :
                         toUpdateSettingTree[key] = value
                     else :
                         updateSettingTree(toUpdateSettingTree[key], gatheringSettingTree[key])
                 elif key not in toUpdateSettingTree :
                     toUpdateSettingTree[key] == value
+
 
 def getSetting(nodeKey,settingTree) :
     setting = None

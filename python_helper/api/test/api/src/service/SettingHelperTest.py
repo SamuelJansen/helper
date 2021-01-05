@@ -1,4 +1,4 @@
-from python_helper import SettingHelper, StringHelper, Constant, log, EnvironmentVariable, EnvironmentHelper, ObjectHelper
+from python_helper import SettingHelper, StringHelper, Constant, log, EnvironmentHelper, ObjectHelper, Test
 
 # LOG_HELPER_SETTINGS = {
 #     log.LOG : True,
@@ -8,7 +8,8 @@ from python_helper import SettingHelper, StringHelper, Constant, log, Environmen
 #     log.WARNING : True,
 #     log.WRAPPER : True,
 #     log.FAILURE : True,
-#     log.ERROR : True
+#     log.ERROR : True,
+#     log.TEST : False
 # }
 
 LOG_HELPER_SETTINGS = {
@@ -19,19 +20,20 @@ LOG_HELPER_SETTINGS = {
     log.WARNING : False,
     log.WRAPPER : False,
     log.FAILURE : False,
-    log.ERROR : False
+    log.ERROR : False,
+    log.TEST : False
 }
 
-@EnvironmentVariable(environmentVariables={
-    # SettingHelper.ACTIVE_ENVIRONMENT : None,
+@Test(environmentVariables={
+    SettingHelper.ACTIVE_ENVIRONMENT : None,
     # **LOG_HELPER_SETTINGS
 })
 def updateActiveEnvironment_withSuccess() :
     # Arrange
     originalACTIVE_ENVIRONMENT_VALUE = SettingHelper.ACTIVE_ENVIRONMENT_VALUE
     originalGottenActiveEnvironment = SettingHelper.getActiveEnvironment()
-    originalActiveEnvironment = EnvironmentHelper.getEnvironmentValue(SettingHelper.ACTIVE_ENVIRONMENT)
     originalActiveEnvironmentIsDefault = SettingHelper.activeEnvironmentIsDefault()
+    originalActiveEnvironment = EnvironmentHelper.get(SettingHelper.ACTIVE_ENVIRONMENT)
     originalACTIVE_ENVIRONMENT_VALUEAfterSettingAnotherOne = SettingHelper.ACTIVE_ENVIRONMENT_VALUE
     myNewActiveEnvironment = 'my new artive environment'
 
@@ -40,18 +42,18 @@ def updateActiveEnvironment_withSuccess() :
 
     # Assert
     assert SettingHelper.DEFAULT_ENVIRONMENT == originalGottenActiveEnvironment
-    assert None == originalActiveEnvironment
+    assert SettingHelper.DEFAULT_ENVIRONMENT == originalActiveEnvironment
     assert True == originalActiveEnvironmentIsDefault
-    assert myNewActiveEnvironment == EnvironmentHelper.getEnvironmentValue(SettingHelper.ACTIVE_ENVIRONMENT)
+    assert myNewActiveEnvironment == EnvironmentHelper.get(SettingHelper.ACTIVE_ENVIRONMENT)
     assert False == SettingHelper.activeEnvironmentIsDefault()
     assert myNewActiveEnvironment == SettingHelper.getActiveEnvironment()
     assert ObjectHelper.isNotEmpty(myGottenNewActiveEnvironment)
     assert myGottenNewActiveEnvironment == myNewActiveEnvironment
-    assert originalACTIVE_ENVIRONMENT_VALUE is None
+    assert SettingHelper.DEFAULT_ENVIRONMENT == originalACTIVE_ENVIRONMENT_VALUE
     assert SettingHelper.DEFAULT_ENVIRONMENT == originalACTIVE_ENVIRONMENT_VALUEAfterSettingAnotherOne
     assert SettingHelper.ACTIVE_ENVIRONMENT_VALUE == myNewActiveEnvironment
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
     'MY_COMPLEX_ENV' : ' -- my complex value -- ',
     'LATE_VALUE' : '-- late environment value --',
@@ -130,7 +132,7 @@ def mustReadSettingFile() :
     assert 'ABCD -- 2.3 -- EFGH' == SettingHelper.getSetting('some-not-string-selfreference.float', readdedSettingTree)
     assert 'ABCD -- True -- EFGH' == SettingHelper.getSetting('some-not-string-selfreference.boolean', readdedSettingTree)
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     **{},
     **LOG_HELPER_SETTINGS
 })
@@ -178,7 +180,7 @@ def mustNotReadSettingFile() :
 
 
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
     **LOG_HELPER_SETTINGS
 })
@@ -271,7 +273,7 @@ def querySetting_withSuccess() :
         'key.key.other-key.other-key.key.key.some-query-key': 'value'
     } == queryTree
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
     **LOG_HELPER_SETTINGS
 })
@@ -304,9 +306,45 @@ def mustHandleSettingValueInFallbackSettingTree() :
     # Act
     readdedSettingFallbackFilePath = SettingHelper.getSettingTree(settingFallbackFilePath)
     readdedSettingTree = SettingHelper.getSettingTree(settingFilePath, keepDepthInLongString=True, fallbackSettingTree=readdedSettingFallbackFilePath)
-    # log.prettyPython(mustHandleSettingValueInFallbackSettingTree, '', readdedSettingTree)
+    log.prettyPython(mustHandleSettingValueInFallbackSettingTree, '', readdedSettingTree)
 
     # Assert
+    assert [] == SettingHelper.getSetting('reffer-to.fallback-settings.empty.list', readdedSettingTree)
+    assert 'ABCD -- [] -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.list-in-between', readdedSettingTree)
+    assert (()) == SettingHelper.getSetting('reffer-to.fallback-settings.empty.tuple', readdedSettingTree)
+    assert 'ABCD -- () -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.tuple-in-between', readdedSettingTree)
+    assert {} == SettingHelper.getSetting('reffer-to.fallback-settings.empty.set-or-dictionary', readdedSettingTree)
+    assert 'ABCD -- {} -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.set-or-dictionary-in-between', readdedSettingTree)
+    assert [
+        'a',
+        'b',
+        'c'
+    ] == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.list', readdedSettingTree)
+    assert "ABCD -- ['a', 'b', 'c'] -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.list-in-between', readdedSettingTree)
+    assert (
+        True,
+        False,
+        'None'
+    ) == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.tuple', readdedSettingTree)
+    assert "ABCD -- (True, False, 'None') -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.tuple-in-between', readdedSettingTree)
+    assert {} == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.set', readdedSettingTree)
+    assert 'ABCD -- {} -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.set-in-between', readdedSettingTree)
+    assert {
+        '1': 20,
+        '2': 10,
+        '3': 30
+    } == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.dictionary', readdedSettingTree)
+    assert "ABCD -- {'1': 20, '2': 10, '3': 30} -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.dictionary-in-between', readdedSettingTree)
+    assert "fallback value" == SettingHelper.getSetting('reffer-to.fallback-settings.string', readdedSettingTree)
+    assert "ABCD -- fallback value -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.string-in-between', readdedSettingTree)
+    assert 222233444 == SettingHelper.getSetting('reffer-to.fallback-settings.integer', readdedSettingTree)
+    assert "ABCD -- 222233444 -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.integer-in-between', readdedSettingTree)
+    assert 2.3 == SettingHelper.getSetting('reffer-to.fallback-settings.float', readdedSettingTree)
+    assert "ABCD -- 2.3 -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.float-in-between', readdedSettingTree)
+    assert True == SettingHelper.getSetting('reffer-to.fallback-settings.boolean', readdedSettingTree)
+    assert "ABCD -- True -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.boolean-in-between', readdedSettingTree)
+    assert 'None' == SettingHelper.getSetting('reffer-to.fallback-settings.none', readdedSettingTree)
+    assert "ABCD -- None -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.none-in-between', readdedSettingTree)
     assert {
         'some-reference': {
             'much': {
@@ -508,6 +546,61 @@ def mustHandleSettingValueInFallbackSettingTree() :
                 'none-in-between': 'ABCD -- None -- EFGH'
             }
         },
+        'some': {
+            'key': 'value',
+            'very': {
+                'key': 'value',
+                'similar': {
+                    'key': 'value',
+                    'tree': {
+                        'key': 'value',
+                        'with': {
+                            'key': 'value',
+                            'a': {
+                                'key': 'value',
+                                'slight': {
+                                    'key': 'value',
+                                    'difference': {
+                                        'key': 'value',
+                                        'right': {
+                                            'here': 'anoter value'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        'print-status': True,
+        'server': {
+            'scheme': 'http',
+            'port': 5001,
+            'servlet': {
+                'context-path': '/test-api'
+            }
+        },
+        'swagger': {
+            'schemes': [
+                'http'
+            ],
+            'host': 'localhost:5001',
+            'info': {
+                'title': 'TestApi',
+                'version': '0.0.1',
+                'description': 'description',
+                'terms-of-service': 'http://swagger.io/terms/',
+                'contact': {
+                    'name': 'Samuel Jansen',
+                    'email': 'samuel.jansenn@gmail.com'
+                },
+                'license': {
+                    'name': 'Apache 2.0 / MIT License',
+                    'url': 'http://www.apache.org/licenses/LICENSE-2.0.html'
+                }
+            }
+        },
         'fallback': {
             'string': 'fallback value',
             'integer': 222233444,
@@ -537,41 +630,28 @@ def mustHandleSettingValueInFallbackSettingTree() :
                     'None'
                 )
             }
+        },
+        'flask-specific-port': 'flask run --host=0.0.0.0 --port=5001',
+        'api': {
+            'name': 'TestApi',
+            'extension': 'yml',
+            'dependency': {
+                'update': False,
+                'list': {
+                    'web': [
+                        'globals',
+                        'python_helper',
+                        'Popen',
+                        'Path',
+                        'numpy',
+                        'pywin32',
+                        'sqlalchemy'
+                    ]
+                }
+            },
+            'git': {
+                'force-upgrade-command': 'pip install --upgrade --force python_framework'
+            },
+            'static-package': 'AppData\Local\Programs\Python\Python38-32\statics'
         }
     } == readdedSettingTree
-    assert [] == SettingHelper.getSetting('reffer-to.fallback-settings.empty.list', readdedSettingTree)
-    assert 'ABCD -- [] -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.list-in-between', readdedSettingTree)
-    assert (()) == SettingHelper.getSetting('reffer-to.fallback-settings.empty.tuple', readdedSettingTree)
-    assert 'ABCD -- () -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.tuple-in-between', readdedSettingTree)
-    assert {} == SettingHelper.getSetting('reffer-to.fallback-settings.empty.set-or-dictionary', readdedSettingTree)
-    assert 'ABCD -- {} -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.set-or-dictionary-in-between', readdedSettingTree)
-    assert [
-        'a',
-        'b',
-        'c'
-    ] == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.list', readdedSettingTree)
-    assert "ABCD -- ['a', 'b', 'c'] -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.list-in-between', readdedSettingTree)
-    assert (
-        True,
-        False,
-        'None'
-    ) == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.tuple', readdedSettingTree)
-    assert "ABCD -- (True, False, 'None') -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.tuple-in-between', readdedSettingTree)
-    assert {} == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.set', readdedSettingTree)
-    assert 'ABCD -- {} -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.set-in-between', readdedSettingTree)
-    assert {
-        '1': 20,
-        '2': 10,
-        '3': 30
-    } == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.dictionary', readdedSettingTree)
-    assert "ABCD -- {'1': 20, '2': 10, '3': 30} -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.dictionary-in-between', readdedSettingTree)
-    assert "fallback value" == SettingHelper.getSetting('reffer-to.fallback-settings.string', readdedSettingTree)
-    assert "ABCD -- fallback value -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.string-in-between', readdedSettingTree)
-    assert 222233444 == SettingHelper.getSetting('reffer-to.fallback-settings.integer', readdedSettingTree)
-    assert "ABCD -- 222233444 -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.integer-in-between', readdedSettingTree)
-    assert 2.3 == SettingHelper.getSetting('reffer-to.fallback-settings.float', readdedSettingTree)
-    assert "ABCD -- 2.3 -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.float-in-between', readdedSettingTree)
-    assert True == SettingHelper.getSetting('reffer-to.fallback-settings.boolean', readdedSettingTree)
-    assert "ABCD -- True -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.boolean-in-between', readdedSettingTree)
-    assert 'None' == SettingHelper.getSetting('reffer-to.fallback-settings.none', readdedSettingTree)
-    assert "ABCD -- None -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.none-in-between', readdedSettingTree)

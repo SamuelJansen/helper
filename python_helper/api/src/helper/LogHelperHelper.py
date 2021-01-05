@@ -1,6 +1,5 @@
-import traceback
 from python_helper.api.src.domain import Constant as c
-from python_helper.api.src.service import LogHelper, SettingHelper, ObjectHelper
+from python_helper.api.src.service import LogHelper, SettingHelper, ObjectHelper, ReflectionHelper, StringHelper, EnvironmentHelper
 
 FIRST_LAYER_COLOR = 'FIRST_LAYER_COLOR'
 SECOND_LAYER_COLOR = 'SECOND_LAYER_COLOR'
@@ -46,6 +45,11 @@ LEVEL_DICTIONARY = {
         FIRST_LAYER_COLOR : c.DARK_RED,
         SECOND_LAYER_COLOR: c.BRIGHT_RED,
         LOG_TEXT : c.ERROR
+    },
+    LogHelper.TEST : {
+        FIRST_LAYER_COLOR : c.BRIGHT_BLACK,
+        SECOND_LAYER_COLOR: c.BRIGHT_BLACK,
+        LOG_TEXT : c.TEST
     }
 }
 
@@ -53,11 +57,8 @@ def getStatus(level) :
     status = LogHelper.LOG_HELPER_SETTINGS.get(level)
     return status if not status is None and isinstance(status, str) else c.TRUE
 
-def levelStatusError(method, level) :
-    error(method,f'"{level}" log level status is not properly defined: {getStatus(level)}',None)
-
 def getColors(level) :
-    if SettingHelper.activeEnvironmentIsLocal() :
+    if SettingHelper.LOCAL_ENVIRONMENT == EnvironmentHelper.get(SettingHelper.ACTIVE_ENVIRONMENT) :
         firstLayerColor = LEVEL_DICTIONARY.get(level).get(FIRST_LAYER_COLOR) if LEVEL_DICTIONARY.get(level) and LEVEL_DICTIONARY.get(level).get(FIRST_LAYER_COLOR) else c.NOTHING
         secondLayerColor = LEVEL_DICTIONARY.get(level).get(SECOND_LAYER_COLOR) if LEVEL_DICTIONARY.get(level) and LEVEL_DICTIONARY.get(level).get(SECOND_LAYER_COLOR) else c.NOTHING
         tirdLayerColor = c.MUTTED_COLOR if c.MUTTED_COLOR else c.NOTHING
@@ -67,39 +68,45 @@ def getColors(level) :
         secondLayerColor = c.NOTHING
         tirdLayerColor = c.NOTHING
         resetColor = c.NOTHING
-    return (firstLayerColor, secondLayerColor, tirdLayerColor, resetColor) if not firstLayerColor is None and not firstLayerColor == c.NOTHING else (c.NOTHING, c.NOTHING, c.NOTHING, c.NOTHING)
+    return (firstLayerColor, secondLayerColor, tirdLayerColor, resetColor) if StringHelper.isNotBlank(firstLayerColor) else (c.NOTHING, c.NOTHING, c.NOTHING, c.NOTHING)
 
-def softLog(origin,message,level,exception=None) :
+def softLog(origin, message, level, exception=None, newLine=False) :
     if ObjectHelper.isNotNone(exception) :
         hardLog(origin,message,exception,level)
     elif c.TRUE == getStatus(level) :
         firstLayerColor, secondLayerColor, tirdLayerColor, resetColor = getColors(level)
-        if not origin or origin == c.NOTHING :
-            classPortion = c.NOTHING
-        else :
-            classPortion = f'{tirdLayerColor}{origin.__name__}{c.COLON_SPACE}{resetColor}'
-        print(f'{firstLayerColor}{LEVEL_DICTIONARY[level][LOG_TEXT]}{classPortion}{secondLayerColor}{message}{resetColor}')
+        print(f'{firstLayerColor}{LEVEL_DICTIONARY[level][LOG_TEXT]}{getOriginPortion(origin, tirdLayerColor, resetColor)}{secondLayerColor}{message}{resetColor}{getNewLine(newLine, exception=exception)}')
     elif not c.FALSE == getStatus(level) :
         levelStatusError(method, level)
 
-def hardLog(origin,message,exception,level) :
+def hardLog(origin, message, exception, level, newLine=False) :
     if c.TRUE == getStatus(level) :
         firstLayerColor, secondLayerColor, tirdLayerColor, resetColor = getColors(level)
-        if not origin or origin == c.NOTHING :
-            classPortion = c.NOTHING
-        else :
-            classPortion = f'{tirdLayerColor}{origin.__name__}{c.COLON_SPACE}{resetColor}'
-        if not exception or exception == c.NOTHING :
-            errorPortion = c.NOTHING
-        else :
-            errorPortion = f'{firstLayerColor}{c.DOT_SPACE_CAUSE}{secondLayerColor}{str(exception)}{c.NEW_LINE}{tirdLayerColor}{traceback.format_exc()}{resetColor}'
-        print(f'{firstLayerColor}{LEVEL_DICTIONARY[level][LOG_TEXT]}{classPortion}{secondLayerColor}{message}{errorPortion}{resetColor}')
+        print(f'{firstLayerColor}{LEVEL_DICTIONARY[level][LOG_TEXT]}{getOriginPortion(origin, tirdLayerColor, resetColor)}{secondLayerColor}{message}{getErrorPortion(exception, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor)}{resetColor}{getNewLine(newLine, exception=exception)}')
     elif not c.FALSE == getStatus(level) :
         levelStatusError(method, level)
 
-def printMessageLog(level,message,condition=False) :
+def printMessageLog(level, message, condition=False, newLine=True, exception=None) :
+    firstLayerColor, secondLayerColor, tirdLayerColor, resetColor = getColors(level)
     if condition :
-        print(f'{Constant.TAB}{LEVEL_DICTIONARY[level][LOG_TEXT]}{message}')
+        print(f'{c.TAB}{firstLayerColor}{LEVEL_DICTIONARY[level][LOG_TEXT]}{secondLayerColor}{message}{getErrorPortion(exception, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor)}{resetColor}{getNewLine(newLine, exception=exception)}')
+
+def getOriginPortion(origin, tirdLayerColor, resetColor) :
+    if not origin or origin == c.NOTHING :
+        return c.NOTHING
+    else :
+        return f'{tirdLayerColor}{origin.__name__}{c.COLON_SPACE}{resetColor}'
+
+def getErrorPortion(exception, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor) :
+    if ObjectHelper.isEmpty(exception) :
+        return c.NOTHING
+    return f'{firstLayerColor}{c.DOT_SPACE_CAUSE}{secondLayerColor}{LogHelper.getExceptionMessage(exception)}{c.NEW_LINE}{tirdLayerColor}{LogHelper.getTracebackMessage()}{resetColor}'
+
+def levelStatusError(method, level) :
+    LogHelper.failure(method,f'"{level}" log level status is not properly defined: {getStatus(level)}',None)
+
+def getNewLine(newLine, exception=None) :
+    return c.NEW_LINE if newLine and ObjectHelper.isNone(exception) else c.NOTHING
 
 # FORE_SIMPLE_RESET_COLOR = colorama.Fore.RESET
 # LEVEL_DICTIONARY = {

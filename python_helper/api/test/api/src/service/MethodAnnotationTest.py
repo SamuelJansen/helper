@@ -1,4 +1,4 @@
-from python_helper import SettingHelper, log, EnvironmentVariable, ObjectHelper, Function, Method, FunctionThrough, RandomHelper
+from python_helper import SettingHelper, log, ObjectHelper, Function, Method, FunctionThrough, RandomHelper, Test
 
 # LOG_HELPER_SETTINGS = {
 #     log.LOG : True,
@@ -8,7 +8,8 @@ from python_helper import SettingHelper, log, EnvironmentVariable, ObjectHelper,
 #     log.WARNING : True,
 #     log.WRAPPER : True,
 #     log.FAILURE : True,
-#     log.ERROR : True
+#     log.ERROR : True,
+    # log.TEST : False
 # }
 
 LOG_HELPER_SETTINGS = {
@@ -19,10 +20,11 @@ LOG_HELPER_SETTINGS = {
     log.WARNING : False,
     log.WRAPPER : False,
     log.FAILURE : False,
-    log.ERROR : False
+    log.ERROR : False,
+    log.TEST : False
 }
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
     **LOG_HELPER_SETTINGS
 })
@@ -52,7 +54,7 @@ def Function_withSuccess() :
     assert ObjectHelper.isNotNone(exception)
     assert f"myOtherFunction function error. Cause: {TEST}" == str(exception)
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
     **LOG_HELPER_SETTINGS
 })
@@ -97,7 +99,7 @@ def Method_withSuccess() :
     assert ObjectHelper.isNotNone(notMethodEception)
     assert f"NoneType.myNotMethod method error. Cause: {TEST}" == str(notMethodEception)
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     SettingHelper.ACTIVE_ENVIRONMENT : None,
     **LOG_HELPER_SETTINGS
 })

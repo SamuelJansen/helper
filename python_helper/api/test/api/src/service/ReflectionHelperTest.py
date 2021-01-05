@@ -1,4 +1,4 @@
-from python_helper import ObjectHelper, StringHelper, SettingHelper, Constant, log, EnvironmentVariable, ReflectionHelper
+from python_helper import ObjectHelper, StringHelper, SettingHelper, Constant, log, ReflectionHelper, Test
 
 # LOG_HELPER_SETTINGS = {
 #     log.LOG : True,
@@ -8,7 +8,8 @@ from python_helper import ObjectHelper, StringHelper, SettingHelper, Constant, l
 #     log.WARNING : True,
 #     log.WRAPPER : True,
 #     log.FAILURE : True,
-#     log.ERROR : True
+#     log.ERROR : True,
+    # log.TEST : False
 # }
 
 LOG_HELPER_SETTINGS = {
@@ -19,10 +20,11 @@ LOG_HELPER_SETTINGS = {
     log.WARNING : False,
     log.WRAPPER : False,
     log.FAILURE : False,
-    log.ERROR : False
+    log.ERROR : False,
+    log.TEST : False
 }
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
     **LOG_HELPER_SETTINGS
 })
@@ -65,7 +67,7 @@ def isNotMethodInstance_withSuccess() :
     assert ReflectionHelper.isMethod(myObject, MY_METHOD_NAME)
     assert not ReflectionHelper.isMethod(myObject, MY_NOT_EXISTING_ATTRIBUTE_OR_METHOD_NAME)
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
     **LOG_HELPER_SETTINGS
 })
@@ -139,7 +141,7 @@ def overrideSignatures_withSuccess() :
     assert f'{False}{NOT_OVERRIDED}' == myObject.myInBetweenWrapperFunction(False)
     assert f'{ABCD}{NOT_OVERRIDED}' == myObject.myInBetweenWrapperFunction(ABCD)
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
     **LOG_HELPER_SETTINGS
 })

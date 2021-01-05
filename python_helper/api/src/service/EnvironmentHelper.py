@@ -8,14 +8,12 @@ OS_SEPARATOR = OS.path.sep
 
 clear = lambda: OS.system('cls')
 
-def getEnvironmentValue(environmentKey, default=None, avoidRecursiveCall=False) :
+def get(environmentKey, default=None) :
     environmentValue = default if ObjectHelper.isNone(environmentKey) else OS.environ.get(environmentKey)
     return environmentValue if ObjectHelper.isNotNone(environmentValue) else default
 
-def updateEnvironmentValue(environmentKey, environmentValue, default=None, avoidRecursiveCall=False) :
+def update(environmentKey, environmentValue, default=None) :
     if ObjectHelper.isNotEmpty(environmentKey) :
-        if SettingHelper.ACTIVE_ENVIRONMENT == environmentKey and not avoidRecursiveCall :
-            return SettingHelper.updateActiveEnvironment(environmentValue)
         associatedValue = None
         if not environmentValue is None :
             associatedValue = str(StringHelper.filterString(environmentValue))
@@ -25,45 +23,45 @@ def updateEnvironmentValue(environmentKey, environmentValue, default=None, avoid
             OS.environ[environmentKey] = associatedValue
         else :
             try:
-                deleteEnvironmentValue(environmentKey)
+                delete(environmentKey)
             except Exception as exception :
-                LogHelper.warning(updateEnvironmentValue, f'Failed to delete "{environmentKey}" enviroment variable key', exception=exception)
+                LogHelper.warning(update, f'Failed to delete "{environmentKey}" enviroment variable key', exception=exception)
         return associatedValue
     else :
-        LogHelper.debug(updateEnvironmentValue, f'arguments: environmentKey: {environmentKey}, environmentValue: {environmentValue}, default: {default}')
+        LogHelper.debug(update, f'arguments: environmentKey: {environmentKey}, environmentValue: {environmentValue}, default: {default}')
         raise Exception(f'Error associating environment variable "{environmentKey}" key to environment variable "{environmentValue}" value')
 
-def replaceEnvironmentVariable(environmentKey, environmentValue, default=None, avoidRecursiveCall=False) :
-    originalEnvironmentValue = getEnvironmentValue(environmentKey, default=default)
-    updateEnvironmentValue(environmentKey, environmentValue, default=default)
+def switch(environmentKey, environmentValue, default=None) :
+    originalEnvironmentValue = get(environmentKey, default=default)
+    update(environmentKey, environmentValue, default=default)
     return originalEnvironmentValue
 
-def resetEnvironmentVariables(environmentVariables, originalEnvironmentVariables, avoidRecursiveCall=False) :
+def reset(environmentVariables, originalEnvironmentVariables) :
     if environmentVariables :
         for key in environmentVariables.keys() :
             if key in originalEnvironmentVariables :
-                updateEnvironmentValue(key, originalEnvironmentVariables[key])
+                update(key, originalEnvironmentVariables[key])
 
-def deleteEnvironmentValue(environmentKey, avoidRecursiveCall=False) :
+def delete(environmentKey) :
     if ObjectHelper.isNotNone(environmentKey) :
         OS.environ.pop(environmentKey)
 
-def getActiveEnvironmentVariableSet(avoidRecursiveCall=False) :
+def getSet(avoidRecursiveCall=False) :
     try :
         return json.loads(str(OS.environ)[8:-1].replace(c.DOUBLE_QUOTE, c.BACK_SLASH_DOUBLE_QUOTE).replace(c.SINGLE_QUOTE, c.DOUBLE_QUOTE))
     except Exception as exception :
-        LogHelper.error(getActiveEnvironmentVariableSet, 'Not possible to load os.environ as a json. Returning os.environ as string by default', exception)
+        LogHelper.error(getSet, 'Not possible to load os.environ as a json. Returning os.environ as string by default', exception)
         return str(OS.environ)[8:-1]
 
-def listDirectoryContent(avoidRecursiveCall=False) :
-    return OS.listdir(apisPath)
+def listDirectoryContent(path) :
+    return OS.listdir(path)
 
-def appendPath(path, avoidRecursiveCall=False) :
+def appendPath(path) :
     SYS.path.append(path)
 
 def getCurrentSoutStatus(avoidRecursiveCall=False) :
     return SYS.stdout, SYS.stderr
 
-def overrideSoutStatus(stdout, stderr, avoidRecursiveCall=False) :
+def overrideSoutStatus(stdout, stderr) :
     SYS.stdout = stdout
     SYS.stderr = stderr

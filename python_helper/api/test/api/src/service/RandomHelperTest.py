@@ -1,5 +1,5 @@
 from python_helper import RandomHelper
-from python_helper import SettingHelper, log, EnvironmentVariable
+from python_helper import SettingHelper, log, Test
 
 # LOG_HELPER_SETTINGS = {
 #     log.LOG : True,
@@ -10,6 +10,7 @@ from python_helper import SettingHelper, log, EnvironmentVariable
 #     log.FAILURE : True,
 #     log.WRAPPER : True,
 #     log.ERROR : True,
+    # log.TEST : False,
 #     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
 # }
 
@@ -21,10 +22,11 @@ LOG_HELPER_SETTINGS = {
     log.WARNING : False,
     log.FAILURE : False,
     log.WRAPPER : False,
-    log.ERROR : False
+    log.ERROR : False,
+    log.TEST : False
 }
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
     **LOG_HELPER_SETTINGS
 })
@@ -94,7 +96,7 @@ def sample_withSuccess() :
         assert key in dictionaryColletcion
         assert dictionarySample[key] == dictionaryColletcion[key]
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
     **LOG_HELPER_SETTINGS
 })
@@ -122,10 +124,10 @@ def randomValues() :
     # Assert
     assert RandomHelper.DEFAULT_MINIMUM_LENGHT <= len(stringValueInDefaultRange) <= RandomHelper.DEFAULT_MAXIMUM_LENGHT
     assert MINIMUM_CUSTOM_RANGE == len(stringValueInCustomRange)
-    assert OTHER_MINIMUM_CUSTOM_RANGE < len(stringValueInOtherCustomRange) <= OTHER_MAXIMUM_CUSTOM_RANGE
+    assert OTHER_MINIMUM_CUSTOM_RANGE <= len(stringValueInOtherCustomRange) <= OTHER_MAXIMUM_CUSTOM_RANGE
     assert RandomHelper.DEFAULT_MINIMUM_LENGHT <= integerValueInDefaultRange <= RandomHelper.DEFAULT_MAXIMUM_LENGHT
     assert MINIMUM_CUSTOM_RANGE == integerValueInCustomRange
-    assert OTHER_MINIMUM_CUSTOM_RANGE < integerValueInOtherCustomRange <= OTHER_MAXIMUM_CUSTOM_RANGE
+    assert OTHER_MINIMUM_CUSTOM_RANGE <= integerValueInOtherCustomRange <= OTHER_MAXIMUM_CUSTOM_RANGE
     assert RandomHelper.DEFAULT_MINIMUM_LENGHT <= floatValueInDefaultRange <= RandomHelper.DEFAULT_MAXIMUM_LENGHT
     assert MINIMUM_CUSTOM_RANGE == floatValueInCustomRange
     assert OTHER_MINIMUM_CUSTOM_RANGE <= floatValueInOtherCustomRange < OTHER_MAXIMUM_CUSTOM_RANGE

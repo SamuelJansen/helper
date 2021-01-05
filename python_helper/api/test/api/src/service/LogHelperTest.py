@@ -1,5 +1,6 @@
-from python_helper import log, SettingHelper, StringHelper, EnvironmentVariable, EnvironmentHelper, ObjectHelper
+from python_helper import log, SettingHelper, StringHelper, EnvironmentVariable, EnvironmentHelper, ObjectHelper, Test
 
+OPTIONAL_EXCEPTION_LOG_TYPES = [log.log, log.debug, log.warning, log.test]
 DICTIONARY_INSTANCE = {
     'my_none_value' : None,
     'my_none_value-as_string' : 'None',
@@ -42,7 +43,7 @@ DICTIONARY_INSTANCE = {
     }
 }
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     log.LOG : True,
     log.SUCCESS : True,
     log.SETTING : True,
@@ -51,6 +52,7 @@ DICTIONARY_INSTANCE = {
     log.WRAPPER : True,
     log.FAILURE : True,
     log.ERROR : True,
+    log.TEST : True,
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
 })
 def mustLogWithColors() :
@@ -64,7 +66,7 @@ def mustLogWithColors() :
         try :
             raise Exception(someExceptionMessage)
         except Exception as e :
-            if logType in [log.log, log.debug, log.warning] :
+            if logType in OPTIONAL_EXCEPTION_LOG_TYPES :
                 logType(logType, someLogMessage, exception=e)
             else :
                 logType(logType, someLogMessage, e)
@@ -80,16 +82,20 @@ def mustLogWithColors() :
     controlableException(log.wraper)
     controlableException(log.failure)
     controlableException(log.error)
+    controlableException(log.test)
+    log.log(log.log, someLogMessage, None)
+    log.debug(log.debug, someLogMessage, None)
+    log.warning(log.warning, someLogMessage, None)
     log.wraper(log.wraper, noExceptionThrown, None)
     log.failure(log.failure, noExceptionThrown, None)
     log.error(log.error, noExceptionThrown, None)
-    log.log(log.log, someLogMessage, None)
+    log.test(log.test, someLogMessage, None)
 
     # Assert
-    assert True == SettingHelper.activeEnvironmentIsLocal()
-    assert 'local' == EnvironmentHelper.getEnvironmentValue(SettingHelper.ACTIVE_ENVIRONMENT)
+    assert SettingHelper.LOCAL_ENVIRONMENT == EnvironmentHelper.get(SettingHelper.ACTIVE_ENVIRONMENT)
+    assert SettingHelper.activeEnvironmentIsLocal()
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     log.LOG : True,
     log.SUCCESS : True,
     log.SETTING : True,
@@ -98,6 +104,7 @@ def mustLogWithColors() :
     log.WRAPPER : True,
     log.FAILURE : True,
     log.ERROR : True,
+    log.TEST : True,
     SettingHelper.ACTIVE_ENVIRONMENT : 'my environment'
 })
 def mustLogWithoutColors() :
@@ -111,7 +118,7 @@ def mustLogWithoutColors() :
         try :
             raise Exception(someExceptionMessage)
         except Exception as e :
-            if logType in [log.log, log.debug, log.warning] :
+            if logType in OPTIONAL_EXCEPTION_LOG_TYPES :
                 logType(logType, someLogMessage, exception=e)
             else :
                 logType(logType, someLogMessage, e)
@@ -127,15 +134,19 @@ def mustLogWithoutColors() :
     controlableException(log.wraper)
     controlableException(log.failure)
     controlableException(log.error)
+    controlableException(log.test)
+    log.log(log.log, someLogMessage, None)
+    log.debug(log.debug, someLogMessage, None)
+    log.warning(log.warning, someLogMessage, None)
     log.wraper(log.wraper, noExceptionThrown, None)
     log.failure(log.failure, noExceptionThrown, None)
     log.error(log.error, noExceptionThrown, None)
-    log.log(log.log, someLogMessage, None)
+    log.test(log.test, someLogMessage, None)
 
     # Assert
-    assert 'my environment' == EnvironmentHelper.getEnvironmentValue(SettingHelper.ACTIVE_ENVIRONMENT)
+    assert 'my environment' == EnvironmentHelper.get(SettingHelper.ACTIVE_ENVIRONMENT)
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     log.LOG : True,
     log.SUCCESS : True,
     log.SETTING : True,
@@ -144,10 +155,12 @@ def mustLogWithoutColors() :
     log.WRAPPER : True,
     log.FAILURE : True,
     log.ERROR : True,
+    log.TEST : False,
     SettingHelper.ACTIVE_ENVIRONMENT : None
 })
 def mustLogWithoutColorsAsWell() :
     # Arrange
+    noExceptionThrown = 'exception not thrown'
     someLogMessage = 'some log message'
     someExceptionMessage = 'some exception message'
     someInnerExceptionMessage = 'some inner exception message'
@@ -156,7 +169,7 @@ def mustLogWithoutColorsAsWell() :
         try :
             raise Exception(someExceptionMessage)
         except Exception as exception :
-            if logType in [log.log, log.debug, log.warning] :
+            if logType in OPTIONAL_EXCEPTION_LOG_TYPES :
                 logType(logType, someLogMessage, exception=exception)
             else :
                 logType(logType, someLogMessage, exception)
@@ -172,21 +185,30 @@ def mustLogWithoutColorsAsWell() :
     controlableException(log.wraper)
     controlableException(log.failure)
     controlableException(log.error)
+    controlableException(log.test)
+    log.log(log.log, someLogMessage, None)
+    log.debug(log.debug, someLogMessage, None)
+    log.warning(log.warning, someLogMessage, None)
+    log.wraper(log.wraper, noExceptionThrown, None)
+    log.failure(log.failure, noExceptionThrown, None)
+    log.error(log.error, noExceptionThrown, None)
+    log.test(log.test, someLogMessage, None)
 
     # Assert
     assert True == SettingHelper.activeEnvironmentIsDefault()
-    assert SettingHelper.DEFAULT_ENVIRONMENT == EnvironmentHelper.getEnvironmentValue(SettingHelper.ACTIVE_ENVIRONMENT)
+    assert SettingHelper.DEFAULT_ENVIRONMENT == EnvironmentHelper.get(SettingHelper.ACTIVE_ENVIRONMENT)
     assert SettingHelper.DEFAULT_ENVIRONMENT == SettingHelper.getActiveEnvironment()
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     log.LOG : False,
-    log.SUCCESS : False,
+    log.SUCCESS : True,
     log.SETTING : True,
     log.DEBUG : False,
     log.WARNING : False,
     log.WRAPPER : False,
     log.FAILURE : True,
     log.ERROR : True,
+    log.TEST : False,
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
     'SOME_PARTICULAR_SETTING' : '"some value"'
 })
@@ -197,19 +219,21 @@ def mustLogEnvironmentSettings() :
     SettingHelper.logEnvironmentSettings()
 
     # Assert
-    assert True == SettingHelper.activeEnvironmentIsLocal()
-    assert 'local' == SettingHelper.getActiveEnvironment()
-    assert "some value" == EnvironmentHelper.getEnvironmentValue('SOME_PARTICULAR_SETTING')
+    assert SettingHelper.LOCAL_ENVIRONMENT == EnvironmentHelper.get(SettingHelper.ACTIVE_ENVIRONMENT)
+    assert SettingHelper.LOCAL_ENVIRONMENT == SettingHelper.getActiveEnvironment()
+    assert SettingHelper.activeEnvironmentIsLocal()
+    assert "some value" == EnvironmentHelper.get('SOME_PARTICULAR_SETTING')
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     log.LOG : True,
-    log.SUCCESS : False,
-    log.SETTING : False,
-    log.DEBUG : False,
-    log.WARNING : False,
-    log.WRAPPER : False,
+    log.SUCCESS : True,
+    log.SETTING : True,
+    log.DEBUG : True,
+    log.WARNING : True,
+    log.WRAPPER : True,
     log.FAILURE : True,
-    log.ERROR : False,
+    log.ERROR : True,
+    log.TEST : False,
     SettingHelper.ACTIVE_ENVIRONMENT : None
 })
 def mustLogPretyPythonWithoutColors() :
@@ -227,15 +251,16 @@ def mustLogPretyPythonWithoutColors() :
     # Assert
     assert ObjectHelper.isNone(exception)
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     log.LOG : True,
-    log.SUCCESS : False,
-    log.SETTING : False,
-    log.DEBUG : False,
-    log.WARNING : False,
-    log.WRAPPER : False,
+    log.SUCCESS : True,
+    log.SETTING : True,
+    log.DEBUG : True,
+    log.WARNING : True,
+    log.WRAPPER : True,
     log.FAILURE : True,
-    log.ERROR : False,
+    log.ERROR : True,
+    log.TEST : False,
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
 })
 def mustLogPretyPythonWithColors() :
@@ -253,15 +278,16 @@ def mustLogPretyPythonWithColors() :
     # Assert
     assert ObjectHelper.isNone(exception)
 
-@EnvironmentVariable(environmentVariables={
+@Test(environmentVariables={
     log.LOG : True,
-    log.SUCCESS : False,
-    log.SETTING : False,
-    log.DEBUG : False,
-    log.WARNING : False,
-    log.WRAPPER : False,
+    log.SUCCESS : True,
+    log.SETTING : True,
+    log.DEBUG : True,
+    log.WARNING : True,
+    log.WRAPPER : True,
     log.FAILURE : True,
-    log.ERROR : False,
+    log.ERROR : True,
+    log.TEST : False,
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
 })
 def mustLogPretyJsonWithColors() :
@@ -278,3 +304,110 @@ def mustLogPretyJsonWithColors() :
 
     # Assert
     assert exception is None
+
+@Test(environmentVariables={
+    log.LOG : True,
+    log.SUCCESS : True,
+    log.SETTING : True,
+    log.DEBUG : True,
+    log.WARNING : True,
+    log.WRAPPER : True,
+    log.FAILURE : True,
+    log.ERROR : True,
+    log.TEST : True,
+    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
+})
+def mustPrintMessageLog_withColors() :
+    # Arrange
+    mustLogWithNewLine = 'must log with new line'
+    mustNotLogWithNewLine = 'must not log with new line'
+    mustLogWithoutNewLine = 'must log without new line'
+    mustNotLogWithoutNewLine = 'must not log without new line'
+    mustLogWithNewLineWithException = 'must log with new line with exception'
+    mustNotLogWithNewLineWithException = 'must not log with new line with exception'
+    mustLogWithoutNewLineWithException = 'must log without new line with exception'
+    mustNotLogWithoutNewLineWithException = 'must not log without new line with exception'
+    someExceptionMessage = 'some exception message'
+    thrownException = None
+    try :
+        raise Exception(someExceptionMessage)
+    except Exception as exception :
+        thrownException = exception
+
+    # Act
+    log.printLog(mustLogWithNewLine, condition=True, newLine=True)
+    log.printSuccess(mustLogWithNewLine, condition=True, newLine=True)
+    log.printSetting(mustLogWithNewLine, condition=True, newLine=True)
+    log.printDebug(mustLogWithNewLine, condition=True, newLine=True, exception=None)
+    log.printWarning(mustLogWithNewLine, condition=True, newLine=True, exception=None)
+    log.printWarper(mustLogWithNewLine, condition=True, newLine=True, exception=None)
+    log.printFailure(mustLogWithNewLine, condition=True, newLine=True, exception=None)
+    log.printError(mustLogWithNewLine, condition=True, newLine=True, exception=None)
+    log.printTest(mustLogWithNewLine, condition=True, newLine=True, exception=None)
+
+    log.printLog(mustNotLogWithNewLine, condition=False, newLine=True)
+    log.printSuccess(mustNotLogWithNewLine, condition=False, newLine=True)
+    log.printSetting(mustNotLogWithNewLine, condition=False, newLine=True)
+    log.printDebug(mustNotLogWithNewLine, condition=False, newLine=True, exception=None)
+    log.printWarning(mustNotLogWithNewLine, condition=False, newLine=True, exception=None)
+    log.printWarper(mustNotLogWithNewLine, condition=False, newLine=True, exception=None)
+    log.printFailure(mustNotLogWithNewLine, condition=False, newLine=True, exception=None)
+    log.printError(mustNotLogWithNewLine, condition=False, newLine=True, exception=None)
+    log.printTest(mustNotLogWithNewLine, condition=False, newLine=True, exception=None)
+
+    log.printLog(mustLogWithoutNewLine, condition=True, newLine=False)
+    log.printSuccess(mustLogWithoutNewLine, condition=True, newLine=False)
+    log.printSetting(mustLogWithoutNewLine, condition=True, newLine=False)
+    log.printDebug(mustLogWithoutNewLine, condition=True, newLine=False, exception=None)
+    log.printWarning(mustLogWithoutNewLine, condition=True, newLine=False, exception=None)
+    log.printWarper(mustLogWithoutNewLine, condition=True, newLine=False, exception=None)
+    log.printFailure(mustLogWithoutNewLine, condition=True, newLine=False, exception=None)
+    log.printError(mustLogWithoutNewLine, condition=True, newLine=False, exception=None)
+    log.printTest(mustLogWithoutNewLine, condition=True, newLine=False, exception=None)
+
+    log.printLog(mustNotLogWithoutNewLine, condition=False, newLine=False)
+    log.printSuccess(mustNotLogWithoutNewLine, condition=False, newLine=False)
+    log.printSetting(mustNotLogWithoutNewLine, condition=False, newLine=False)
+    log.printDebug(mustNotLogWithoutNewLine, condition=False, newLine=False, exception=None)
+    log.printWarning(mustNotLogWithoutNewLine, condition=False, newLine=False, exception=None)
+    log.printWarper(mustNotLogWithoutNewLine, condition=False, newLine=False, exception=None)
+    log.printFailure(mustNotLogWithoutNewLine, condition=False, newLine=False, exception=None)
+    log.printError(mustNotLogWithoutNewLine, condition=False, newLine=False, exception=None)
+    log.printTest(mustNotLogWithoutNewLine, condition=False, newLine=False, exception=None)
+
+    log.printLog(mustLogWithNewLineWithException, condition=True, newLine=True, exception=thrownException)
+    log.printDebug(mustLogWithNewLineWithException, condition=True, newLine=True, exception=thrownException)
+    log.printWarning(mustLogWithNewLineWithException, condition=True, newLine=True, exception=thrownException)
+    log.printWarper(mustLogWithNewLineWithException, condition=True, newLine=True, exception=thrownException)
+    log.printFailure(mustLogWithNewLineWithException, condition=True, newLine=True, exception=thrownException)
+    log.printError(mustLogWithNewLineWithException, condition=True, newLine=True, exception=thrownException)
+    log.printTest(mustLogWithNewLineWithException, condition=True, newLine=True, exception=thrownException)
+
+    log.printLog(mustLogWithoutNewLineWithException, condition=True, newLine=False, exception=thrownException)
+    log.printDebug(mustLogWithoutNewLineWithException, condition=True, newLine=False, exception=thrownException)
+    log.printWarning(mustLogWithoutNewLineWithException, condition=True, newLine=False, exception=thrownException)
+    log.printWarper(mustLogWithoutNewLineWithException, condition=True, newLine=False, exception=thrownException)
+    log.printFailure(mustLogWithoutNewLineWithException, condition=True, newLine=False, exception=thrownException)
+    log.printError(mustLogWithoutNewLineWithException, condition=True, newLine=False, exception=thrownException)
+    log.printTest(mustLogWithoutNewLineWithException, condition=True, newLine=False, exception=thrownException)
+
+    log.printLog(mustNotLogWithNewLineWithException, condition=False, newLine=True, exception=thrownException)
+    log.printDebug(mustNotLogWithNewLineWithException, condition=False, newLine=True, exception=thrownException)
+    log.printWarning(mustNotLogWithNewLineWithException, condition=False, newLine=True, exception=thrownException)
+    log.printWarper(mustNotLogWithNewLineWithException, condition=False, newLine=True, exception=thrownException)
+    log.printFailure(mustNotLogWithNewLineWithException, condition=False, newLine=True, exception=thrownException)
+    log.printError(mustNotLogWithNewLineWithException, condition=False, newLine=True, exception=thrownException)
+    log.printTest(mustNotLogWithNewLineWithException, condition=False, newLine=True, exception=thrownException)
+
+    log.printLog(mustNotLogWithoutNewLineWithException, condition=False, newLine=False, exception=thrownException)
+    log.printDebug(mustNotLogWithoutNewLineWithException, condition=False, newLine=False, exception=thrownException)
+    log.printWarning(mustNotLogWithoutNewLineWithException, condition=False, newLine=False, exception=thrownException)
+    log.printWarper(mustNotLogWithoutNewLineWithException, condition=False, newLine=False, exception=thrownException)
+    log.printFailure(mustNotLogWithoutNewLineWithException, condition=False, newLine=False, exception=thrownException)
+    log.printError(mustNotLogWithoutNewLineWithException, condition=False, newLine=False, exception=thrownException)
+    log.printTest(mustNotLogWithoutNewLineWithException, condition=False, newLine=False, exception=thrownException)
+
+    # Assert
+    assert True == SettingHelper.activeEnvironmentIsLocal()
+    assert SettingHelper.LOCAL_ENVIRONMENT == EnvironmentHelper.get(SettingHelper.ACTIVE_ENVIRONMENT)
+    assert SettingHelper.LOCAL_ENVIRONMENT == SettingHelper.getActiveEnvironment()

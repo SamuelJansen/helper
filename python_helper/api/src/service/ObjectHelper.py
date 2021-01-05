@@ -1,10 +1,10 @@
 from numbers import Number
-from python_helper.api.src.domain import Constant
+from python_helper.api.src.domain import Constant as c
 from python_helper.api.src.service import StringHelper
 from python_helper.api.src.helper import ObjectHelperHelper
 
 GENERATOR_CLASS_NAME = 'generator'
-UNKNOWN_OBJECT_CLASS_NAME = 'unknown'
+UNKNOWN_OBJECT_CLASS_NAME = c.UNKNOWN.lower()
 
 METADATA_NAME = 'metadata'
 
@@ -25,7 +25,7 @@ COLLECTION_CLASS_LIST = [
 ]
 
 def equal(responseAsDict,expectedResponseAsDict,ignoreKeyList=None,ignoreCharactereList=None) :
-    innerIgnoreCharactereList = [Constant.SPACE]
+    innerIgnoreCharactereList = [c.SPACE]
     if isNotNone(ignoreCharactereList) :
         innerIgnoreCharactereList += ignoreCharactereList
     filteredResponse = StringHelper.filterJson(
@@ -56,7 +56,7 @@ def getSortedCollection(thing) :
     return thing if isNotCollection(thing) else sorted(
         thing,
         key=lambda x: (
-            x is not None, Constant.NOTHING if isinstance(x, Number) else type(x).__name__, x
+            x is not None, c.NOTHING if isinstance(x, Number) else type(x).__name__, x
         )
     )
 

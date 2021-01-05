@@ -1,5 +1,4 @@
-from python_helper import StringHelper, SettingHelper, Constant, log, EnvironmentVariable
-from python_helper.api.src.helper import StringHelperHelper
+from python_helper import StringHelper, SettingHelper, Constant, log, Test
 
 # LOG_HELPER_SETTINGS = {
 #     log.LOG : True,
@@ -10,6 +9,7 @@ from python_helper.api.src.helper import StringHelperHelper
 #     log.FAILURE : True,
 #     log.WRAPPER : True,
 #     log.ERROR : True,
+#     log.TEST : False,
 #     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
 # }
 
@@ -21,7 +21,8 @@ LOG_HELPER_SETTINGS = {
     log.WARNING : False,
     log.FAILURE : False,
     log.WRAPPER : False,
-    log.ERROR : False
+    log.ERROR : False,
+    log.TEST : False
 }
 
 DICTIONARY_INSTANCE = {
@@ -76,7 +77,7 @@ DICTIONARY_INSTANCE = {
     ]
 }
 
-@EnvironmentVariable(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(environmentVariables={**LOG_HELPER_SETTINGS})
 def mustFilterSetting() :
     # Arrange
     expectedSingleQuoteSettingCase = 'b'
@@ -112,7 +113,7 @@ def mustFilterSetting() :
     assert someCommentsInBetween == filteredStringSomeCommentsInBetween
     assert Constant.NOTHING == filteredStringOnlyComment
 
-@EnvironmentVariable(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
 def prettyJson_withSucces() :
     # Arrange
     simpleDictionaryInstance = {**{}, **DICTIONARY_INSTANCE}
@@ -175,7 +176,7 @@ def prettyJson_withSucces() :
     toAssert = StringHelper.removeColors(toAssert)
     assert expected == toAssert
 
-@EnvironmentVariable(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
 def prettyPython_withSucces() :
     # Arrange
     simpleDictionaryInstance = {**{}, **DICTIONARY_INSTANCE}
@@ -239,7 +240,7 @@ def prettyPython_withSucces() :
     toAssert = StringHelper.removeColors(toAssert)
     assert expected == toAssert
 
-@EnvironmentVariable(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
 def filterJson_withSucces() :
     # Arrange
     simpleDictionaryInstance = {'key':'value','anotherKey':{'key':'value'},'aThirdKey':['a','b',{'c':'d'},[None, True, 'True', 3.3, (2,'2')],{'key':('e','f',{'g':{'h':['i','j']}})},{'someKey':'someValue','someOtherKey':{'q','r',1,2,3,'s'}}]}
@@ -257,7 +258,7 @@ def filterJson_withSucces() :
     assert expectedWithSpace == toAssertWithSpace
     assert expectedWithoutSpace == toAssertWithoutSpace
 
-@EnvironmentVariable(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
 def isLongString_withSuccess() :
     # Arrange
     tripleSinleQuotes = f'{Constant.TRIPLE_SINGLE_QUOTE}'

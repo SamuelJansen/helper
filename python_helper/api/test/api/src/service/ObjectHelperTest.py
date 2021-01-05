@@ -1,5 +1,5 @@
 import json
-from python_helper import ObjectHelper, StringHelper, SettingHelper, Constant, log, EnvironmentVariable
+from python_helper import ObjectHelper, StringHelper, SettingHelper, Constant, log, Test
 
 # LOG_HELPER_SETTINGS = {
 #     log.LOG : True,
@@ -10,6 +10,7 @@ from python_helper import ObjectHelper, StringHelper, SettingHelper, Constant, l
 #     log.FAILURE : True,
 #     log.WRAPPER : True,
 #     log.ERROR : True,
+    # log.TEST : False,
 #     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
 # }
 
@@ -21,7 +22,8 @@ LOG_HELPER_SETTINGS = {
     log.WARNING : False,
     log.FAILURE : False,
     log.WRAPPER : False,
-    log.ERROR : False
+    log.ERROR : False,
+    log.TEST : False
 }
 
 DICTIONARY_INSTANCE = {
@@ -67,7 +69,7 @@ DICTIONARY_INSTANCE = {
 }
 JSON_INSTANCE = json.loads(StringHelper.prettyJson(DICTIONARY_INSTANCE))
 
-@EnvironmentVariable(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
 def basicMethods() :
     # Arrange
     def generatorInstance() :
@@ -339,7 +341,7 @@ def basicMethods() :
     assert not ObjectHelper.isNativeClassIsntance(type(None))
     assert ObjectHelper.isNotNativeClassIsntance(type(None))
 
-@EnvironmentVariable(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
 def mustAssertEquals() :
     # Arrange
     dictionaryInstance = {**{},**JSON_INSTANCE}
@@ -474,7 +476,7 @@ def mustAssertEquals() :
     assert unsortedDictionaryToAssert
     assert not notEqualsToAssert
 
-@EnvironmentVariable(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
 def mustIgnoreKeyCorrectly() :
     # Arrange
     expected = {**{},**DICTIONARY_INSTANCE}

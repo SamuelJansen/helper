@@ -472,7 +472,7 @@ def getSettingInjectionValue(settingKey, settingValue, nodeKey, settingTree) :
             raise Exception(f'Not possible to associate "{nodeKey}{c.DOT}{settingKey}" key to "{unwrapedSettingInjectionValue}" value. "{unwrapedSettingInjectionValue}" value is probably not defined')
         return selfReferenceSettingValue
     environmentKey = unwrapedSettingInjectionValue.split(c.COLON)[0]
-    environmentValue = EnvironmentHelper.getEnvironmentValue(environmentKey)
+    environmentValue = EnvironmentHelper.get(environmentKey)
     if environmentValue :
         return environmentValue
     else :

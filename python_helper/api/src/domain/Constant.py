@@ -8,6 +8,7 @@ WARNING =   '[WARNING] '
 FAILURE =   '[FAILURE] '
 WRAPPER =   '[WRAPPER] '
 ERROR =     '[ERROR  ] '
+TEST =      '[TEST   ] '
 
 BACK_SLASH = '\\'
 NEW_LINE = '\n'
@@ -61,6 +62,8 @@ OPEN_SET = '{'
 CLOSE_SET = '}'
 LESSER = '<'
 BIGGER = '>'
+
+UNKNOWN = 'Unknown'
 
 TYPE_FUNCTION = 'function'
 TYPE_CLASS = 'class'
