@@ -1,4 +1,4 @@
-from python_helper import SettingHelper, StringHelper, Constant, log, EnvironmentHelper, ObjectHelper, Test, ReflectionHelper
+from python_helper import SettingHelper, StringHelper, Constant, log, EnvironmentHelper, ObjectHelper, Test, RandomHelper
 
 UNMUTED_LOG_HELPER_SETTINGS = {
     log.LOG : True,
@@ -48,6 +48,7 @@ def mustRun_withSuccess() :
         myTest()
     except Exception as e :
         exception = e
+        print(f'exception: {exception}')
 
     # Assert
     assert myFunction('original a') == str('original a')+''
@@ -179,7 +180,6 @@ def mustRun_withSuccess_ExecutingActionFirst_withFailure() :
         myTest()
     except Exception as e :
         exception = e
-        print(f'exception: {exception}')
 
     # Assert
     assert ObjectHelper.isNotNone(exception)
@@ -358,7 +358,6 @@ def mustRun_withFailre_ExecutingActionLater_withFailre() :
         myTest()
     except Exception as e :
         exception = e
-    print(f'exception: {exception}')
 
     # Assert
     assert ObjectHelper.isNotNone(exception)
@@ -416,6 +415,58 @@ def handleEnvironmentChangesProperly_withSuccess() :
     assert ObjectHelper.isDictionary(afterTestEnvironmentSettings)
     assert afterTestEnvironmentSettings == beforeTestEnvironmentSettings
     assert not beforeTestEnvironmentSettings == inBetweenTestEnvironmentSettings
+
+
+@Test(environmentVariables={
+    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+    **UNMUTED_LOG_HELPER_SETTINGS
+})
+def handleEnvironmentChangesProperly_withSuccess_whenActionsHaveNoArguments() :
+    beforeTestEnvironmentSettings = {**EnvironmentHelper.getSet()}
+    inBetweenTestEnvironmentSettings = None
+    afterTestEnvironmentSettings = None
+    MY_BEFORE_ACTION_RETURN = RandomHelper.string(minimum=10)
+    MY_AFTER_ACTION_RETURN = RandomHelper.string(minimum=10)
+    # Arrange
+    def myBeforeAction():
+        return MY_BEFORE_ACTION_RETURN
+    def myAfterAction():
+        return MY_AFTER_ACTION_RETURN
+    def myFunction(a):
+        return a
+    returns = {}
+    @Test(
+        callBefore=myBeforeAction,
+        callAfter=myAfterAction,
+        returns=returns,
+        environmentVariables={
+            SettingHelper.ACTIVE_ENVIRONMENT : None,
+            **MUTED_LOG_HELPER_SETTINGS
+        }
+    )
+    def myTest() :
+        inBetweenTestEnvironmentSettings = EnvironmentHelper.getSet()
+        assert ObjectHelper.isNotNone(inBetweenTestEnvironmentSettings)
+        assert ObjectHelper.isDictionary(inBetweenTestEnvironmentSettings)
+        assert 'a' == myFunction('a')
+        return inBetweenTestEnvironmentSettings
+
+    # Act
+    inBetweenTestEnvironmentSettings = myTest()
+    afterTestEnvironmentSettings = {**EnvironmentHelper.getSet()}
+
+    # Assert
+    assert MY_BEFORE_ACTION_RETURN == returns['returnOfCallBefore']
+    assert MY_AFTER_ACTION_RETURN == returns['returnOfCallAfter']
+    assert ObjectHelper.isNotNone(beforeTestEnvironmentSettings)
+    assert ObjectHelper.isDictionary(beforeTestEnvironmentSettings)
+    assert ObjectHelper.isNotNone(inBetweenTestEnvironmentSettings)
+    assert ObjectHelper.isDictionary(inBetweenTestEnvironmentSettings)
+    assert ObjectHelper.isNotNone(afterTestEnvironmentSettings)
+    assert ObjectHelper.isDictionary(afterTestEnvironmentSettings)
+    assert afterTestEnvironmentSettings == beforeTestEnvironmentSettings
+    assert not beforeTestEnvironmentSettings == inBetweenTestEnvironmentSettings
+
 
 @Test(environmentVariables={
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,

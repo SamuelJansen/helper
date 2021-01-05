@@ -2,14 +2,16 @@ from python_helper.api.src.domain import Constant as c
 from python_helper.api.src.service import LogHelper, ReflectionHelper, EnvironmentHelper, ObjectHelper
 from python_helper.api.src.annotation.EnvironmentAnnotation import EnvironmentVariable
 
-TEST_VALUE_NOT_SET = '__TEST_VALUE_NOT_SET__'
-
 CALL_BEFORE = 'callBefore'
+ARGS_OF_CALL_BEFORE = 'argsOfCallBefore'
+KWARGS_OF_CALL_BEFORE = 'kwargsOfCallBefore'
 CALL_AFTER = 'callAfter'
-
+ARGS_OF_CALL_AFTER = 'argsOfCallAfter'
+KWARGS_OF_CALL_AFTER = 'kwargsOfCallAfter'
 RETURN_VALUE_FROM_CALL_BEFORE = 'returnOfCallBefore'
 RETURN_VALUE_FROM_CALL_AFTER = 'returnOfCallAfter'
 
+TEST_VALUE_NOT_SET = '__TEST_VALUE_NOT_SET__'
 BEFORE_THE_TEST = 'before'
 AFTER_THE_TEST = 'after'
 
@@ -30,56 +32,51 @@ def Test(
         def innerResourceInstanceMethod(*innerArgs,**innerKwargs) :
             methodReturnException = None
             methodReturn = TEST_VALUE_NOT_SET
-            callBeforeException = handleAction(handleBefore, BEFORE_THE_TEST, resourceInstanceMethod, callBefore, argsOfCallBefore, kwargsOfCallBefore, returns)
-            if ObjectHelper.isNotNone(callBeforeException) :
-                raise callBeforeException
+            handleBefore(resourceInstanceMethod, callBefore, argsOfCallBefore, kwargsOfCallBefore, returns)
             try :
                 methodReturn = resourceInstanceMethod(*innerArgs,**innerKwargs)
                 LogHelper.printSuccess(f'{ReflectionHelper.getName(resourceInstanceMethod)} test succeed', condition=True)
             except Exception as exception :
                 methodReturnException = exception
                 LogHelper.printError(f'"{ReflectionHelper.getName(resourceInstanceMethod)}" test failed', condition=True, exception=methodReturnException)
-            callAfterException = handleAction(handleAfter, AFTER_THE_TEST, resourceInstanceMethod, callAfter, argsOfCallAfter, kwargsOfCallAfter, returns)
-            return handleReturn(methodReturn, methodReturnException, callAfterException)
+            return handleAfter(resourceInstanceMethod, callAfter, argsOfCallAfter, kwargsOfCallAfter, returns, methodReturn, methodReturnException=methodReturnException)
         ReflectionHelper.overrideSignatures(innerResourceInstanceMethod, resourceInstanceMethod)
         return innerResourceInstanceMethod
     return innerMethodWrapper
 
-def handleReturn(methodReturn, methodReturnException, callAfterException) :
-    if ObjectHelper.isNotNone(methodReturnException) or ObjectHelper.isNotNone(callAfterException) :
-        if ObjectHelper.isNotNone(methodReturnException) and ObjectHelper.isNotNone(callAfterException) :
-            raise Exception(f'{LogHelper.getExceptionMessage(methodReturnException)}. Followed by: {LogHelper.getExceptionMessage(callAfterException)}')
+def handleBefore(resourceInstanceMethod, actionClass, args, kwargs, returns) :
+    LogHelper.test(resourceInstanceMethod, 'Test started')
+    actionHandlerException = handle(resourceInstanceMethod, actionClass, args, kwargs, returns, BEFORE_THE_TEST, RETURN_VALUE_FROM_CALL_BEFORE)
+    if ObjectHelper.isNotNone(actionHandlerException) :
+        raise actionHandlerException
+
+def handleAfter(resourceInstanceMethod, actionClass, args, kwargs, returns, methodReturn, methodReturnException=None) :
+    actionHandlerException = handle(resourceInstanceMethod, actionClass, args, kwargs, returns, AFTER_THE_TEST, RETURN_VALUE_FROM_CALL_AFTER)
+    LogHelper.test(resourceInstanceMethod, 'Test completed')
+    if ObjectHelper.isNotNone(methodReturnException) or ObjectHelper.isNotNone(actionHandlerException) :
+        if ObjectHelper.isNotNone(methodReturnException) and ObjectHelper.isNotNone(actionHandlerException) :
+            raise Exception(f'{LogHelper.getExceptionMessage(methodReturnException)}. Followed by: {LogHelper.getExceptionMessage(actionHandlerException)}')
         elif ObjectHelper.isNotNone(methodReturnException) :
             raise methodReturnException
-        raise callAfterException
+        raise actionHandlerException
     if not TEST_VALUE_NOT_SET == methodReturn :
         return methodReturn
 
-def handleAction(action, moment, resourceInstanceMethod, callAfter, argsOfCallAfter, kwargsOfCallAfter, returns) :
+def handle(resourceInstanceMethod, actionClass, args, kwargs, returns, moment, returnKey) :
     try :
-        action(resourceInstanceMethod, callAfter, argsOfCallAfter, kwargsOfCallAfter, returns)
+        returnCall = None
+        if actionIsPresent(actionClass) :
+            argsMessage = getArgsLogMessage(args)
+            kwargsMessage = getKwargsLogMessage(kwargs)
+            returnCall = getRetrunValue(actionClass, args, kwargs)
+            LogHelper.test(resourceInstanceMethod, f'{ReflectionHelper.getName(actionClass)}({argsMessage}, {kwargsMessage}): {returnCall}')
+        else :
+            LogHelper.test(resourceInstanceMethod, f'Test handler to perform actions {moment} the test is not defined')
+        if returnsValueIsPresent(returns) :
+            returns[returnKey] = returnCall
     except Exception as exception :
-        LogHelper.printError(f'"{ReflectionHelper.getName(resourceInstanceMethod)}" test went wrong while handling "{ReflectionHelper.getName(action)}" {moment} the test. Check TEST logs for more information', condition=True, exception=exception)
+        LogHelper.printError(f'"{ReflectionHelper.getName(resourceInstanceMethod)}" test went wrong while handling actions {moment} the test. Check TEST logs for more information', condition=True, exception=exception)
         return exception
-
-def handleBefore(resourceInstanceMethod, methodInstance, args, kwargs, returns) :
-    LogHelper.test(resourceInstanceMethod, 'Test started')
-    handle(resourceInstanceMethod, methodInstance, args, kwargs, returns, CALL_BEFORE, RETURN_VALUE_FROM_CALL_BEFORE)
-
-def handleAfter(resourceInstanceMethod, methodInstance, args, kwargs, returns, methodReturnException=None) :
-    handle(resourceInstanceMethod, methodInstance, args, kwargs, returns, CALL_AFTER, RETURN_VALUE_FROM_CALL_AFTER)
-
-def handle(resourceInstanceMethod, methodInstance, args, kwargs, returns, moment, returnKey) :
-    returnCall = None
-    if methodIsPresent(methodInstance) :
-        argsMessage = getArgsLogMessage(args)
-        kwargsMessage = getKwargsLogMessage(kwargs)
-        returnCall = getRetrunValue(methodInstance, args, kwargs)
-        LogHelper.test(resourceInstanceMethod, f'{moment}({argsMessage}, {kwargsMessage}): {returnCall}')
-    else :
-        LogHelper.test(resourceInstanceMethod, f'Method "{moment}" not defined')
-    if returnsValueIsPresent(returns) :
-        returns[returnKey] = returnCall
 
 def getArgsLogMessage(args) :
     if TEST_VALUE_NOT_SET == args :
@@ -91,14 +88,14 @@ def getKwargsLogMessage(kwargs) :
         return '**{}'
     return f'**{kwargs}'
 
-def getRetrunValue(methodInstance, givenArgs, givenKwargs) :
-    if methodIsPresent(methodInstance) :
+def getRetrunValue(actionClass, givenArgs, givenKwargs) :
+    if actionIsPresent(actionClass) :
         args = [] if TEST_VALUE_NOT_SET == givenArgs else givenArgs
         kwargs = {} if TEST_VALUE_NOT_SET == givenKwargs else givenKwargs
-        return methodInstance(*args, **kwargs)
+        return actionClass(*args, **kwargs)
 
-def methodIsPresent(methodInstance) :
-    return not TEST_VALUE_NOT_SET == methodInstance and ObjectHelper.isNotNone(methodInstance)
+def actionIsPresent(actionClass) :
+    return not TEST_VALUE_NOT_SET == actionClass and ObjectHelper.isNotNone(actionClass)
 
 def returnsValueIsPresent(returns) :
     isPresent = ObjectHelper.isDictionary(returns)
