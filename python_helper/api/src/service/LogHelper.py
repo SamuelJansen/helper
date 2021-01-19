@@ -151,4 +151,4 @@ def getTracebackMessage() :
         tracebackMessage = traceback.format_exc()
     except :
         tracebackMessage = f'{c.NEW_LINE}'
-    return tracebackMessage
+    return LogHelperHelper.NO_TRACEBACK_PRESENT_MESSAGE if LogHelperHelper.NO_TRACEBACK_PRESENT == str(tracebackMessage) else tracebackMessage

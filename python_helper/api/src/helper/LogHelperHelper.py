@@ -1,6 +1,9 @@
 from python_helper.api.src.domain import Constant as c
 from python_helper.api.src.service import LogHelper, SettingHelper, ObjectHelper, ReflectionHelper, StringHelper, EnvironmentHelper
 
+NO_TRACEBACK_PRESENT = f'NoneType: None{c.NEW_LINE}'
+NO_TRACEBACK_PRESENT_MESSAGE = 'No exception raised'
+
 FIRST_LAYER_COLOR = 'FIRST_LAYER_COLOR'
 SECOND_LAYER_COLOR = 'SECOND_LAYER_COLOR'
 LOG_TEXT = 'LOG_TEXT'
@@ -106,7 +109,7 @@ def levelStatusError(method, level) :
     LogHelper.failure(method,f'"{level}" log level status is not properly defined: {getStatus(level)}',None)
 
 def getNewLine(newLine, exception=None) :
-    return c.NEW_LINE if newLine and ObjectHelper.isNone(exception) else c.NOTHING
+    return c.NEW_LINE if (newLine and ObjectHelper.isNone(exception)) or (ObjectHelper.isNotNone(exception) and NO_TRACEBACK_PRESENT_MESSAGE == LogHelper.getTracebackMessage()) else c.NOTHING
 
 # FORE_SIMPLE_RESET_COLOR = colorama.Fore.RESET
 # LEVEL_DICTIONARY = {

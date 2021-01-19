@@ -48,7 +48,6 @@ def mustRun_withSuccess() :
         myTest()
     except Exception as e :
         exception = e
-        print(f'exception: {exception}')
 
     # Assert
     assert myFunction('original a') == str('original a')+''

@@ -422,10 +422,8 @@ def getDictionary(value) :
     return resultantDictionary
 
 def getSettingInjectionListFromSettingValue(settingValue) :
-    # if ObjectHelper.isNotCollection(settingValue) and ObjectHelper.isNotEmpty(settingValue) : #StringHelper.isNotBlank(settingValue) :
     if ObjectHelper.isNotNone(settingValue) and StringHelper.isNotBlank(settingValue) :
         splitedSettingValue = settingValue.split(OPEN_SETTING_INJECTION)
-        # print(f'        splitedSettingValue: {splitedSettingValue}')
         settingValueList = []
         completeSettingValue = c.NOTHING
         for segment in splitedSettingValue if settingValue.startswith(OPEN_SETTING_INJECTION) else splitedSettingValue[1:] :
@@ -438,13 +436,6 @@ def getSettingInjectionListFromSettingValue(settingValue) :
                     if ObjectHelper.isNotNone(completeSettingValue) and StringHelper.isNotBlank(completeSettingValue) :
                         settingValueList.append(f'{OPEN_SETTING_INJECTION}{completeSettingValue}{CLOSE_SETTING_INJECTION}')
                     completeSettingValue = c.NOTHING
-            # if not segment is None and not segment.count(c.OPEN_DICTIONARY) is None and not segment.count(c.OPEN_DICTIONARY) == segment.count(c.CLOSE_DICTIONARY) and 0 < segment.count(c.OPEN_DICTIONARY) :
-            #     completeSettingValue += segment
-            # else :
-            #     splitedSegment = segment.split(CLOSE_SETTING_INJECTION)
-            #     completeSettingValue += splitedSegment[0]
-            #     settingValueList.append(f'{OPEN_SETTING_INJECTION}{completeSettingValue}{CLOSE_SETTING_INJECTION}')
-            #     completeSettingValue = c.NOTHING
         return settingValueList
     return []
 
@@ -473,13 +464,9 @@ def isSettingInjection(settingValue) :
     )
 
 def containsSettingInjection(settingValue) :
-    # print(f'len(getSettingInjectionListFromSettingValue({settingValue})): {len(getSettingInjectionListFromSettingValue(settingValue))}')
-    # print(f'    getSettingInjectionListFromSettingValue({settingValue}): {getSettingInjectionListFromSettingValue(settingValue)}')
     return False if not containsValidSettingInjection(settingValue) else 0 < len(getSettingInjectionListFromSettingValue(settingValue))
 
 def containsOnlyOneSettingInjection(settingValue) :
-    # print(f'len(getSettingInjectionListFromSettingValue({settingValue})): {len(getSettingInjectionListFromSettingValue(settingValue))}')
-    # print(f'    getSettingInjectionListFromSettingValue({settingValue}): {getSettingInjectionListFromSettingValue(settingValue)}')
     return False if not containsValidSettingInjection(settingValue) else 2 >= len(getSettingInjectionListFromSettingValue(settingValue))
 
 def getSettingInjectionValue(settingKey, settingValue, nodeKey, settingTree) :
