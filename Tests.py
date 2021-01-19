@@ -6,6 +6,7 @@ from python_helper.api.test.api.src.service import ReflectionHelperTest
 from python_helper.api.test.api.src.service import RandomHelperTest
 from python_helper.api.test.api.src.service import MethodAnnotationTest
 from python_helper.api.test.api.src.annotation import TestTest
+from python_helper.api.test.api.src import ModuleImports
 
 import time
 startTime = time.time()

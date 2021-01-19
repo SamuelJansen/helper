@@ -54,8 +54,8 @@ def getValueAsString(value) :
     ])
     return f'{value}{c.NOTHING}'
 
-def getSettingTree(settingFilePath, settingTree=None, keepDepthInLongString=False, depthStep=c.TAB_UNITS, fallbackSettingTree=None) :
-    with open(settingFilePath,c.READ,encoding=c.ENCODING) as settingsFile :
+def getSettingTree(settingFilePath, settingTree=None, keepDepthInLongString=False, depthStep=c.TAB_UNITS, fallbackSettingTree=None, encoding=c.ENCODING) :
+    with open(settingFilePath,c.READ,encoding=encoding) as settingsFile :
         allSettingLines = settingsFile.readlines()
     settingInjectionList = []
     longStringCapturing = False
