@@ -7,6 +7,7 @@ from python_helper.api.test.api.src.service import RandomHelperTest
 from python_helper.api.test.api.src.service import MethodAnnotationTest
 from python_helper.api.test.api.src.annotation import TestTest
 from python_helper.api.test.api.src import ModuleImports
+from python_helper import log
 
 import time
 startTime = time.time()
@@ -33,6 +34,7 @@ SettingHelperTest.mustNotReadSettingFile()
 SettingHelperTest.mustPrintSettingTree()
 SettingHelperTest.querySetting_withSuccess()
 SettingHelperTest.mustHandleSettingValueInFallbackSettingTree()
+SettingHelperTest.getSettingTree_whenIsSettingKeyActuallyContainsSettingKey()
 
 StringHelperTest.mustFilterSetting()
 StringHelperTest.prettyJson_withSucces()
@@ -65,4 +67,4 @@ MethodAnnotationTest.Method_withSuccess()
 MethodAnnotationTest.FunctionThrough_withSuccess()
 
 endTime = time.time()
-print(f'endTime - startTime = {endTime - startTime}')
+log.test(log.test, f'Test duration: {endTime - startTime} seconds')

@@ -139,18 +139,6 @@ def mustReadSettingFile() :
 def mustNotReadSettingFile() :
     # Arrange
     settingFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','application-circular-reference.yml'])
-
-    # Act
-    readdedSettingTree = {}
-    exception = None
-    try :
-        readdedSettingTree = SettingHelper.getSettingTree(settingFilePath, keepDepthInLongString=True)
-    except Exception as ext :
-        exception = ext
-
-    # Assert
-    assert {} == readdedSettingTree
-
     circularReferenceSettingInjectionDictionary = {
         'circular.reference.on.key': {
             'SETTING_KEY': 'key',
@@ -173,12 +161,19 @@ def mustNotReadSettingFile() :
             'SETTING_NODE_KEY': 'circular'
         }
     }
-
     exceptionMessage = f'Circular reference detected in following setting injections: {StringHelper.prettyPython(circularReferenceSettingInjectionDictionary)}'
 
+    # Act
+    readdedSettingTree = {}
+    exception = None
+    try :
+        readdedSettingTree = SettingHelper.getSettingTree(settingFilePath, keepDepthInLongString=True)
+    except Exception as ext :
+        exception = ext
+
+    # Assert
+    assert {} == readdedSettingTree
     assert exceptionMessage == str(exception)
-
-
 
 @Test(environmentVariables={
     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
@@ -655,3 +650,18 @@ def mustHandleSettingValueInFallbackSettingTree() :
             'static-package': 'AppData\Local\Programs\Python\Python38-32\statics'
         }
     } == readdedSettingTree
+
+@Test(environmentVariables={
+    **{},
+    **LOG_HELPER_SETTINGS
+})
+def getSettingTree_whenIsSettingKeyActuallyContainsSettingKey() :
+    # Arrange
+    settingFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','database.yml'])
+
+    # Act
+    readdedSettingTree = SettingHelper.getSettingTree(settingFilePath)
+    print(SettingHelper.getSetting('environment.database.value', readdedSettingTree))
+
+    # Assert
+    assert "a:b:c:d://e:f:g:h:i:j:k:l@m:n:o:p:q:r:s:t/u:v:w:x" == SettingHelper.getSetting('environment.database.value', readdedSettingTree)
