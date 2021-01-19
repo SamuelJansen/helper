@@ -16,3 +16,4 @@ from python_helper import SettingHelperHelper
 from python_helper import SettingHelperHelper
 from python_helper import LogHelperHelper
 from python_helper import RandomHelperHelper
+from python_helper import AnnotationHelper
