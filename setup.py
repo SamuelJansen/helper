@@ -1,6 +1,9 @@
 from distutils.core import setup
+import os
 
-version = '0.2.11'
+OS_SEPARATOR = os.path.sep
+
+version = '0.2.12'
 name = 'python_helper'
 url = f'https://github.com/SamuelJansen/{name}/'
 
@@ -8,12 +11,12 @@ setup(
     name = name,
     packages = [
         name,
-        f'{name}/api',
-        f'{name}/api/src',
-        f'{name}/api/src/service',
-        f'{name}/api/src/domain',
-        f'{name}/api/src/helper',
-        f'{name}/api/src/annotation'
+        f'{name}{OS_SEPARATOR}api',
+        f'{name}{OS_SEPARATOR}api{OS_SEPARATOR}src',
+        f'{name}{OS_SEPARATOR}api{OS_SEPARATOR}src{OS_SEPARATOR}service',
+        f'{name}{OS_SEPARATOR}api{OS_SEPARATOR}src{OS_SEPARATOR}domain',
+        f'{name}{OS_SEPARATOR}api{OS_SEPARATOR}src{OS_SEPARATOR}helper',
+        f'{name}{OS_SEPARATOR}api{OS_SEPARATOR}src{OS_SEPARATOR}annotation'
     ],
     version = version,
     license = 'MIT',
