@@ -66,7 +66,7 @@ def mustReadSettingFile() :
 
     # Act
     readdedSettingTree = SettingHelper.getSettingTree(settingFilePath, keepDepthInLongString=True)
-    # log.prettyPython(mustReadSettingFile, '', readdedSettingTree)
+    # log.prettyPython(mustReadSettingFile, 'readdedSettingTree', readdedSettingTree)
 
     # Assert
     assert 'self reference value' == SettingHelper.getSetting('my.self-reference-key', readdedSettingTree)
@@ -301,7 +301,7 @@ def mustHandleSettingValueInFallbackSettingTree() :
     # Act
     readdedSettingFallbackFilePath = SettingHelper.getSettingTree(settingFallbackFilePath)
     readdedSettingTree = SettingHelper.getSettingTree(settingFilePath, keepDepthInLongString=True, fallbackSettingTree=readdedSettingFallbackFilePath)
-    log.prettyPython(mustHandleSettingValueInFallbackSettingTree, '', readdedSettingTree)
+    # log.prettyPython(mustHandleSettingValueInFallbackSettingTree, 'readdedSettingTree', readdedSettingTree)
 
     # Assert
     assert [] == SettingHelper.getSetting('reffer-to.fallback-settings.empty.list', readdedSettingTree)
@@ -652,16 +652,75 @@ def mustHandleSettingValueInFallbackSettingTree() :
     } == readdedSettingTree
 
 @Test(environmentVariables={
-    **{},
+    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
     **LOG_HELPER_SETTINGS
 })
 def getSettingTree_whenIsSettingKeyActuallyContainsSettingKey() :
     # Arrange
-    settingFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','database.yml'])
+    settingFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','framework.yml'])
+    expected = {
+        'database': {
+            'dialect': 'a:b$c:d',
+            'username': 'e:f?g:h',
+            'password': 'i:j!k:l',
+            'host': 'm:n*o:p',
+            'port': '[q:r:s:t]',
+            'schema': '(u:v:w:x)'
+        },
+        'environment': {
+            'database': {
+                'key': 'DATABASE_URL',
+                'value': 'a:b$c:d://e:f?g:h:i:j!k:l@m:n*o:p:[q:r:s:t]/(u:v:w:x)'
+            }
+        },
+        'server': {
+            'scheme': 'https',
+            'host': 'host',
+            'servlet': {
+                'context-path': '/test-api'
+            },
+            'port': 5050
+        },
+        'api': {
+            'name': 'TestApi',
+            'host-0': 'https://host',
+            'host-1': 'https://host/test-api',
+            'host-2': 'https://host:5050/test-api'
+        },
+        'swagger': {
+            'host': 'host',
+            'info': {
+                'title': 'TestApi',
+                'version': '0.0.1',
+                'description': 'description',
+                'terms-of-service': 'http://swagger.io/terms/',
+                'contact': {
+                    'name': 'Samuel Jansen',
+                    'email': 'samuel.jansenn@gmail.com'
+                },
+                'license': {
+                    'name': 'Apache 2.0 / MIT License',
+                    'url': 'http://www.apache.org/licenses/LICENSE-2.0.html'
+                }
+            },
+            'schemes': [
+                'https'
+            ]
+        },
+        'some': {
+            'dictionary': {
+                'yolo': 'yes',
+                'another-yolo': 'no',
+                'another-yolo-again': '',
+                "{ 'again?'": "'yes' }"
+            }
+        }
+    }
 
     # Act
     readdedSettingTree = SettingHelper.getSettingTree(settingFilePath)
-    print(SettingHelper.getSetting('environment.database.value', readdedSettingTree))
+    # log.prettyPython(getSettingTree_whenIsSettingKeyActuallyContainsSettingKey, 'readdedSettingTree', readdedSettingTree)
 
     # Assert
-    assert "a:b:c:d://e:f:g:h:i:j:k:l@m:n:o:p:q:r:s:t/u:v:w:x" == SettingHelper.getSetting('environment.database.value', readdedSettingTree)
+    assert "a:b$c:d://e:f?g:h:i:j!k:l@m:n*o:p:[q:r:s:t]/(u:v:w:x)" == SettingHelper.getSetting('environment.database.value', readdedSettingTree)
+    assert ObjectHelper.equal(expected, readdedSettingTree)

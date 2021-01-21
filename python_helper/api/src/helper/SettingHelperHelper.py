@@ -191,10 +191,11 @@ def handleSettingInjectionList(settingInjectionList, settingTree, fallbackSettin
                                 settingInjection[SETTING_NODE_KEY],
                                 settingTree
                             )
-                            settingInjectionList.remove(settingInjection)
                             settingInjectionArgs = list(settingInjection.values()) + [settingTree]
                             updateSettingValue(*settingInjectionArgs)
-                            isSettingInjectionCount += 1
+                            if not containsSettingInjection(settingInjection[SETTING_VALUE]) :
+                                settingInjectionList.remove(settingInjection)
+                                isSettingInjectionCount += 1
                             stuck = False
                         elif containsSettingInjection(settingInjection[SETTING_VALUE]) :
                             settingInjectionListFromSettingValue = getSettingInjectionListFromSettingValue(settingInjection[SETTING_VALUE])
@@ -206,13 +207,18 @@ def handleSettingInjectionList(settingInjectionList, settingTree, fallbackSettin
                                     settingInjection[SETTING_NODE_KEY],
                                     settingTree
                                 )
-                                newSettingInjection = newSettingInjection.replace(settingValue,str(newSettingValue))
+                                if ObjectHelper.isList(newSettingInjection) :
+                                    for index, element in enumerate(newSettingInjection):
+                                    	if settingValue == element :
+                                            newSettingInjection[index] = newSettingValue
+                                else :
+                                    newSettingInjection = newSettingInjection.replace(settingValue,str(newSettingValue))
                             settingInjection[SETTING_VALUE] = newSettingInjection
-                            if not containsSettingInjection(settingInjection[SETTING_VALUE]) :
-                                settingInjectionList.remove(settingInjection)
                             settingInjectionArgs = list(settingInjection.values()) + [settingTree]
                             updateSettingValue(*settingInjectionArgs)
-                            containsSettingInjectionCount += 1
+                            if not containsSettingInjection(settingInjection[SETTING_VALUE]) :
+                                settingInjectionList.remove(settingInjection)
+                                containsSettingInjectionCount += 1
                             stuck = False
                     except Exception as exception :
                         LogHelper.log(handleSettingInjectionList, f'Ignored exception while handling {StringHelper.prettyPython(settingInjection)} setting injection list', exception=exception)
@@ -238,8 +244,9 @@ def handleSettingInjectionList(settingInjectionList, settingTree, fallbackSettin
                                     )
                                     settingInjectionArgs = list(settingInjection.values()) + [settingTree]
                                     updateSettingValue(*settingInjectionArgs)
-                                    settingInjectionList.remove(settingInjection)
-                                    isSettingInjectionCount += 1
+                                    if not containsSettingInjection(settingInjection[SETTING_VALUE]) :
+                                        settingInjectionList.remove(settingInjection)
+                                        isSettingInjectionCount += 1
                                     stuck = False
                                 elif containsSettingInjection(settingInjection[SETTING_VALUE]) :
                                     settingInjectionListFromSettingValue = getSettingInjectionListFromSettingValue(settingInjection[SETTING_VALUE])
@@ -252,13 +259,18 @@ def handleSettingInjectionList(settingInjectionList, settingTree, fallbackSettin
                                             settingTree,
                                             fallbackSettingTree=fallbackSettingTree
                                         )
-                                        newSettingInjection = newSettingInjection.replace(settingValue,str(newSettingValue))
+                                        if ObjectHelper.isList(newSettingInjection) :
+                                            for index, element in enumerate(newSettingInjection):
+                                            	if settingValue == element :
+                                                    newSettingInjection[index] = newSettingValue
+                                        else :
+                                            newSettingInjection = newSettingInjection.replace(settingValue,str(newSettingValue))
                                     settingInjection[SETTING_VALUE] = newSettingInjection
-                                    if not containsSettingInjection(settingInjection[SETTING_VALUE]) :
-                                        settingInjectionList.remove(settingInjection)
                                     settingInjectionArgs = list(settingInjection.values()) + [settingTree]
                                     updateSettingValue(*settingInjectionArgs)
-                                    containsSettingInjectionCount += 1
+                                    if not containsSettingInjection(settingInjection[SETTING_VALUE]) :
+                                        settingInjectionList.remove(settingInjection)
+                                        containsSettingInjectionCount += 1
                                     stuck = False
                             except Exception as exception :
                                 LogHelper.log(handleSettingInjectionList, f'Ignored exception while handling {StringHelper.prettyPython(settingInjection)} setting injection list from fallback setting tree', exception=exception)
@@ -407,7 +419,7 @@ def getDictionary(value) :
     splitedValue = value[1:-1].split(c.COLON)
     keyList = []
     for index in range(len(splitedValue) -1) :
-        keyList.append(splitedValue[index].split(c.COMA)[-1].strip())
+        keyList.append(StringHelper.filterString(splitedValue[index].split(c.COMA)[-1].strip()))
     valueList = []
     valueListSize = len(splitedValue) -1
     for index in range(valueListSize) :
@@ -422,13 +434,20 @@ def getDictionary(value) :
     return resultantDictionary
 
 def getSettingInjectionListFromSettingValue(settingValue) :
-    if ObjectHelper.isNotNone(settingValue) and StringHelper.isNotBlank(settingValue) :
+    if ObjectHelper.isList(settingValue) :
+        allElements = []
+        for element in settingValue :
+            elements = getSettingInjectionListFromSettingValue(element)
+            if ObjectHelper.isList(elements) :
+                allElements += elements
+        return allElements
+    elif ObjectHelper.isNotNone(settingValue) and StringHelper.isNotBlank(settingValue) :
         splitedSettingValue = settingValue.split(OPEN_SETTING_INJECTION)
         settingValueList = []
         completeSettingValue = c.NOTHING
         for segment in splitedSettingValue if settingValue.startswith(OPEN_SETTING_INJECTION) else splitedSettingValue[1:] :
             if ObjectHelper.isNotNone(segment) and StringHelper.isNotBlank(segment) :
-                if not segment.count(c.OPEN_DICTIONARY) is None and not segment.count(c.OPEN_DICTIONARY) == segment.count(c.CLOSE_DICTIONARY) and 0 < segment.count(c.OPEN_DICTIONARY) :
+                if ObjectHelper.isNotNone(segment.count(c.OPEN_DICTIONARY)) and not segment.count(c.OPEN_DICTIONARY) == segment.count(c.CLOSE_DICTIONARY) and 0 < segment.count(c.OPEN_DICTIONARY) :
                     completeSettingValue += segment
                 else :
                     splitedSegment = segment.split(CLOSE_SETTING_INJECTION)
@@ -440,19 +459,26 @@ def getSettingInjectionListFromSettingValue(settingValue) :
     return []
 
 def containsValidSettingInjection(settingValue) :
-    if StringHelper.isNotBlank(settingValue) and 0 < settingValue.count(OPEN_SETTING_INJECTION) and settingValue.count(c.OPEN_DICTIONARY) == settingValue.count(c.CLOSE_DICTIONARY) :
+    if ObjectHelper.isNotNone(settingValue) and StringHelper.isNotBlank(settingValue) and 0 < settingValue.count(OPEN_SETTING_INJECTION) and settingValue.count(c.OPEN_DICTIONARY) == settingValue.count(c.CLOSE_DICTIONARY) :
         splitedSettingValue = settingValue.split(OPEN_SETTING_INJECTION)
         settingValueList = []
         completeSettingValue = c.NOTHING
         for segment in splitedSettingValue if settingValue.startswith(OPEN_SETTING_INJECTION) else splitedSettingValue[1:] :
-            if not segment is None and not segment.count(c.OPEN_DICTIONARY) is None and not segment.count(c.OPEN_DICTIONARY) == segment.count(c.CLOSE_DICTIONARY) and 0 < segment.count(c.OPEN_DICTIONARY) :
-                completeSettingValue += segment
-            else :
-                splitedSegment = segment.split(CLOSE_SETTING_INJECTION)
-                completeSettingValue += splitedSegment[0]
-                settingValueList.append(f'{OPEN_SETTING_INJECTION}{completeSettingValue}{CLOSE_SETTING_INJECTION}')
-                completeSettingValue = c.NOTHING
+            if ObjectHelper.isNotNone(segment) :
+                if ObjectHelper.isNotNone(segment.count(c.OPEN_DICTIONARY)) and not segment.count(c.OPEN_DICTIONARY) == segment.count(c.CLOSE_DICTIONARY) and 0 < segment.count(c.OPEN_DICTIONARY) :
+                    completeSettingValue += segment
+                else :
+                    splitedSegment = segment.split(CLOSE_SETTING_INJECTION)
+                    completeSettingValue += splitedSegment[0]
+                    settingValueList.append(f'{OPEN_SETTING_INJECTION}{completeSettingValue}{CLOSE_SETTING_INJECTION}')
+                    completeSettingValue = c.NOTHING
         return len(splitedSettingValue) == len(settingValueList) if settingValue.startswith(OPEN_SETTING_INJECTION) else len(splitedSettingValue) == len(settingValueList) + 1
+        # if ObjectHelper.isList(settingValue) :
+        #     for element in settingValue :
+        #         if containsValidSettingInjection(element) :
+        #             return True
+    elif ObjectHelper.isList(settingValue) :
+        return containsValidSettingInjection(str(settingValue))
     return False
 
 def isSettingInjection(settingValue) :
@@ -467,7 +493,7 @@ def containsSettingInjection(settingValue) :
     return False if not containsValidSettingInjection(settingValue) else 0 < len(getSettingInjectionListFromSettingValue(settingValue))
 
 def containsOnlyOneSettingInjection(settingValue) :
-    return False if not containsValidSettingInjection(settingValue) else 2 >= len(getSettingInjectionListFromSettingValue(settingValue))
+    return False if not containsValidSettingInjection(settingValue) else 1 == len(getSettingInjectionListFromSettingValue(settingValue))
 
 def getSettingInjectionValue(settingKey, settingValue, nodeKey, settingTree) :
     unwrapedSettingInjectionValue = getUnwrappedSettingInjection(settingValue)
