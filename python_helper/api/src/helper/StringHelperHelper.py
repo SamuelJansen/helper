@@ -1,6 +1,9 @@
 from numbers import Number
 from python_helper.api.src.domain import Constant as c
-from python_helper.api.src.service import ObjectHelper, StringHelper
+from python_helper.api.src.service import ObjectHelper, StringHelper, ReflectionHelper
+
+def getColorValue(thing, color) :
+    return color if ObjectHelper.isNotNone(color) else c.NATIVE_PROMPT_COLOR.get(ReflectionHelper.getName(type(thing)), c.DEFAULT_COLOR)
 
 def newLine(strReturn, charactere, prettyFunction, withColors):
     if charactere == strReturn[-len(charactere):] :
@@ -13,8 +16,7 @@ def getValueCollection(outterValue) :
 
 def getItAsColoredString(thing, prettyFunction, withColors, replaceBy=None, color=None) :
     thingValue = str(thing) if ObjectHelper.isNone(replaceBy) else str(replaceBy)
-    colorValue = color if ObjectHelper.isNotNone(color) else c.NATIVE_PROMPT_COLOR[type(thing).__name__]
-    return thingValue if not withColors else f'{colorValue}{thingValue}{c.RESET_COLOR}'
+    return thingValue if not withColors else f'{getColorValue(thing, color)}{thingValue}{c.RESET_COLOR}'
 
 def getFilteredAndColoredQuote(keyOrValue, string, prettyFunction, withColors, color) :
     if ObjectHelper.isNativeClassIsntance(keyOrValue) and not isinstance(keyOrValue, str) :
@@ -77,8 +79,8 @@ def prettyCollection(
         falseValue,
         withColors=False
     ) :
-    openCollection = c.COLLECTION_TYPE[collectionType][c.OPEN_COLLECTION][withColors]
-    closeCollection = c.COLLECTION_TYPE[collectionType][c.CLOSE_COLLECTION][withColors]
+    openCollection = c.COLLECTION_TYPE.get(collectionType, c.COLLECTION_TYPE.get(c.TYPE_LIST)).get(c.OPEN_COLLECTION).get(withColors, c.COLLECTION_TYPE.get(collectionType, c.COLLECTION_TYPE.get(c.TYPE_LIST)).get(c.OPEN_COLLECTION).get(c.WITHOUT_COLOR))
+    closeCollection = c.COLLECTION_TYPE.get(collectionType, c.COLLECTION_TYPE.get(c.TYPE_LIST)).get(c.CLOSE_COLLECTION).get(withColors, c.COLLECTION_TYPE.get(collectionType, c.COLLECTION_TYPE.get(c.TYPE_LIST)).get(c.CLOSE_COLLECTION).get(c.WITHOUT_COLOR))
     strReturn = c.NOTHING
     if len(outterValue) == 0 :
         strReturn += f'{openCollection}{closeCollection}'

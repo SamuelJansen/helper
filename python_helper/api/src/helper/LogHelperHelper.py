@@ -58,7 +58,7 @@ LEVEL_DICTIONARY = {
 
 def getStatus(level) :
     status = LogHelper.LOG_HELPER_SETTINGS.get(level)
-    return status if not status is None and isinstance(status, str) else c.TRUE
+    return status if isinstance(status, str) and StringHelper.isNotBlank(status) else c.TRUE
 
 def getColors(level) :
     if SettingHelper.LOCAL_ENVIRONMENT == EnvironmentHelper.get(SettingHelper.ACTIVE_ENVIRONMENT) :
@@ -98,7 +98,7 @@ def getOriginPortion(origin, tirdLayerColor, resetColor) :
     if not origin or origin == c.NOTHING :
         return c.NOTHING
     else :
-        return f'{tirdLayerColor}{origin.__name__}{c.COLON_SPACE}{resetColor}'
+        return f'{tirdLayerColor}{ReflectionHelper.getName(origin)}{c.COLON_SPACE}{resetColor}'
 
 def getErrorPortion(exception, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor) :
     if ObjectHelper.isEmpty(exception) :
@@ -106,7 +106,7 @@ def getErrorPortion(exception, firstLayerColor, secondLayerColor, tirdLayerColor
     return f'{firstLayerColor}{c.DOT_SPACE_CAUSE}{secondLayerColor}{LogHelper.getExceptionMessage(exception)}{c.NEW_LINE}{tirdLayerColor}{LogHelper.getTracebackMessage()}{resetColor}'
 
 def levelStatusError(method, level) :
-    LogHelper.failure(method,f'"{level}" log level status is not properly defined: {getStatus(level)}',None)
+    LogHelper.failure(method, f'"{level}" log level status is not properly defined: {getStatus(level)}', None)
 
 def getNewLine(newLine, exception=None) :
     return c.NEW_LINE if (newLine and ObjectHelper.isNone(exception)) or (ObjectHelper.isNotNone(exception) and NO_TRACEBACK_PRESENT_MESSAGE == LogHelper.getTracebackMessage()) else c.NOTHING

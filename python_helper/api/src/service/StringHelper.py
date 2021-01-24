@@ -154,7 +154,7 @@ def isLongString(thing) :
         return False
 
 def removeColors(thing) :
-    if isNotBlank(thing) :
+    if ObjectHelper.isNotNone(thing) and isNotBlank(thing) :
         for color in c.IMPLEMENTED_PROMP_COLORS :
             if color in thing :
                 thing = thing.replace(color,c.NOTHING)

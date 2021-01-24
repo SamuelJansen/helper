@@ -38,4 +38,4 @@ swagger:
             name: Apache 2.0 / MIT License
             url: http://www.apache.org/licenses/LICENSE-2.0.html
 some:
-    dictionary: { 'yolo': 'yes', 'another-yolo': 'no', 'another-yolo-again': { 'again?': 'yes'} }
+    dictionary: { 'yolo': 'yes', 'another-yolo': 'no', 'another-yolo-again': { 'again?': 'yes' } }
