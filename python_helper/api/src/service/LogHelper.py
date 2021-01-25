@@ -60,80 +60,86 @@ def error(origin, message, exception, newLine=False) :
 def test(origin, message, exception=None, newLine=False) :
     LogHelperHelper.softLog(origin, message, TEST, newLine=newLine, exception=exception)
 
-def printLog(message, condition=False, newLine=True, exception=None) :
-    LogHelperHelper.printMessageLog(LOG, message, condition=condition, newLine=newLine, exception=exception)
+def printLog(message, condition=False, newLine=True, margin=True, exception=None) :
+    LogHelperHelper.printMessageLog(LOG, message, condition=condition, newLine=newLine, margin=margin, exception=exception)
 
-def printSuccess(message, condition=False, newLine=True) :
-    LogHelperHelper.printMessageLog(SUCCESS, message, condition=condition, newLine=newLine)
+def printSuccess(message, condition=False, newLine=True, margin=True) :
+    LogHelperHelper.printMessageLog(SUCCESS, message, condition=condition, newLine=newLine, margin=margin)
 
-def printSetting(message, condition=False, newLine=True) :
-    LogHelperHelper.printMessageLog(SETTING, message, condition=condition, newLine=newLine)
+def printSetting(message, condition=False, newLine=True, margin=True) :
+    LogHelperHelper.printMessageLog(SETTING, message, condition=condition, newLine=newLine, margin=margin)
 
-def printDebug(message, condition=False, newLine=True, exception=None) :
-    LogHelperHelper.printMessageLog(DEBUG, message, condition=condition, newLine=newLine, exception=exception)
+def printDebug(message, condition=False, newLine=True, margin=True, exception=None) :
+    LogHelperHelper.printMessageLog(DEBUG, message, condition=condition, newLine=newLine, margin=margin, exception=exception)
 
-def printWarning(message, condition=False, newLine=True, exception=None) :
-    LogHelperHelper.printMessageLog(WARNING, message, condition=condition, newLine=newLine, exception=exception)
+def printWarning(message, condition=False, newLine=True, margin=True, exception=None) :
+    LogHelperHelper.printMessageLog(WARNING, message, condition=condition, newLine=newLine, margin=margin, exception=exception)
 
-def printWarper(message, condition=False, newLine=True, exception=None) :
-    LogHelperHelper.printMessageLog(WRAPPER, message, condition=condition, newLine=newLine, exception=exception)
+def printWarper(message, condition=False, newLine=True, margin=True, exception=None) :
+    LogHelperHelper.printMessageLog(WRAPPER, message, condition=condition, newLine=newLine, margin=margin, exception=exception)
 
-def printFailure(message, condition=False, newLine=True, exception=None) :
-    LogHelperHelper.printMessageLog(FAILURE, message, condition=condition, newLine=newLine, exception=exception)
+def printFailure(message, condition=False, newLine=True, margin=True, exception=None) :
+    LogHelperHelper.printMessageLog(FAILURE, message, condition=condition, newLine=newLine, margin=margin, exception=exception)
 
-def printError(message, condition=False, newLine=True, exception=None) :
-    LogHelperHelper.printMessageLog(ERROR, message, condition=condition, newLine=newLine, exception=exception)
+def printError(message, condition=False, newLine=True, margin=True, exception=None) :
+    LogHelperHelper.printMessageLog(ERROR, message, condition=condition, newLine=newLine, margin=margin, exception=exception)
 
-def printTest(message, condition=False, newLine=True, exception=None) :
-    LogHelperHelper.printMessageLog(TEST, message, condition=condition, newLine=newLine, exception=exception)
+def printTest(message, condition=False, newLine=True, margin=True, exception=None) :
+    LogHelperHelper.printMessageLog(TEST, message, condition=condition, newLine=newLine, margin=margin, exception=exception)
 
 def prettyPython(
         origin,
         message,
         dictionaryInstance,
-        quote=c.SINGLE_QUOTE,
-        tabCount=0,
-        nullValue=c.NONE,
-        trueValue=c.TRUE,
-        falseValue=c.FALSE,
-        logLevel=LOG
+        quote = c.SINGLE_QUOTE,
+        tabCount = 0,
+        nullValue = c.NONE,
+        trueValue = c.TRUE,
+        falseValue = c.FALSE,
+        logLevel = LOG,
+        condition = True
     ) :
-    stdout, stderr = EnvironmentHelper.getCurrentSoutStatus()
-    prettyPythonValue = StringHelper.prettyPython(
-        dictionaryInstance,
-        quote=quote,
-        tabCount=tabCount,
-        nullValue=nullValue,
-        trueValue=trueValue,
-        falseValue=falseValue,
-        withColors=SettingHelper.activeEnvironmentIsLocal()
-    )
-    LogHelperHelper.softLog(origin, f'{message}{c.COLON_SPACE}{prettyPythonValue}', logLevel)
-    EnvironmentHelper.overrideSoutStatus(stdout, stderr)
+    if condition :
+        stdout, stderr = EnvironmentHelper.getCurrentSoutStatus()
+        prettyPythonValue = StringHelper.prettyPython(
+            dictionaryInstance,
+            quote = quote,
+            tabCount = tabCount,
+            nullValue = nullValue,
+            trueValue = trueValue,
+            falseValue = falseValue,
+            withColors = SettingHelper.activeEnvironmentIsLocal(),
+            joinAtReturn = False
+        )
+        LogHelperHelper.softLog(origin, StringHelper.join([message, c.COLON_SPACE, *prettyPythonValue]), logLevel)
+        EnvironmentHelper.overrideSoutStatus(stdout, stderr)
 
 def prettyJson(
         origin,
         message,
         dictionaryInstance,
-        quote=c.DOUBLE_QUOTE,
-        tabCount=0,
-        nullValue=c.NULL_VALUE,
-        trueValue=c.TRUE_VALUE,
-        falseValue=c.FALSE_VALUE,
-        logLevel=LOG
+        quote = c.DOUBLE_QUOTE,
+        tabCount = 0,
+        nullValue = c.NULL_VALUE,
+        trueValue = c.TRUE_VALUE,
+        falseValue = c.FALSE_VALUE,
+        logLevel = LOG,
+        condition = True
     ) :
-    stdout, stderr = EnvironmentHelper.getCurrentSoutStatus()
-    prettyJsonValue = StringHelper.prettyJson(
-        dictionaryInstance,
-        quote=quote,
-        tabCount=tabCount,
-        nullValue=nullValue,
-        trueValue=trueValue,
-        falseValue=falseValue,
-        withColors=SettingHelper.activeEnvironmentIsLocal()
-    )
-    LogHelperHelper.softLog(origin, f'{message}{c.COLON_SPACE}{prettyJsonValue}', logLevel)
-    EnvironmentHelper.overrideSoutStatus(stdout, stderr)
+    if condition :
+        stdout, stderr = EnvironmentHelper.getCurrentSoutStatus()
+        prettyJsonValue = StringHelper.prettyJson(
+            dictionaryInstance,
+            quote = quote,
+            tabCount = tabCount,
+            nullValue = nullValue,
+            trueValue = trueValue,
+            falseValue = falseValue,
+            withColors = SettingHelper.activeEnvironmentIsLocal(),
+            joinAtReturn = False
+        )
+        LogHelperHelper.softLog(origin, StringHelper.join([message, c.COLON_SPACE, *prettyJsonValue]), logLevel)
+        EnvironmentHelper.overrideSoutStatus(stdout, stderr)
 
 
 def getExceptionMessage(exception) :

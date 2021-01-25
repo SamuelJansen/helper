@@ -3,26 +3,34 @@ from python_helper.api.src.service import LogHelper, ObjectHelper, StringHelper,
 
 MAXIMUN_ARGUMENTS = 20
 
-CLASS_TYPE_NAME = 'class'
-METHOD_TYPE_NAME = 'method'
-BUILTIN_FUNCTION_OR_METHOD_TYPE_NAME = 'builtin_function_or_method'
-FUNCTION_TYPE_NAME = 'function'
-
 UNKNOWN_TYPE_NAME = f'{c.UNKNOWN.lower()} type'
-NAME_NOT_PRESENT = 'name not present'
+UNDEFINED = 'undefined'
 
 METHOD_TYPE_NAME_LIST = [
-    METHOD_TYPE_NAME,
-    BUILTIN_FUNCTION_OR_METHOD_TYPE_NAME
+    c.TYPE_METHOD,
+    c.TYPE_BUILTIN_FUNCTION_OR_METHOD
 ]
 
-def getAttributeOrMethod(instance, name) :
+def hasAttributeOrMethod(instance, name) :
+    return False if ObjectHelper.isNone(instance) or ObjectHelper.isNone(name) else hasattr(instance, name)
+
+def getAttributeOrMethod(instance, name, muteLogs=False) :
     attributeOrMethodInstance = None
-    try :
-        attributeOrMethodInstance = None if ObjectHelper.isNone(instance) or ObjectHelper.isNone(name) else getattr(instance, name)
-    except Exception as exception :
-        LogHelper.warning(getAttributeOrMethod, f'Not possible to get "{name}" from "{getName(instance.__class__, typeName=CLASS_TYPE_NAME) if ObjectHelper.isNotNone(instance) else instance}" instance', exception=exception)
+    if ObjectHelper.isNotNone(instance) and ObjectHelper.isNotNone(name) :
+        try :
+            attributeOrMethodInstance = None if not hasattr(instance, name) else getattr(instance, name)
+        except Exception as exception :
+            if not muteLogs :
+                LogHelper.warning(getAttributeOrMethod, f'Not possible to get "{name}" from "{getClassName(instance, typeName=c.TYPE_CLASS, muteLogs=muteLogs) if ObjectHelper.isNotNone(instance) else instance}" instance', exception=exception)
     return attributeOrMethodInstance
+
+def setAttributeOrMethod(instance, name, attributeOrMethodInstance, muteLogs=False) :
+    if ObjectHelper.isNotNone(instance) and ObjectHelper.isNotNone(name) :
+        try :
+            setattr(instance, name, attributeOrMethodInstance)
+        except Exception as exception :
+            if not muteLogs :
+                LogHelper.warning(setAttributeOrMethod, f'Not possible to set "{name}:{attributeOrMethodInstance}" to "{getClassName(instance, typeName=c.TYPE_CLASS, muteLogs=muteLogs) if ObjectHelper.isNotNone(instance) else instance}" instance', exception=exception)
 
 def getAttributeAndMethodNameList(instanceClass) :
     objectNullArgsInstance = instanciateItWithNoArgsConstructor(instanceClass)
@@ -131,27 +139,72 @@ def getAttributeDataDictionary(instance) :
             instanceDataDictionary[name] = getattr(instance, name)
     return instanceDataDictionary
 
-def setAttributeOrMethod(instance, attributeOrMethodName, attributeOrMethodInstance) :
-    setattr(instance, attributeOrMethodName, attributeOrMethodInstance)
-
 def overrideSignatures(toOverride, original) :
     try :
         toOverride.__name__ = original.__name__
-        toOverride.__module__ = original.__module__
         toOverride.__qualname__ = original.__qualname__
+        toOverride.__module__ = original.__module__
     except Exception as exception :
-        LogHelper.error(overrideSignatures,f'''failed to override signatures of {toOverride} by signatures of {original} method''',exception)
+        LogHelper.error(overrideSignatures, f'''Not possible to override signatures of {toOverride} by signatures of {original} method''', exception)
+        raise exception
 
-def getName(thing, typeName=None) :
+def getClass(thing, typeClass=None, muteLogs=False) :
+    thingClass = None
+    try :
+        if ObjectHelper.isEmpty(thing) :
+            thingClass = typeClass
+        else :
+            thingClass = thing.__class__
+    except Exception as exception :
+        thingClass = type(None)
+        if not muteLogs :
+            LogHelper.warning(None, f'Not possible to get class of {thing}. Returning {thingClass} insted', exception=exception)
+    return thingClass
+
+def getName(thing, typeName=None, muteLogs=False) :
     name = None
     try :
-        name = thing.__name__
-    except :
-        if ObjectHelper.isNone(typeName) or StringHelper.isBlank(typeName) :
-            name = f'({NAME_NOT_PRESENT})'
+        if ObjectHelper.isEmpty(thing) :
+            name = getUndefindeName(typeName)
         else :
-            name = f'({typeName} {NAME_NOT_PRESENT})'
+            name = thing.__name__
+    except Exception as exception :
+        name = getUndefindeName(typeName)
+        if not muteLogs :
+            LogHelper.warning(None, f'Not possible to get name of {thing}. Returning {name} insted', exception=exception)
     return name
+
+def getClassName(thing, typeClass=None, muteLogs=False) :
+    name = None
+    try :
+        if ObjectHelper.isEmpty(thing) :
+            name = getUndefindeName(typeClass)
+        else :
+            name = getName(getClass(thing, muteLogs=muteLogs), muteLogs=muteLogs)
+    except Exception as exception :
+        name = getUndefindeName(typeClass)
+        if not muteLogs :
+            LogHelper.warning(None, f'Not possible to get class name of {thing}. Returning {name} insted', exception=exception)
+    return name
+
+def getModuleName(thing, typeModule=None, muteLogs=False) :
+    name = None
+    try :
+        if ObjectHelper.isEmpty(thing) :
+            name = getUndefindeName(typeModule)
+        else :
+            name = thing.__module__.split(c.DOT)[-1]
+    except Exception as exception :
+        name = getUndefindeName(typeModule)
+        if not muteLogs :
+            LogHelper.warning(None, f'Not possible to get module name of {thing}. Returning {name} insted', exception=exception)
+    return name
+
+def getUndefindeName(typeThing) :
+    if ObjectHelper.isEmpty(typeThing) :
+        return f'({UNDEFINED})'
+    else :
+        return f'({typeThing} {UNDEFINED})'
 
 def printDetails(toDetail):
     print(f'{2 * c.TAB}printDetails({toDetail}):')

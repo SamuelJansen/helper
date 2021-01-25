@@ -1,5 +1,10 @@
 from python_helper import log, SettingHelper, StringHelper, EnvironmentVariable, EnvironmentHelper, ObjectHelper, Test
 
+class MyClass :
+    def myMethod(self):
+        self.me = 1
+def myFunction(a):
+    return str(a) + 'b'
 OPTIONAL_EXCEPTION_LOG_TYPES = [log.log, log.debug, log.warning, log.test]
 DICTIONARY_INSTANCE = {
     'my_none_value' : None,
@@ -265,7 +270,25 @@ def mustLogPretyPythonWithoutColors() :
 })
 def mustLogPretyPythonWithColors() :
     # Arrange
-    dictionaryInstance = {**{}, **DICTIONARY_INSTANCE}
+    # log.log(mustLogPretyPythonWithColors, f'type({MyClass}): {type(MyClass)}')
+    # log.log(mustLogPretyPythonWithColors, f'type({MyClass}).__name__: {type(MyClass).__name__}')
+    # log.log(mustLogPretyPythonWithColors, f'type({MyClass().myMethod}): {type(MyClass().myMethod)}')
+    # log.log(mustLogPretyPythonWithColors, f'type({MyClass().myMethod}).__name__: {type(MyClass().myMethod).__name__}')
+    # log.log(mustLogPretyPythonWithColors, f'type({myFunction}): {type(myFunction)}')
+    # log.log(mustLogPretyPythonWithColors, f'type({myFunction}).__name__: {type(myFunction).__name__}')
+    # log.log(mustLogPretyPythonWithColors, f'type({log}): {type(log)}')
+    # log.log(mustLogPretyPythonWithColors, f'type({log}).__name__: {type(log).__name__}')
+    dictionaryInstance = {
+        **{
+            'class' : MyClass,
+            'method' : MyClass().myMethod,
+            'value' : MyClass().myMethod(),
+            'function' : myFunction,
+            'otherValue' : myFunction(1.1),
+            'module' : log
+        },
+        **DICTIONARY_INSTANCE
+    }
     exception = None
 
     # Act
@@ -292,7 +315,25 @@ def mustLogPretyPythonWithColors() :
 })
 def mustLogPretyJsonWithColors() :
     # Arrange
-    dictionaryInstance = {**{}, **DICTIONARY_INSTANCE}
+    # log.log(mustLogPretyPythonWithColors, f'type({MyClass}): {type(MyClass)}')
+    # log.log(mustLogPretyPythonWithColors, f'type({MyClass}).__name__: {type(MyClass).__name__}')
+    # log.log(mustLogPretyPythonWithColors, f'type({MyClass().myMethod}): {type(MyClass().myMethod)}')
+    # log.log(mustLogPretyPythonWithColors, f'type({MyClass().myMethod}).__name__: {type(MyClass().myMethod).__name__}')
+    # log.log(mustLogPretyPythonWithColors, f'type({myFunction}): {type(myFunction)}')
+    # log.log(mustLogPretyPythonWithColors, f'type({myFunction}).__name__: {type(myFunction).__name__}')
+    # log.log(mustLogPretyPythonWithColors, f'type({log}): {type(log)}')
+    # log.log(mustLogPretyPythonWithColors, f'type({log}).__name__: {type(log).__name__}')
+    dictionaryInstance = {
+        **{
+            'class' : MyClass,
+            'method' : MyClass().myMethod,
+            'value' : MyClass().myMethod(),
+            'function' : myFunction,
+            'otherValue' : myFunction(1.1),
+            'module' : log
+        },
+        **DICTIONARY_INSTANCE
+    }
     exception = None
 
     # Act

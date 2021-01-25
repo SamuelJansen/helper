@@ -76,7 +76,7 @@ def isEmpty(thing) :
     return StringHelper.isBlank(thing) if isinstance(thing, str) else isNone(thing) or isEmptyCollection(thing)
 
 def isNotEmpty(thing) :
-    return StringHelper.isNotBlank(thing) if isinstance(thing, str) else isNotNone(thing) or isNotEmptyCollection(thing)
+    return not isEmpty(thing)
 
 def isEmptyCollection(thing) :
     return isCollection(thing) and 0 == len(thing)

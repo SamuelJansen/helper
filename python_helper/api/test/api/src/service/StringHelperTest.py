@@ -1,4 +1,5 @@
-from python_helper import StringHelper, SettingHelper, Constant, log, Test
+import time
+from python_helper import ObjectHelper, StringHelper, SettingHelper, Constant, log, Test
 
 # LOG_HELPER_SETTINGS = {
 #     log.LOG : True,
@@ -24,6 +25,8 @@ LOG_HELPER_SETTINGS = {
     log.ERROR : False,
     log.TEST : False
 }
+
+LOG_RESULT = True
 
 DICTIONARY_INSTANCE = {
     11: 'yolo',
@@ -77,7 +80,7 @@ DICTIONARY_INSTANCE = {
     ]
 }
 
-@Test(environmentVariables={**LOG_HELPER_SETTINGS})
+@Test(logResult=LOG_RESULT, environmentVariables={**LOG_HELPER_SETTINGS})
 def mustFilterSetting() :
     # Arrange
     expectedSingleQuoteSettingCase = 'b'
@@ -113,7 +116,7 @@ def mustFilterSetting() :
     assert someCommentsInBetween == filteredStringSomeCommentsInBetween
     assert Constant.NOTHING == filteredStringOnlyComment
 
-@Test(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(logResult=LOG_RESULT, environmentVariables={**{}, **LOG_HELPER_SETTINGS})
 def prettyJson_withSucces() :
     # Arrange
     simpleDictionaryInstance = {**{}, **DICTIONARY_INSTANCE}
@@ -176,7 +179,7 @@ def prettyJson_withSucces() :
     toAssert = StringHelper.removeColors(toAssert)
     assert expected == toAssert
 
-@Test(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(logResult=LOG_RESULT, environmentVariables={**{}, **LOG_HELPER_SETTINGS})
 def prettyPython_withSucces() :
     # Arrange
     simpleDictionaryInstance = {**{}, **DICTIONARY_INSTANCE}
@@ -240,7 +243,7 @@ def prettyPython_withSucces() :
     toAssert = StringHelper.removeColors(toAssert)
     assert expected == toAssert
 
-@Test(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(logResult=LOG_RESULT, environmentVariables={**{}, **LOG_HELPER_SETTINGS})
 def filterJson_withSucces() :
     # Arrange
     simpleDictionaryInstance = {'key':'value','anotherKey':{'key':'value'},'aThirdKey':['a','b',{'c':'d'},[None, True, 'True', 3.3, (2,'2')],{'key':('e','f',{'g':{'h':['i','j']}})},{'someKey':'someValue','someOtherKey':{'q','r',1,2,3,'s'}}]}
@@ -258,7 +261,7 @@ def filterJson_withSucces() :
     assert expectedWithSpace == toAssertWithSpace
     assert expectedWithoutSpace == toAssertWithoutSpace
 
-@Test(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(logResult=LOG_RESULT, environmentVariables={**{}, **LOG_HELPER_SETTINGS})
 def isLongString_withSuccess() :
     # Arrange
     tripleSinleQuotes = f'{Constant.TRIPLE_SINGLE_QUOTE}'
@@ -290,3 +293,25 @@ def isLongString_withSuccess() :
     assert not toAssertDoubleTripleSinleAndDoubleQuotes
     assert not toAssertActualLongStringWithTripleSinleQuotes
     assert not toAssertActualLongStringWithTripleDoubleQuotes
+
+@Test(logResult=LOG_RESULT, environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+def prettifyPerformance() :
+    # arrange
+    TEST_SIZE = 100
+    dictionaryToPrettify = {}
+    for index in range(TEST_SIZE) :
+        dictionaryToPrettify[f'key_{index}'] = DICTIONARY_INSTANCE
+
+    # act
+    performanceTime = 0
+    performanceTimeInit = time.time()
+    toAssertPython = StringHelper.prettyPython(dictionaryToPrettify, tabCount=1, withColors=True)
+    toAssertJson = StringHelper.prettyJson(dictionaryToPrettify, tabCount=1, withColors=True)
+    performanceTime += time.time() - performanceTimeInit
+    ###- returning f'{strInstance}{strInstance}' : 365.3402144908905 seconds
+    ###- returning ''.join([strInstance, strInstance]) : 46.94538736343384 seconds
+
+    # assert
+    assert ObjectHelper.isNotNone(toAssertPython) and StringHelper.isNotBlank(toAssertPython)
+    assert ObjectHelper.isNotNone(toAssertJson) and StringHelper.isNotBlank(toAssertJson)
+    log.test(prettifyPerformance, f'performance time on a {len(str(dictionaryToPrettify))} dictionary size: {performanceTime} seconds')

@@ -2,6 +2,10 @@ from python_helper.api.src.domain import Constant as c
 from python_helper.api.src.service import ObjectHelper
 from python_helper.api.src.helper import StringHelperHelper
 
+PAST = 'past'
+PRESENT = 'present'
+FUTURE = 'future'
+
 def isBlank(thing) :
     return isinstance(thing, str) and c.NOTHING == thing
 
@@ -23,20 +27,20 @@ def removeCharactere(charactere,string) :
         return filteredString.replace(charactere,c.NOTHING)
     return string
 
-def getFilteredString(string,globals) :
-    return filterString(string)
+def join(stringList, character=c.NOTHING):
+    return character.join(stringList)
 
 def prettyPython(
         outterValue,
-        quote=c.SINGLE_QUOTE,
-        tabCount=0,
-        nullValue=c.NONE,
-        trueValue=c.TRUE,
-        falseValue=c.FALSE,
-        withColors=False
+        quote = c.SINGLE_QUOTE,
+        tabCount = 0,
+        nullValue = c.NONE,
+        trueValue = c.TRUE,
+        falseValue = c.FALSE,
+        withColors = False,
+        joinAtReturn = True
     ) :
     '''It always sort sets'''
-    strReturn = c.NOTHING
     if ObjectHelper.isCollection(outterValue) :
         if isinstance(outterValue, list) :
             collectionType = c.TYPE_LIST
@@ -47,7 +51,7 @@ def prettyPython(
         elif isinstance(outterValue, dict) :
             collectionType = c.TYPE_DICT
         else :
-            raise Exception(f'Unexpected collection in python_helper.StringHelper.prettyPython(): {outterValue}')
+            raise Exception(f'Unexpected collection: {outterValue}')
         return StringHelperHelper.prettyCollection(
             StringHelperHelper.getValueCollection(outterValue),
             collectionType,
@@ -57,7 +61,8 @@ def prettyPython(
             nullValue,
             trueValue,
             falseValue,
-            withColors=withColors
+            withColors = withColors,
+            joinAtReturn = joinAtReturn
         )
     else :
         return StringHelperHelper.prettyInstance(
@@ -68,17 +73,19 @@ def prettyPython(
             nullValue,
             trueValue,
             falseValue,
-            withColors=withColors
+            withColors = withColors,
+            joinAtReturn = joinAtReturn
         )
 
 def prettyJson(
         outterValue,
-        quote=c.DOUBLE_QUOTE,
-        tabCount=0,
-        nullValue=c.NULL_VALUE,
-        trueValue=c.TRUE_VALUE,
-        falseValue=c.FALSE_VALUE,
-        withColors=False
+        quote = c.DOUBLE_QUOTE,
+        tabCount = 0,
+        nullValue = c.NULL_VALUE,
+        trueValue = c.TRUE_VALUE,
+        falseValue = c.FALSE_VALUE,
+        withColors = False,
+        joinAtReturn = True
     ) :
     '''It always sort sets'''
     if ObjectHelper.isCollection(outterValue) :
@@ -87,7 +94,7 @@ def prettyJson(
         elif isinstance(outterValue, dict) :
             collectionType = c.TYPE_DICT
         else :
-            raise Exception(f'Unexpected collection in python_helper.StringHelper.prettyJson(): {outterValue}')
+            raise Exception(f'Unexpected collection: {outterValue}')
         return StringHelperHelper.prettyCollection(
             StringHelperHelper.getValueCollection(outterValue),
             collectionType,
@@ -97,7 +104,8 @@ def prettyJson(
             nullValue,
             trueValue,
             falseValue,
-            withColors=withColors
+            withColors = withColors,
+            joinAtReturn = joinAtReturn
         )
     else :
         return StringHelperHelper.prettyInstance(
@@ -108,7 +116,8 @@ def prettyJson(
             nullValue,
             trueValue,
             falseValue,
-            withColors=withColors
+            withColors = withColors,
+            joinAtReturn = joinAtReturn
         )
 
 def filterString(string) :
@@ -159,3 +168,26 @@ def removeColors(thing) :
             if color in thing :
                 thing = thing.replace(color,c.NOTHING)
     return thing if isinstance(thing, str) else str(string)
+
+def getS(contition, es=False) :
+    return c.NOTHING if not contition else 'es' if es else 's'
+
+def getToBe(condition, singular=True, tense=PRESENT, negative=False) :
+    if condition :
+        if negative :
+            if PAST == tense :
+                return f'wasn{c.SINGLE_QUOTE}t' if singular else f'weren{c.SINGLE_QUOTE}t'
+            elif PRESENT == tense :
+                return f'isn{c.SINGLE_QUOTE}t' if singular else f'aren{c.SINGLE_QUOTE}t'
+            elif FUTURE == tense :
+                return f'won{c.SINGLE_QUOTE}t'
+        else :
+            if PAST == tense :
+                return 'was' if singular else 'were'
+            elif PRESENT == tense :
+                return 'is' if singular else 'are'
+            elif FUTURE == tense :
+                return 'will'
+        return 'to be'
+    else :
+        return c.NOTHING

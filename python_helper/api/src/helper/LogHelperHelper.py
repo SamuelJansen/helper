@@ -78,32 +78,36 @@ def softLog(origin, message, level, exception=None, newLine=False) :
         hardLog(origin,message,exception,level)
     elif c.TRUE == getStatus(level) :
         firstLayerColor, secondLayerColor, tirdLayerColor, resetColor = getColors(level)
-        print(f'{firstLayerColor}{LEVEL_DICTIONARY[level][LOG_TEXT]}{getOriginPortion(origin, tirdLayerColor, resetColor)}{secondLayerColor}{message}{resetColor}{getNewLine(newLine, exception=exception)}')
+        print(StringHelper.join([firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], *getOriginPortion(origin, tirdLayerColor, resetColor), secondLayerColor, message, resetColor, getNewLine(newLine, exception=exception)]))
     elif not c.FALSE == getStatus(level) :
         levelStatusError(method, level)
 
 def hardLog(origin, message, exception, level, newLine=False) :
     if c.TRUE == getStatus(level) :
         firstLayerColor, secondLayerColor, tirdLayerColor, resetColor = getColors(level)
-        print(f'{firstLayerColor}{LEVEL_DICTIONARY[level][LOG_TEXT]}{getOriginPortion(origin, tirdLayerColor, resetColor)}{secondLayerColor}{message}{getErrorPortion(exception, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor)}{resetColor}{getNewLine(newLine, exception=exception)}')
+        print(StringHelper.join([firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], *getOriginPortion(origin, tirdLayerColor, resetColor), secondLayerColor, message, *getErrorPortion(exception, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor), resetColor, getNewLine(newLine, exception=exception)]))
     elif not c.FALSE == getStatus(level) :
         levelStatusError(method, level)
 
-def printMessageLog(level, message, condition=False, newLine=True, exception=None) :
-    firstLayerColor, secondLayerColor, tirdLayerColor, resetColor = getColors(level)
+def printMessageLog(level, message, condition=False, newLine=True, margin=True, exception=None) :
     if condition :
-        print(f'{c.TAB}{firstLayerColor}{LEVEL_DICTIONARY[level][LOG_TEXT]}{secondLayerColor}{message}{getErrorPortion(exception, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor)}{resetColor}{getNewLine(newLine, exception=exception)}')
+        firstLayerColor, secondLayerColor, tirdLayerColor, resetColor = getColors(level)
+        print(StringHelper.join([c.TAB if margin else c.NOTHING, firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], secondLayerColor, message, *getErrorPortion(exception, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor), resetColor, getNewLine(newLine, exception=exception)]))
 
 def getOriginPortion(origin, tirdLayerColor, resetColor) :
     if not origin or origin == c.NOTHING :
-        return c.NOTHING
+        return [c.NOTHING]
     else :
-        return f'{tirdLayerColor}{ReflectionHelper.getName(origin)}{c.COLON_SPACE}{resetColor}'
+        moduleName = ReflectionHelper.getModuleName(origin)
+        className = ReflectionHelper.getClassName(origin)
+        moduleProtion = [] if moduleName in c.NATIVE_TYPES or (c.OPEN_TUPLE in moduleName and c.CLOSE_TUPLE in moduleName) else [moduleName, c.DOT]
+        classPortion = [] if className in c.NATIVE_TYPES or (c.OPEN_TUPLE in className and c.CLOSE_TUPLE in className) else [className, c.DOT]
+        return [tirdLayerColor, *moduleProtion, *classPortion, ReflectionHelper.getName(origin), c.COLON_SPACE, resetColor]
 
 def getErrorPortion(exception, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor) :
     if ObjectHelper.isEmpty(exception) :
-        return c.NOTHING
-    return f'{firstLayerColor}{c.DOT_SPACE_CAUSE}{secondLayerColor}{LogHelper.getExceptionMessage(exception)}{c.NEW_LINE}{tirdLayerColor}{LogHelper.getTracebackMessage()}{resetColor}'
+        return [c.NOTHING]
+    return [firstLayerColor, c.DOT_SPACE_CAUSE, secondLayerColor, LogHelper.getExceptionMessage(exception), c.NEW_LINE, tirdLayerColor, LogHelper.getTracebackMessage(), resetColor]
 
 def levelStatusError(method, level) :
     LogHelper.failure(method, f'"{level}" log level status is not properly defined: {getStatus(level)}', None)

@@ -104,8 +104,8 @@ def overrideSignatures_withSuccess() :
 
     # Act
     myObject = ReflectionHelper.instanciateItWithNoArgsConstructor(MyObject)
-    setattr(myObject, myOverridedFunction.__name__, myOverridedFunction)
-    setattr(myObject, myNotOverridedFunction.__name__, myNotOverridedFunction)
+    ReflectionHelper.setAttributeOrMethod(myObject, myOverridedFunction.__name__, myOverridedFunction)
+    ReflectionHelper.setAttributeOrMethod(myObject, myNotOverridedFunction.__name__, myNotOverridedFunction)
     try :
         myObject.myNotOverridedFunction('any arg')
     except Exception as e :
