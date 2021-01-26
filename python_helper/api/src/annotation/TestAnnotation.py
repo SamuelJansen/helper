@@ -85,7 +85,7 @@ def handle(resourceInstanceMethod, actionClass, args, kwargs, returns, moment, r
         if returnsValueIsPresent(returns) :
             returns[returnKey] = returnCall
     except Exception as exception :
-        LogHelper.printError(f'"{ReflectionHelper.getName(resourceInstanceMethod)}" test went wrong while handling actions {moment} the test. Check TEST logs for more information', condition=True, exception=exception)
+        LogHelper.printError(f'{getMethodModuleNameDotName(resourceInstanceMethod)} test went wrong while handling actions {moment} the test. *args: {args}, **kwargs: {kwargs}. Enable test logs for more information', condition=True, exception=exception)
         return exception
 
 def getArgsLogMessage(args) :
@@ -110,5 +110,8 @@ def actionIsPresent(actionClass) :
 def returnsValueIsPresent(returns) :
     isPresent = ObjectHelper.isDictionary(returns)
     if not isPresent :
-        LogHelper.test(returnsValueIsPresent, f'the key "returns" from "{ReflectionHelper.getName(Test)}" annotation call was not defined')
+        LogHelper.test(returnsValueIsPresent, f'the key "returns" from {getMethodModuleNameDotName(Test)} annotation call was not defined')
     return isPresent
+
+def getMethodModuleNameDotName(methodInstance) :
+    return f'{ReflectionHelper.getModuleName(Test)}{c.DOT}{ReflectionHelper.getName(Test)}'

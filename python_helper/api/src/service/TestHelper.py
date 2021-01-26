@@ -11,10 +11,7 @@ TEST_PACKAGE = TEST_SUFIX_NAME.lower()
 
 def updateTestNames(testNames, queryResult) :
     if not c.NOTHING == queryResult :
-        # print(f'type(queryResult): {type(queryRes ult)}')
-        # print(f'queryResult: ->{queryResult}<-')
         for key, value in queryResult.items() :
-            # print(f'value: {value}')
             if c.NOTHING == value and key.endswith(TEST_DOT_PY) :
                 testNames.append(key[:-len(DOT_PY)])
             else :
@@ -41,7 +38,7 @@ def getModuleTest(logResult, globalsInstance) :
         LogHelper.DEBUG : globalsInstance.debugStatus,
         LogHelper.WARNING : globalsInstance.warningStatus,
         LogHelper.FAILURE : globalsInstance.failureStatus,
-        LogHelper.WRAPPER : False, # globalsInstance.wrapperStatus,
+        LogHelper.WRAPPER : False, #globalsInstance.wrapperStatus,
         LogHelper.ERROR : globalsInstance.errorStatus,
         LogHelper.TEST : globalsInstance.testStatus
     })
@@ -162,7 +159,7 @@ def run(
         , settingStatus = settingStatus
         , debugStatus = debugStatus
         , warningStatus = warningStatus
-        # , wrapperStatus = wrapperStatus,
+        # , wrapperStatus = wrapperStatus
         , testStatus = testStatus
         , logStatus = logStatus
     )
