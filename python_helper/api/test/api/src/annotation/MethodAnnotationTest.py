@@ -121,7 +121,6 @@ def FunctionThrough_withSuccess() :
     try :
         myOtherResult = myOtherFunction(SOMETHING)
     except Exception as ext :
-        print(ext)
         exception = ext
 
     # Assert

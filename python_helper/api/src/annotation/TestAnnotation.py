@@ -53,12 +53,13 @@ def Test(
 def inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, tense) :
     if inspectGlobals :
         import globals
-        LogHelper.printDebug(f'''{globals.getGlobalsInstance()} globals instance {tense} run {ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)}''', condition=inspectGlobals, newLine=False, margin=False)
+        LogHelper.printDebug(f'''Inspection: {globals.getGlobalsInstance(muteLogs=inspectGlobals)} globals instance {tense} {ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)}''', condition=inspectGlobals, newLine=False, margin=False)
 
 def handleBefore(resourceInstanceMethod, actionClass, args, kwargs, returns, inspectGlobals) :
-    inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'will')
+    inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'will run')
     LogHelper.test(resourceInstanceMethod, 'Test started')
     actionHandlerException = handle(resourceInstanceMethod, actionClass, args, kwargs, returns, BEFORE_THE_TEST, RETURN_VALUE_FROM_CALL_BEFORE)
+    inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'running')
     if ObjectHelper.isNotNone(actionHandlerException) :
         raise actionHandlerException
 
@@ -67,9 +68,10 @@ def handleAfter(resourceInstanceMethod, actionClass, args, kwargs, returns, meth
         LogHelper.printSuccess(f'{ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)} test succeed', condition=logResult)
     else :
         LogHelper.printError(f'{ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)} test failed', condition=logResult, exception=methodReturnException)
+    inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'still running')
     actionHandlerException = handle(resourceInstanceMethod, actionClass, args, kwargs, returns, AFTER_THE_TEST, RETURN_VALUE_FROM_CALL_AFTER)
     LogHelper.test(resourceInstanceMethod, 'Test completed')
-    inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'did')
+    inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'did run')
     if ObjectHelper.isNotNone(methodReturnException) or ObjectHelper.isNotNone(actionHandlerException) :
         if ObjectHelper.isNotNone(methodReturnException) and ObjectHelper.isNotNone(actionHandlerException) :
             raise Exception(f'{LogHelper.getExceptionMessage(methodReturnException)}. Followed by: {LogHelper.getExceptionMessage(actionHandlerException)}')

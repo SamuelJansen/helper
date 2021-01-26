@@ -3,7 +3,7 @@ import os
 
 OS_SEPARATOR = os.path.sep
 
-version = '0.2.21'
+version = '0.2.22'
 name = 'python_helper'
 url = f'https://github.com/SamuelJansen/{name}/'
 
