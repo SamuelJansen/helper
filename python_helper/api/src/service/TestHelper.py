@@ -3,11 +3,42 @@ from python_helper.api.src.annotation.TestAnnotation import Test
 from python_helper.api.src.domain import Constant as c
 from python_helper.api.src.service import SettingHelper, LogHelper, ReflectionHelper, ObjectHelper, StringHelper
 import time
+import globals
 
-DOT_PY = f'{c.DOT}{"py"}'
+DOT_PY = f'{c.DOT}{globals.Globals.PYTHON_EXTENSION}'
 TEST_SUFIX_NAME = 'Test'
 TEST_DOT_PY = f'{TEST_SUFIX_NAME}{DOT_PY}'
 TEST_PACKAGE = TEST_SUFIX_NAME.lower()
+
+GLOBALS_INSTANCE_LIST = []
+RESULTS = {}
+TEST_KWARGS = {
+    'callBefore' : globals.runBeforeTest,
+    'argsOfCallBefore' : [GLOBALS_INSTANCE_LIST],
+    'callAfter' : globals.runAfterTest,
+    'argsOfCallAfter' : [GLOBALS_INSTANCE_LIST],
+    'returns' : RESULTS
+}
+
+def getTestEnvironmentVariables(globalsInstance) :
+    return {
+        LogHelper.LOG : globalsInstance.logStatus,
+        LogHelper.SUCCESS : globalsInstance.successStatus,
+        LogHelper.SETTING : globalsInstance.settingStatus,
+        LogHelper.DEBUG : globalsInstance.debugStatus,
+        LogHelper.WARNING : globalsInstance.warningStatus,
+        LogHelper.FAILURE : globalsInstance.failureStatus,
+        LogHelper.WRAPPER : globalsInstance.wrapperStatus,
+        LogHelper.ERROR : globalsInstance.errorStatus,
+        LogHelper.TEST : globalsInstance.testStatus
+    }
+
+def getGlobalsTestKwargs(globalsInstance) :
+    return {
+        'logResult' : False,
+        'environmentVariables' : getTestEnvironmentVariables(globalsInstance),
+        **TEST_KWARGS
+    }
 
 def updateTestNames(testNames, queryResult) :
     if not c.NOTHING == queryResult :
@@ -30,23 +61,33 @@ def getTestNames(testQueryTree) :
         updateTestNames(testNames, queryResult)
     return testNames
 
+def getUnitTest(globalsInstance) :
+    @Test(**getGlobalsTestKwargs(globalsInstance))
+    def unitTest(testName, data, testReturns, logResult) :
+        discountTimeEnd = time.time()
+        if logResult :
+            LogHelper.test(unitTest, f'Sinlge {testName}{c.DOT}{data[1]} started')
+        moduleTestStartTime = time.time()
+        testReturns[data[1]] = data[0]()
+        if logResult :
+            LogHelper.test(unitTest, f'Single {testName}{c.DOT}{data[1]} completed in {time.time() - moduleTestStartTime} seconds')
+        someDidRun = True
+        return testName, data, testReturns, someDidRun, logResult, discountTimeEnd
+    return unitTest
+
+def getUnitTestBatch(globalsInstance) :
+    @Test(**getGlobalsTestKwargs(globalsInstance))
+    def unitTestBatch(data) :
+        discountTimeEnd = time.time()
+        data[0]()
+        return discountTimeEnd
+    return unitTestBatch
+
 def getModuleTest(logResult, globalsInstance) :
-    @Test(logResult=False, environmentVariables={
-        LogHelper.LOG : globalsInstance.logStatus,
-        LogHelper.SUCCESS : globalsInstance.successStatus,
-        LogHelper.SETTING : globalsInstance.settingStatus,
-        LogHelper.DEBUG : globalsInstance.debugStatus,
-        LogHelper.WARNING : globalsInstance.warningStatus,
-        LogHelper.FAILURE : globalsInstance.failureStatus,
-        LogHelper.WRAPPER : False, #globalsInstance.wrapperStatus,
-        LogHelper.ERROR : globalsInstance.errorStatus,
-        LogHelper.TEST : globalsInstance.testStatus
-    })
     def tddModule(testName, testModule, dataList, times, runSpecificTests, testsToRun, allShouldRun, someShouldRun, logResult) :
         LogHelper.test(tddModule, f'{testName} started')
         testReturns = {}
         testTime = 0
-        moduleTestTime = 0
         for data in dataList :
             testMustRun = isTestToRun(testModule, data, runSpecificTests, testsToRun)
             LogHelper.prettyPython(tddModule, f'test attribute or method', data[0], logLevel=LogHelper.TEST)
@@ -55,16 +96,12 @@ def getModuleTest(logResult, globalsInstance) :
                 for index in range(times) :
                     testTimeStart = time.time()
                     if times - 1 == index :
-                        if logResult :
-                            LogHelper.test(tddModule, f'Sinlge {testName}{c.DOT}{data[1]} started')
-                        moduleTestStartTime = time.time()
-                        testReturns[data[1]] = data[0]()
-                        if logResult :
-                            LogHelper.test(tddModule, f'Single {testName}{c.DOT}{data[1]} completed in {moduleTestStartTime - time.time()} seconds')
-                        someDidRun = True
+                        runnableUnitTest = getUnitTest(globalsInstance)
+                        testName, data, testReturns, someDidRun, logResult, discountTimeEnd = runnableUnitTest(testName, data, testReturns, logResult)
                     else :
-                        data[0]()
-                    testTime += time.time() - testTimeStart
+                        runnableUnitTestBatch = getUnitTestBatch(globalsInstance)
+                        discountTimeEnd = runnableUnitTestBatch(data)
+                    testTime += time.time() - discountTimeEnd
             else :
                 allDidRun = False
         if not allShouldRun == allDidRun and someShouldRun == someDidRun :
@@ -78,11 +115,10 @@ def getModuleTest(logResult, globalsInstance) :
         return allDidRun, someDidRun, testTime, testReturns
     return tddModule
 
-def runModuleTests(testName, tddModule, times, runSpecificTests, testsToRun, logResult, globalsInstance) :
-    import globals
+def runModuleTests(testName, runnableTddModule, times, runSpecificTests, testsToRun, logResult, globalsInstance) :
     testModule = globals.importModule(testName)
     dataList = ReflectionHelper.getAttributeDataList(testModule)
-    LogHelper.prettyPython(tddModule, f'{ReflectionHelper.getName(testModule)} tests loaded', dataList, logLevel=LogHelper.TEST)
+    LogHelper.prettyPython(runnableTddModule, f'{ReflectionHelper.getName(testModule)} tests loaded', dataList, logLevel=LogHelper.TEST)
     allShouldRun, someShouldRun, allDidRun, someDidRun = getRunStatus(testModule, dataList, runSpecificTests, testsToRun)
     testReturns = {}
     testTime = 0
@@ -92,7 +128,7 @@ def runModuleTests(testName, tddModule, times, runSpecificTests, testsToRun, log
         methodReturnException = None
         LogHelper.printTest(f'{defaultMessage} started', condition=logResult)
         try :
-            allDidRun, someDidRun, testTime, testReturns = tddModule(testName, testModule, dataList, times, runSpecificTests, testsToRun, allShouldRun, someShouldRun, logResult)
+            allDidRun, someDidRun, testTime, testReturns = runnableTddModule(testName, testModule, dataList, times, runSpecificTests, testsToRun, allShouldRun, someShouldRun, logResult)
             LogHelper.printTest(f'{defaultMessage} succeed. {getTestRuntimeInfo(times, testTime, time.time() - totalTestTimeStart)}', condition=logResult)
         except Exception as exception :
             methodReturnException = exception
@@ -138,6 +174,7 @@ def getSomeDidOrDidntAsString(allDidRun, someDidRun) :
 def getSomeDidOrDidntAsString(allDidRun, someDidRun) :
     return 'did' if allDidRun or someDidRun else f'didn{c.SINGLE_QUOTE}t'
 
+# @Test(**getGlobalsTestKwargs(globalsInstance))
 def run(
     fileName,
     runOnly = None,
@@ -152,14 +189,13 @@ def run(
     logStatus = False,
     logResult = True
 ) :
-    import globals
     globalsInstance = globals.newGlobalsInstance(fileName
         , successStatus = successStatus
         , errorStatus = errorStatus
         , settingStatus = settingStatus
         , debugStatus = debugStatus
         , warningStatus = warningStatus
-        # , wrapperStatus = wrapperStatus
+        , wrapperStatus = wrapperStatus
         , testStatus = testStatus
         , logStatus = logStatus
     )
@@ -174,8 +210,8 @@ def run(
     totalTestTimeStart = time.time()
     testTime = 0
     for testName in testNames :
-        tddModule = getModuleTest(logResult, globalsInstance)
-        allDidRun, didRun, moduleTestTime, testReturns = runModuleTests(testName, tddModule, times, runSpecificTests, testsToRun, logResult, globalsInstance)
+        runnableTddModule = getModuleTest(logResult, globalsInstance)
+        allDidRun, didRun, moduleTestTime, testReturns = runModuleTests(testName, runnableTddModule, times, runSpecificTests, testsToRun, logResult, globalsInstance)
         returns[testName] = testReturns
         testTime += moduleTestTime
     totalTestTime = time.time() - totalTestTimeStart
