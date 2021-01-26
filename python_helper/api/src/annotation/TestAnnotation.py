@@ -28,6 +28,7 @@ def Test(
     argsOfCallAfter = TEST_VALUE_NOT_SET,
     kwargsOfCallAfter = TEST_VALUE_NOT_SET,
     returns = None,
+    inspectGlobals = False,
     logResult = True,
     **outerKwargs
 ) :
@@ -36,33 +37,39 @@ def Test(
         def innerResourceInstanceMethod(*innerArgs,**innerKwargs) :
             methodReturnException = None
             methodReturn = TEST_VALUE_NOT_SET
-            handleBefore(resourceInstanceMethod, callBefore, argsOfCallBefore, kwargsOfCallBefore, returns)
+            handleBefore(resourceInstanceMethod, callBefore, argsOfCallBefore, kwargsOfCallBefore, returns, inspectGlobals)
             originalEnvironmentVariables, originalActiveEnvironment = AnnotationHelper.getOriginalEnvironmentVariables(environmentVariables)
             try :
                 methodReturn = resourceInstanceMethod(*innerArgs,**innerKwargs)
             except Exception as exception :
                 methodReturnException = exception
             AnnotationHelper.resetEnvironmentVariables(environmentVariables, originalEnvironmentVariables, originalActiveEnvironment)
-            return handleAfter(resourceInstanceMethod, callAfter, argsOfCallAfter, kwargsOfCallAfter, returns, methodReturn, methodReturnException=methodReturnException, logResult=logResult)
+            return handleAfter(resourceInstanceMethod, callAfter, argsOfCallAfter, kwargsOfCallAfter, returns, methodReturn, inspectGlobals, methodReturnException=methodReturnException, logResult=logResult)
         ReflectionHelper.overrideSignatures(innerResourceInstanceMethod, resourceInstanceMethod)
         ReflectionHelper.setAttributeOrMethod(innerResourceInstanceMethod, IS_TEST_METHOD, True)
         return innerResourceInstanceMethod
     return innerMethodWrapper
 
-def handleBefore(resourceInstanceMethod, actionClass, args, kwargs, returns) :
+def inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, tense) :
+    if inspectGlobals :
+        import globals
+        LogHelper.printDebug(f'''{globals.getGlobalsInstance()} globals instance {tense} run {ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)}''', condition=inspectGlobals, newLine=False, margin=False)
+
+def handleBefore(resourceInstanceMethod, actionClass, args, kwargs, returns, inspectGlobals) :
+    inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'will')
     LogHelper.test(resourceInstanceMethod, 'Test started')
     actionHandlerException = handle(resourceInstanceMethod, actionClass, args, kwargs, returns, BEFORE_THE_TEST, RETURN_VALUE_FROM_CALL_BEFORE)
     if ObjectHelper.isNotNone(actionHandlerException) :
         raise actionHandlerException
 
-def handleAfter(resourceInstanceMethod, actionClass, args, kwargs, returns, methodReturn, methodReturnException=None, logResult=True) :
-    testName = f'{ReflectionHelper.getModuleName(resourceInstanceMethod)}{c.DOT}{ReflectionHelper.getName(resourceInstanceMethod)}'
+def handleAfter(resourceInstanceMethod, actionClass, args, kwargs, returns, methodReturn, inspectGlobals, methodReturnException=None, logResult=True) :
     if ObjectHelper.isNone(methodReturnException) :
-        LogHelper.printSuccess(f'{testName} test succeed', condition=logResult)
+        LogHelper.printSuccess(f'{ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)} test succeed', condition=logResult)
     else :
-        LogHelper.printError(f'{testName} test failed', condition=logResult, exception=methodReturnException)
+        LogHelper.printError(f'{ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)} test failed', condition=logResult, exception=methodReturnException)
     actionHandlerException = handle(resourceInstanceMethod, actionClass, args, kwargs, returns, AFTER_THE_TEST, RETURN_VALUE_FROM_CALL_AFTER)
     LogHelper.test(resourceInstanceMethod, 'Test completed')
+    inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'did')
     if ObjectHelper.isNotNone(methodReturnException) or ObjectHelper.isNotNone(actionHandlerException) :
         if ObjectHelper.isNotNone(methodReturnException) and ObjectHelper.isNotNone(actionHandlerException) :
             raise Exception(f'{LogHelper.getExceptionMessage(methodReturnException)}. Followed by: {LogHelper.getExceptionMessage(actionHandlerException)}')
@@ -85,7 +92,7 @@ def handle(resourceInstanceMethod, actionClass, args, kwargs, returns, moment, r
         if returnsValueIsPresent(returns) :
             returns[returnKey] = returnCall
     except Exception as exception :
-        LogHelper.printError(f'{getMethodModuleNameDotName(resourceInstanceMethod)} test went wrong while handling actions {moment} the test. *args: {args}, **kwargs: {kwargs}. Enable test logs for more information', condition=True, exception=exception)
+        LogHelper.printError(f'{ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)} test went wrong while handling actions {moment} the test. *args: {args}, **kwargs: {kwargs}. Enable test logs for more information', condition=True, exception=exception)
         return exception
 
 def getArgsLogMessage(args) :
@@ -110,8 +117,5 @@ def actionIsPresent(actionClass) :
 def returnsValueIsPresent(returns) :
     isPresent = ObjectHelper.isDictionary(returns)
     if not isPresent :
-        LogHelper.test(returnsValueIsPresent, f'the key "returns" from {getMethodModuleNameDotName(Test)} annotation call was not defined')
+        LogHelper.test(returnsValueIsPresent, f'the key "returns" from {ReflectionHelper.getMethodModuleNameDotName(Test)} annotation call was not defined')
     return isPresent
-
-def getMethodModuleNameDotName(methodInstance) :
-    return f'{ReflectionHelper.getModuleName(Test)}{c.DOT}{ReflectionHelper.getName(Test)}'

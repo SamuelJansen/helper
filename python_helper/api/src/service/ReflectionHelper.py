@@ -200,6 +200,9 @@ def getModuleName(thing, typeModule=None, muteLogs=False) :
             LogHelper.warning(None, f'Not possible to get module name of {thing}. Returning {name} insted', exception=exception)
     return name
 
+def getMethodModuleNameDotName(instance) :
+    return f'{getModuleName(instance)}{c.DOT}{getName(instance)}'
+
 def getUndefindeName(typeThing) :
     if ObjectHelper.isEmpty(typeThing) :
         return f'({UNDEFINED})'
