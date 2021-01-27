@@ -54,6 +54,25 @@ def getValueAsString(value) :
     ])
     return f'{value}{c.NOTHING}'
 
+def replaceEnvironmentVariables(environmentVariables) :
+    global ACTIVE_ENVIRONMENT_VALUE
+    originalActiveEnvironment = None if ObjectHelper.isNone(ACTIVE_ENVIRONMENT_VALUE) else f'{c.NOTHING}{ACTIVE_ENVIRONMENT_VALUE}'
+    if ObjectHelper.isNotEmpty(originalActiveEnvironment) :
+        ACTIVE_ENVIRONMENT_VALUE = None
+    originalEnvironmentVariables = {}
+    if ObjectHelper.isDictionary(environmentVariables) :
+        for key,value in environmentVariables.items() :
+            originalEnvironmentVariables[key] = EnvironmentHelper.switch(key, value)
+    getActiveEnvironment()
+    LogHelper.loadSettings()
+    return originalEnvironmentVariables, originalActiveEnvironment
+
+def recoverEnvironmentVariables(environmentVariables, originalEnvironmentVariables, originalActiveEnvironment) :
+    global ACTIVE_ENVIRONMENT_VALUE
+    EnvironmentHelper.reset(environmentVariables, originalEnvironmentVariables)
+    LogHelper.loadSettings()
+    ACTIVE_ENVIRONMENT_VALUE = originalActiveEnvironment
+
 def getSettingTree(settingFilePath, settingTree=None, keepDepthInLongString=False, depthStep=c.TAB_UNITS, fallbackSettingTree=None, encoding=c.ENCODING) :
     with open(settingFilePath,c.READ,encoding=encoding) as settingsFile :
         allSettingLines = settingsFile.readlines()

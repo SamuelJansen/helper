@@ -1,17 +1,16 @@
-from python_helper.api.src.helper import AnnotationHelper
-from python_helper.api.src.service import ReflectionHelper, ObjectHelper
+from python_helper.api.src.service import SettingHelper, ReflectionHelper, ObjectHelper
 
 def EnvironmentVariable(*outerArgs, environmentVariables=None, **outerKwargs) :
     def innerMethodWrapper(resourceInstanceMethod,*innerMethodArgs,**innerMethodKwargs) :
         def innerResourceInstanceMethod(*innerArgs,**innerKwargs) :
             methodReturn = None
             wraperException = None
-            originalEnvironmentVariables, originalActiveEnvironment = AnnotationHelper.getOriginalEnvironmentVariables(environmentVariables)
+            originalEnvironmentVariables, originalActiveEnvironment = SettingHelper.replaceEnvironmentVariables(environmentVariables)
             try :
                 methodReturn = resourceInstanceMethod(*innerArgs,**innerKwargs)
             except Exception as exception :
                 wraperException = exception
-            AnnotationHelper.resetEnvironmentVariables(environmentVariables, originalEnvironmentVariables, originalActiveEnvironment)
+            SettingHelper.recoverEnvironmentVariables(environmentVariables, originalEnvironmentVariables, originalActiveEnvironment)
             if ObjectHelper.isNotNone(wraperException) :
                 raise wraperException
             return methodReturn

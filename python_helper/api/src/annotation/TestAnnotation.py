@@ -1,6 +1,5 @@
 from python_helper.api.src.domain import Constant as c
-from python_helper.api.src.helper import AnnotationHelper
-from python_helper.api.src.service import LogHelper, ReflectionHelper, EnvironmentHelper, ObjectHelper
+from python_helper.api.src.service import LogHelper, ReflectionHelper, EnvironmentHelper, ObjectHelper, SettingHelper
 from python_helper.api.src.annotation.EnvironmentAnnotation import EnvironmentVariable
 
 IS_TEST_METHOD = 'isTestMethod'
@@ -28,47 +27,55 @@ def Test(
     argsOfCallAfter = TEST_VALUE_NOT_SET,
     kwargsOfCallAfter = TEST_VALUE_NOT_SET,
     returns = None,
-    inspectGlobals= True,
+    inspectGlobals = True,
     logResult = True,
     **outerKwargs
 ) :
     def innerMethodWrapper(resourceInstanceMethod,*innerMethodArgs,**innerMethodKwargs) :
         @EnvironmentVariable(environmentVariables=environmentVariables)
         def innerResourceInstanceMethod(*innerArgs,**innerKwargs) :
-            methodReturnException = None
-            methodReturn = TEST_VALUE_NOT_SET
-            handleBefore(resourceInstanceMethod, callBefore, argsOfCallBefore, kwargsOfCallBefore, returns, inspectGlobals)
-            originalEnvironmentVariables, originalActiveEnvironment = AnnotationHelper.getOriginalEnvironmentVariables(environmentVariables)
+            handlerException = None
+            handlerReturn = None
+            inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'will impartialy observe')
             try :
+                methodReturnException = None
+                methodReturn = TEST_VALUE_NOT_SET
+                handleBefore(resourceInstanceMethod, callBefore, argsOfCallBefore, kwargsOfCallBefore, returns, inspectGlobals)
+                originalEnvironmentVariables, originalActiveEnvironment = SettingHelper.replaceEnvironmentVariables(environmentVariables)
                 inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'is about to run')
-                methodReturn = resourceInstanceMethod(*innerArgs,**innerKwargs)
+                try :
+                    methodReturn = resourceInstanceMethod(*innerArgs,**innerKwargs)
+                except Exception as exception :
+                    methodReturnException = exception
                 inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'just run')
+                SettingHelper.recoverEnvironmentVariables(environmentVariables, originalEnvironmentVariables, originalActiveEnvironment)
+                handlerReturn = handleAfter(resourceInstanceMethod, callAfter, argsOfCallAfter, kwargsOfCallAfter, returns, methodReturn, inspectGlobals, methodReturnException=methodReturnException, logResult=logResult)
             except Exception as exception :
-                methodReturnException = exception
-            AnnotationHelper.resetEnvironmentVariables(environmentVariables, originalEnvironmentVariables, originalActiveEnvironment)
-            return handleAfter(resourceInstanceMethod, callAfter, argsOfCallAfter, kwargsOfCallAfter, returns, methodReturn, inspectGlobals, methodReturnException=methodReturnException, logResult=logResult)
+                handlerException = exception
+            inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'impartialy observed')
+            if ObjectHelper.isNotNone(handlerException) :
+                raise handlerException
+            return handlerReturn
         ReflectionHelper.overrideSignatures(innerResourceInstanceMethod, resourceInstanceMethod)
         ReflectionHelper.setAttributeOrMethod(innerResourceInstanceMethod, IS_TEST_METHOD, True)
         return innerResourceInstanceMethod
     return innerMethodWrapper
 
 def handleBefore(resourceInstanceMethod, actionClass, args, kwargs, returns, inspectGlobals) :
-    inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'will impartialy observe')
     LogHelper.test(resourceInstanceMethod, 'Test started')
     actionHandlerException = handle(resourceInstanceMethod, actionClass, args, kwargs, returns, BEFORE_THE_TEST, RETURN_VALUE_FROM_CALL_BEFORE)
-    inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'will run')
     if ObjectHelper.isNotNone(actionHandlerException) :
         raise actionHandlerException
+    inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'will run')
 
 def handleAfter(resourceInstanceMethod, actionClass, args, kwargs, returns, methodReturn, inspectGlobals, methodReturnException=None, logResult=True) :
-    if ObjectHelper.isNone(methodReturnException) :
-        LogHelper.printSuccess(f'{ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)} test succeed', condition=logResult)
-    else :
-        LogHelper.printError(f'{ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)} test failed', condition=logResult, exception=methodReturnException)
     inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'did run')
+    if ObjectHelper.isNone(methodReturnException) :
+        LogHelper.printSuccess(f'{ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)} test succeed', condition=logResult, newLine=False)
+    else :
+        LogHelper.printError(f'{ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)} test failed', condition=logResult, newLine=False, exception=methodReturnException)
     actionHandlerException = handle(resourceInstanceMethod, actionClass, args, kwargs, returns, AFTER_THE_TEST, RETURN_VALUE_FROM_CALL_AFTER)
     LogHelper.test(resourceInstanceMethod, 'Test completed')
-    inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'impartialy observed')
     if ObjectHelper.isNotNone(methodReturnException) or ObjectHelper.isNotNone(actionHandlerException) :
         if ObjectHelper.isNotNone(methodReturnException) and ObjectHelper.isNotNone(actionHandlerException) :
             raise Exception(f'{LogHelper.getExceptionMessage(methodReturnException)}. Followed by: {LogHelper.getExceptionMessage(actionHandlerException)}')

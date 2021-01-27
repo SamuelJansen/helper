@@ -48,18 +48,26 @@ DICTIONARY_INSTANCE = {
     }
 }
 
-@Test(environmentVariables={
-    log.LOG : True,
-    log.SUCCESS : True,
-    log.SETTING : True,
-    log.DEBUG : True,
-    log.WARNING : True,
-    log.WRAPPER : True,
-    log.FAILURE : True,
-    log.ERROR : True,
-    log.TEST : True,
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
-})
+TEST_SETTINGS = {
+    'inspectGlobals' : False,
+    'logResult' : True
+}
+
+@Test(
+    environmentVariables={
+        log.LOG : True,
+        log.SUCCESS : True,
+        log.SETTING : True,
+        log.DEBUG : True,
+        log.WARNING : True,
+        log.WRAPPER : True,
+        log.FAILURE : True,
+        log.ERROR : True,
+        log.TEST : True,
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
+    },
+    **TEST_SETTINGS
+)
 def mustLogWithColors() :
     # Arrange
     noExceptionThrown = 'exception not thrown'
@@ -100,18 +108,21 @@ def mustLogWithColors() :
     assert SettingHelper.LOCAL_ENVIRONMENT == EnvironmentHelper.get(SettingHelper.ACTIVE_ENVIRONMENT)
     assert SettingHelper.activeEnvironmentIsLocal()
 
-@Test(environmentVariables={
-    log.LOG : True,
-    log.SUCCESS : True,
-    log.SETTING : True,
-    log.DEBUG : True,
-    log.WARNING : True,
-    log.WRAPPER : True,
-    log.FAILURE : True,
-    log.ERROR : True,
-    log.TEST : True,
-    SettingHelper.ACTIVE_ENVIRONMENT : 'my environment'
-})
+@Test(
+    environmentVariables={
+        log.LOG : True,
+        log.SUCCESS : True,
+        log.SETTING : True,
+        log.DEBUG : True,
+        log.WARNING : True,
+        log.WRAPPER : True,
+        log.FAILURE : True,
+        log.ERROR : True,
+        log.TEST : True,
+        SettingHelper.ACTIVE_ENVIRONMENT : 'my environment'
+    },
+    **TEST_SETTINGS
+)
 def mustLogWithoutColors() :
     # Arrange
     noExceptionThrown = 'exception not thrown'
@@ -151,18 +162,21 @@ def mustLogWithoutColors() :
     # Assert
     assert 'my environment' == EnvironmentHelper.get(SettingHelper.ACTIVE_ENVIRONMENT)
 
-@Test(environmentVariables={
-    log.LOG : True,
-    log.SUCCESS : True,
-    log.SETTING : True,
-    log.DEBUG : True,
-    log.WARNING : True,
-    log.WRAPPER : True,
-    log.FAILURE : True,
-    log.ERROR : True,
-    log.TEST : False,
-    SettingHelper.ACTIVE_ENVIRONMENT : None
-})
+@Test(
+    environmentVariables={
+        log.LOG : True,
+        log.SUCCESS : True,
+        log.SETTING : True,
+        log.DEBUG : True,
+        log.WARNING : True,
+        log.WRAPPER : True,
+        log.FAILURE : True,
+        log.ERROR : True,
+        log.TEST : False,
+        SettingHelper.ACTIVE_ENVIRONMENT : None
+    },
+    **TEST_SETTINGS
+)
 def mustLogWithoutColorsAsWell() :
     # Arrange
     noExceptionThrown = 'exception not thrown'
@@ -204,19 +218,22 @@ def mustLogWithoutColorsAsWell() :
     assert SettingHelper.DEFAULT_ENVIRONMENT == EnvironmentHelper.get(SettingHelper.ACTIVE_ENVIRONMENT)
     assert SettingHelper.DEFAULT_ENVIRONMENT == SettingHelper.getActiveEnvironment()
 
-@Test(environmentVariables={
-    log.LOG : False,
-    log.SUCCESS : True,
-    log.SETTING : True,
-    log.DEBUG : False,
-    log.WARNING : False,
-    log.WRAPPER : False,
-    log.FAILURE : True,
-    log.ERROR : True,
-    log.TEST : False,
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    'SOME_PARTICULAR_SETTING' : '"some value"'
-})
+@Test(
+    environmentVariables={
+        log.LOG : False,
+        log.SUCCESS : True,
+        log.SETTING : True,
+        log.DEBUG : False,
+        log.WARNING : False,
+        log.WRAPPER : False,
+        log.FAILURE : True,
+        log.ERROR : True,
+        log.TEST : False,
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        'SOME_PARTICULAR_SETTING' : '"some value"'
+    },
+    **TEST_SETTINGS
+)
 def mustLogEnvironmentSettings() :
     # Arrange
 
@@ -229,18 +246,21 @@ def mustLogEnvironmentSettings() :
     assert SettingHelper.activeEnvironmentIsLocal()
     assert "some value" == EnvironmentHelper.get('SOME_PARTICULAR_SETTING')
 
-@Test(environmentVariables={
-    log.LOG : True,
-    log.SUCCESS : True,
-    log.SETTING : True,
-    log.DEBUG : True,
-    log.WARNING : True,
-    log.WRAPPER : True,
-    log.FAILURE : True,
-    log.ERROR : True,
-    log.TEST : False,
-    SettingHelper.ACTIVE_ENVIRONMENT : None
-})
+@Test(
+    environmentVariables={
+        log.LOG : True,
+        log.SUCCESS : True,
+        log.SETTING : True,
+        log.DEBUG : True,
+        log.WARNING : True,
+        log.WRAPPER : True,
+        log.FAILURE : True,
+        log.ERROR : True,
+        log.TEST : False,
+        SettingHelper.ACTIVE_ENVIRONMENT : None
+    },
+    **TEST_SETTINGS
+)
 def mustLogPretyPythonWithoutColors() :
     # Arrange
     dictionaryInstance = {**{}, **DICTIONARY_INSTANCE}
@@ -256,18 +276,21 @@ def mustLogPretyPythonWithoutColors() :
     # Assert
     assert ObjectHelper.isNone(exception)
 
-@Test(environmentVariables={
-    log.LOG : True,
-    log.SUCCESS : True,
-    log.SETTING : True,
-    log.DEBUG : True,
-    log.WARNING : True,
-    log.WRAPPER : True,
-    log.FAILURE : True,
-    log.ERROR : True,
-    log.TEST : False,
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
-})
+@Test(
+    environmentVariables={
+        log.LOG : True,
+        log.SUCCESS : True,
+        log.SETTING : True,
+        log.DEBUG : True,
+        log.WARNING : True,
+        log.WRAPPER : True,
+        log.FAILURE : True,
+        log.ERROR : True,
+        log.TEST : False,
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
+    },
+    **TEST_SETTINGS
+)
 def mustLogPretyPythonWithColors() :
     # Arrange
     # log.log(mustLogPretyPythonWithColors, f'type({MyClass}): {type(MyClass)}')
@@ -301,18 +324,21 @@ def mustLogPretyPythonWithColors() :
     # Assert
     assert ObjectHelper.isNone(exception)
 
-@Test(environmentVariables={
-    log.LOG : True,
-    log.SUCCESS : True,
-    log.SETTING : True,
-    log.DEBUG : True,
-    log.WARNING : True,
-    log.WRAPPER : True,
-    log.FAILURE : True,
-    log.ERROR : True,
-    log.TEST : False,
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
-})
+@Test(
+    environmentVariables={
+        log.LOG : True,
+        log.SUCCESS : True,
+        log.SETTING : True,
+        log.DEBUG : True,
+        log.WARNING : True,
+        log.WRAPPER : True,
+        log.FAILURE : True,
+        log.ERROR : True,
+        log.TEST : False,
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
+    },
+    **TEST_SETTINGS
+)
 def mustLogPretyJsonWithColors() :
     # Arrange
     # log.log(mustLogPretyPythonWithColors, f'type({MyClass}): {type(MyClass)}')
@@ -346,18 +372,21 @@ def mustLogPretyJsonWithColors() :
     # Assert
     assert exception is None
 
-@Test(environmentVariables={
-    log.LOG : True,
-    log.SUCCESS : True,
-    log.SETTING : True,
-    log.DEBUG : True,
-    log.WARNING : True,
-    log.WRAPPER : True,
-    log.FAILURE : True,
-    log.ERROR : True,
-    log.TEST : True,
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
-})
+@Test(
+    environmentVariables={
+        log.LOG : True,
+        log.SUCCESS : True,
+        log.SETTING : True,
+        log.DEBUG : True,
+        log.WARNING : True,
+        log.WRAPPER : True,
+        log.FAILURE : True,
+        log.ERROR : True,
+        log.TEST : True,
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
+    },
+    **TEST_SETTINGS
+)
 def mustPrintMessageLog_withColors() :
     # Arrange
     mustLogWithNewLine = 'must log with new line'

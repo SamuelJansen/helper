@@ -26,10 +26,18 @@ LOG_HELPER_SETTINGS = {
     log.TEST : False
 }
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **LOG_HELPER_SETTINGS
-})
+TEST_SETTINGS = {
+    'inspectGlobals' : False,
+    'logResult' : True
+}
+
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def sample_withSuccess() :
     # Arrange
     SAMPLE_SIZE = 2
@@ -96,10 +104,13 @@ def sample_withSuccess() :
         assert key in dictionaryColletcion
         assert dictionarySample[key] == dictionaryColletcion[key]
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def randomValues() :
     # Arrange
     MINIMUM_CUSTOM_RANGE = 30

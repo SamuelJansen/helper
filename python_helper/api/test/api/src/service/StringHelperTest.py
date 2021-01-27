@@ -26,8 +26,6 @@ LOG_HELPER_SETTINGS = {
     log.TEST : False
 }
 
-LOG_RESULT = True
-
 DICTIONARY_INSTANCE = {
     11: 'yolo',
     10: 2.2,
@@ -80,7 +78,15 @@ DICTIONARY_INSTANCE = {
     ]
 }
 
-@Test(logResult=LOG_RESULT, environmentVariables={**LOG_HELPER_SETTINGS})
+TEST_SETTINGS = {
+    'inspectGlobals' : False,
+    'logResult' : True
+}
+
+@Test(
+    environmentVariables={**LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
 def mustFilterSetting() :
     # Arrange
     expectedSingleQuoteSettingCase = 'b'
@@ -116,7 +122,10 @@ def mustFilterSetting() :
     assert someCommentsInBetween == filteredStringSomeCommentsInBetween
     assert Constant.NOTHING == filteredStringOnlyComment
 
-@Test(logResult=LOG_RESULT, environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
 def prettyJson_withSucces() :
     # Arrange
     simpleDictionaryInstance = {**{}, **DICTIONARY_INSTANCE}
@@ -179,7 +188,10 @@ def prettyJson_withSucces() :
     toAssert = StringHelper.removeColors(toAssert)
     assert expected == toAssert
 
-@Test(logResult=LOG_RESULT, environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
 def prettyPython_withSucces() :
     # Arrange
     simpleDictionaryInstance = {**{}, **DICTIONARY_INSTANCE}
@@ -243,7 +255,10 @@ def prettyPython_withSucces() :
     toAssert = StringHelper.removeColors(toAssert)
     assert expected == toAssert
 
-@Test(logResult=LOG_RESULT, environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
 def filterJson_withSucces() :
     # Arrange
     simpleDictionaryInstance = {'key':'value','anotherKey':{'key':'value'},'aThirdKey':['a','b',{'c':'d'},[None, True, 'True', 3.3, (2,'2')],{'key':('e','f',{'g':{'h':['i','j']}})},{'someKey':'someValue','someOtherKey':{'q','r',1,2,3,'s'}}]}
@@ -261,7 +276,10 @@ def filterJson_withSucces() :
     assert expectedWithSpace == toAssertWithSpace
     assert expectedWithoutSpace == toAssertWithoutSpace
 
-@Test(logResult=LOG_RESULT, environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
 def isLongString_withSuccess() :
     # Arrange
     tripleSinleQuotes = f'{Constant.TRIPLE_SINGLE_QUOTE}'
@@ -294,7 +312,10 @@ def isLongString_withSuccess() :
     assert not toAssertActualLongStringWithTripleSinleQuotes
     assert not toAssertActualLongStringWithTripleDoubleQuotes
 
-@Test(logResult=LOG_RESULT, environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
 def prettifyPerformance() :
     # arrange
     TEST_SIZE = 100

@@ -24,10 +24,18 @@ MUTED_LOG_HELPER_SETTINGS = {
     log.TEST : False
 }
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **UNMUTED_LOG_HELPER_SETTINGS
-})
+TEST_SETTINGS = {
+    'inspectGlobals' : False,
+    'logResult' : True
+}
+
+@Test(
+    environmentVariables = {
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **UNMUTED_LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def mustRun_withSuccess() :
     # Arrange
     def myFunction(a):
@@ -53,10 +61,13 @@ def mustRun_withSuccess() :
     assert myFunction('original a') == str('original a')+''
     assert exception is None
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **UNMUTED_LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables = {
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **UNMUTED_LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def mustRun_withFailure() :
     # Arrange
     def myFunction(a):
@@ -78,10 +89,13 @@ def mustRun_withFailure() :
     # Assert
     assert exception is not None
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **UNMUTED_LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **UNMUTED_LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def mustRun_withSuccess_ExecutingActionFirst() :
     # Arrange
     def myAction(c, d=None):
@@ -113,10 +127,13 @@ def mustRun_withSuccess_ExecutingActionFirst() :
     assert ObjectHelper.isNone(exception)
     assert 'fg' == returns['returnOfCallBefore']
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **UNMUTED_LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **UNMUTED_LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def mustRun_withFailre_ExecutingActionFirst() :
     # Arrange
     def myAction(c, d=None):
@@ -148,10 +165,13 @@ def mustRun_withFailre_ExecutingActionFirst() :
     assert ObjectHelper.isNotNone(exception)
     assert 'fg' == returns['returnOfCallBefore']
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **UNMUTED_LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **UNMUTED_LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def mustRun_withSuccess_ExecutingActionFirst_withFailure() :
     # Arrange
     exceptionMessage = 'some exception'
@@ -184,10 +204,13 @@ def mustRun_withSuccess_ExecutingActionFirst_withFailure() :
     assert ObjectHelper.isNotNone(exception)
     assert exceptionMessage == str(exception)
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **UNMUTED_LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **UNMUTED_LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def mustRun_withFailre_ExecutingActionFirst_withFailre() :
     # Arrange
     exceptionMessage = 'some exception'
@@ -220,10 +243,13 @@ def mustRun_withFailre_ExecutingActionFirst_withFailre() :
     assert ObjectHelper.isNotNone(exception)
     assert exceptionMessage == str(exception)
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **UNMUTED_LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **UNMUTED_LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def mustRun_withSuccess_ExecutingActionLater() :
     # Arrange
     def myAction(c, d=None):
@@ -255,10 +281,13 @@ def mustRun_withSuccess_ExecutingActionLater() :
     assert ObjectHelper.isNone(exception)
     assert 'fg' == returns['returnOfCallAfter']
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **UNMUTED_LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **UNMUTED_LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def mustRun_withFailre_ExecutingActionLater() :
     # Arrange
     def myAction(c, d=None):
@@ -290,10 +319,13 @@ def mustRun_withFailre_ExecutingActionLater() :
     assert ObjectHelper.isNotNone(exception)
     assert 'fg' == returns['returnOfCallAfter']
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **UNMUTED_LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **UNMUTED_LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def mustRun_withSuccess_ExecutingActionLater_withFailure() :
     # Arrange
     exceptionMessage = 'some exception'
@@ -326,10 +358,13 @@ def mustRun_withSuccess_ExecutingActionLater_withFailure() :
     assert ObjectHelper.isNotNone(exception)
     assert exceptionMessage == str(exception)
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **UNMUTED_LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **UNMUTED_LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def mustRun_withFailre_ExecutingActionLater_withFailre() :
     # Arrange
     exceptionMessage = 'some exception'
@@ -363,10 +398,13 @@ def mustRun_withFailre_ExecutingActionLater_withFailre() :
     assert not exceptionMessage == str(exception)
     assert 'AssertionError. Followed by: some exception' == str(exception)
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **UNMUTED_LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **UNMUTED_LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def handleEnvironmentChangesProperly_withSuccess() :
     beforeTestEnvironmentSettings = {**EnvironmentHelper.getSet()}
     inBetweenTestEnvironmentSettings = None
@@ -416,10 +454,13 @@ def handleEnvironmentChangesProperly_withSuccess() :
     assert not beforeTestEnvironmentSettings == inBetweenTestEnvironmentSettings
 
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **UNMUTED_LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **UNMUTED_LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def handleEnvironmentChangesProperly_withSuccess_whenActionsHaveNoArguments() :
     beforeTestEnvironmentSettings = {**EnvironmentHelper.getSet()}
     inBetweenTestEnvironmentSettings = None
@@ -467,10 +508,13 @@ def handleEnvironmentChangesProperly_withSuccess_whenActionsHaveNoArguments() :
     assert not beforeTestEnvironmentSettings == inBetweenTestEnvironmentSettings
 
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **UNMUTED_LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **UNMUTED_LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def handleEnvironmentChangesProperly_withErrorBefore() :
     beforeTestEnvironmentSettings = {**EnvironmentHelper.getSet()}
     inBetweenTestEnvironmentSettings = None
@@ -523,10 +567,13 @@ def handleEnvironmentChangesProperly_withErrorBefore() :
     assert afterTestEnvironmentSettings == beforeTestEnvironmentSettings
     assert not beforeTestEnvironmentSettings == inBetweenTestEnvironmentSettings
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **UNMUTED_LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **UNMUTED_LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def handleEnvironmentChangesProperly_withErrorAfter() :
     beforeTestEnvironmentSettings = {**EnvironmentHelper.getSet()}
     inBetweenTestEnvironmentSettings = None
@@ -580,10 +627,13 @@ def handleEnvironmentChangesProperly_withErrorAfter() :
     assert afterTestEnvironmentSettings == beforeTestEnvironmentSettings
     assert not beforeTestEnvironmentSettings == inBetweenTestEnvironmentSettings
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **UNMUTED_LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **UNMUTED_LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def handleEnvironmentChangesProperly_withError() :
     beforeTestEnvironmentSettings = {**EnvironmentHelper.getSet()}
     inBetweenTestEnvironmentSettings = None

@@ -24,10 +24,18 @@ LOG_HELPER_SETTINGS = {
     log.TEST : False
 }
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **LOG_HELPER_SETTINGS
-})
+TEST_SETTINGS = {
+    'inspectGlobals' : False,
+    'logResult' : True
+}
+
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def isNotMethodInstance_withSuccess() :
     # Arrange
     class MyObject:
@@ -67,10 +75,13 @@ def isNotMethodInstance_withSuccess() :
     assert ReflectionHelper.isMethod(myObject, MY_METHOD_NAME)
     assert not ReflectionHelper.isMethod(myObject, MY_NOT_EXISTING_ATTRIBUTE_OR_METHOD_NAME)
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def overrideSignatures_withSuccess() :
     # Arrange
     class MyObject:
@@ -141,10 +152,13 @@ def overrideSignatures_withSuccess() :
     assert f'{False}{NOT_OVERRIDED}' == myObject.myInBetweenWrapperFunction(False)
     assert f'{ABCD}{NOT_OVERRIDED}' == myObject.myInBetweenWrapperFunction(ABCD)
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def getArgsOrder_withSuccess() :
     # Arrange
     class MyClass :

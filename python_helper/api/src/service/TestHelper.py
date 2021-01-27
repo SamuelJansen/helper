@@ -73,7 +73,7 @@ def getTestNames(testQueryTree) :
 
 def getUnitTest(inspectGlobals, globalsInstance) :
     @Test(**getGlobalsTestKwargs(inspectGlobals, globalsInstance))
-    def unitTest(testName, data, testReturns, logResult) :
+    def unitTest(testModule, testName, data, testReturns, logResult) :
         discountTimeEnd = time.time()
         if logResult :
             LogHelper.test(unitTest, f'Sinlge {testName}{c.DOT}{data[1]} started')
@@ -87,7 +87,7 @@ def getUnitTest(inspectGlobals, globalsInstance) :
 
 def getUnitTestBatch(inspectGlobals, globalsInstance) :
     @Test(**getGlobalsTestKwargs(inspectGlobals, globalsInstance))
-    def unitTestBatch(data) :
+    def unitTestBatch(testModule, data) :
         discountTimeEnd = time.time()
         data[0]()
         return discountTimeEnd
@@ -96,6 +96,17 @@ def getUnitTestBatch(inspectGlobals, globalsInstance) :
 def getModuleTest(inspectGlobals, logResult, globalsInstance) :
     @Test(**getGlobalsTestKwargs(inspectGlobals, globalsInstance))
     def tddModule(testName, testModule, dataList, times, runSpecificTests, testsToRun, allShouldRun, someShouldRun, logResult) :
+        import globals
+        tddModuleGlobalsInstance = globals.newGlobalsInstance(testModule.__file__
+            , successStatus = globalsInstance.successStatus
+            , errorStatus = globalsInstance.errorStatus
+            , settingStatus = globalsInstance.settingStatus and inspectGlobals
+            , debugStatus = globalsInstance.debugStatus
+            , warningStatus = globalsInstance.warningStatus
+            , wrapperStatus = globalsInstance.wrapperStatus
+            , testStatus = globalsInstance.testStatus
+            , logStatus = globalsInstance.logStatus
+        )
         LogHelper.test(tddModule, f'{testName} started')
         testReturns = {}
         testTime = 0
@@ -108,10 +119,10 @@ def getModuleTest(inspectGlobals, logResult, globalsInstance) :
                     testTimeStart = time.time()
                     if times - 1 == index :
                         runnableUnitTest = getUnitTest(inspectGlobals, globalsInstance)
-                        testName, data, testReturns, someDidRun, logResult, discountTimeEnd = runnableUnitTest(testName, data, testReturns, logResult)
+                        testName, data, testReturns, someDidRun, logResult, discountTimeEnd = runnableUnitTest(testModule, testName, data, testReturns, logResult)
                     else :
                         runnableUnitTestBatch = getUnitTestBatch(inspectGlobals, globalsInstance)
-                        discountTimeEnd = runnableUnitTestBatch(data)
+                        discountTimeEnd = runnableUnitTestBatch(testModule, data)
                     testTime += time.time() - discountTimeEnd
             else :
                 allDidRun = False
@@ -138,10 +149,10 @@ def runModuleTests(testName, runnableTddModule, times, runSpecificTests, testsTo
     if someShouldRun :
         defaultMessage = f'{testName}{StringHelper.getS(allShouldRun)}'
         methodReturnException = None
-        LogHelper.printTest(f'{defaultMessage} started', condition=logResult)
+        LogHelper.printTest(f'{defaultMessage} started', condition=logResult, newLine=False)
         try :
             allDidRun, someDidRun, testTime, testReturns = runnableTddModule(testName, testModule, dataList, times, runSpecificTests, testsToRun, allShouldRun, someShouldRun, logResult)
-            LogHelper.printTest(f'{defaultMessage} succeed. {getTestRuntimeInfo(times, testTime, time.time() - totalTestTimeStart)}', condition=logResult)
+            LogHelper.printTest(f'{defaultMessage} succeed. {getTestRuntimeInfo(times, testTime, time.time() - totalTestTimeStart)}', condition=logResult, newLine=False)
         except Exception as exception :
             methodReturnException = exception
             LogHelper.printError(f'{defaultMessage} failed', condition=True, exception=methodReturnException)
@@ -187,12 +198,12 @@ def getSomeDidOrDidntAsString(allDidRun, someDidRun) :
     return 'did' if allDidRun or someDidRun else f'didn{c.SINGLE_QUOTE}t'
 
 def run(
-    fileName,
+    filePath,
     runOnly = None,
     times = 1,
     successStatus = True,
     errorStatus = True,
-    settingStatus = True,
+    settingStatus = False,
     debugStatus = True,
     warningStatus = True,
     wrapperStatus = False,
@@ -202,10 +213,10 @@ def run(
     logResult = True
 ) :
     import globals
-    globalsInstance = globals.newGlobalsInstance(fileName
+    globalsInstance = globals.newGlobalsInstance(filePath
         , successStatus = successStatus
         , errorStatus = errorStatus
-        , settingStatus = settingStatus
+        , settingStatus = settingStatus or inspectGlobals
         , debugStatus = debugStatus
         , warningStatus = warningStatus
         , wrapperStatus = wrapperStatus

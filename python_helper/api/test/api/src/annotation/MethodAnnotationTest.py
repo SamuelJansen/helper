@@ -1,4 +1,4 @@
-from python_helper import SettingHelper, log, ObjectHelper, Function, Method, FunctionThrough, RandomHelper, Test
+from python_helper import SettingHelper, log, ObjectHelper, Function, Method, RandomHelper, Test
 
 # LOG_HELPER_SETTINGS = {
 #     log.LOG : True,
@@ -24,10 +24,18 @@ LOG_HELPER_SETTINGS = {
     log.TEST : False
 }
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **LOG_HELPER_SETTINGS
-})
+TEST_SETTINGS = {
+    'inspectGlobals' : False,
+    'logResult' : True
+}
+
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def Function_withSuccess() :
     # Arrange
     TEST = RandomHelper.string(minimum=10)
@@ -52,12 +60,15 @@ def Function_withSuccess() :
     assert (TEST, SOMETHING) == myRestult
     assert ObjectHelper.isNone(myOtherResult)
     assert ObjectHelper.isNotNone(exception)
-    assert f"myOtherFunction function error. Cause: {TEST}" == str(exception)
+    assert TEST == str(exception)
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def Method_withSuccess() :
     # Arrange
     TEST = RandomHelper.string(minimum=10)
@@ -94,37 +105,7 @@ def Method_withSuccess() :
     assert (TEST, SOMETHING) == myRestult
     assert ObjectHelper.isNone(myOtherResult)
     assert ObjectHelper.isNotNone(methodException)
-    assert f"MyClass.myOtherMethod method error. Cause: {TEST}" == str(methodException)
+    assert TEST == str(methodException)
     assert ObjectHelper.isNone(myNotMethodResult)
     assert ObjectHelper.isNotNone(notMethodEception)
-    assert f"NoneType.myNotMethod method error. Cause: {TEST}" == str(notMethodEception)
-
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : None,
-    **LOG_HELPER_SETTINGS
-})
-def FunctionThrough_withSuccess() :
-    # Arrange
-    TEST = RandomHelper.string(minimum=10)
-    @FunctionThrough
-    def myFunction(something) :
-        return TEST, something
-    @FunctionThrough
-    def myOtherFunction(something) :
-        raise Exception(TEST)
-    SOMETHING = RandomHelper.string(minimum=10)
-    exception = None
-
-    # Act
-    myRestult = myFunction(SOMETHING)
-    myOtherResult = None
-    try :
-        myOtherResult = myOtherFunction(SOMETHING)
-    except Exception as ext :
-        exception = ext
-
-    # Assert
-    assert (TEST, SOMETHING) == myRestult
-    assert ObjectHelper.isNone(myOtherResult)
-    assert ObjectHelper.isNotNone(exception)
-    assert TEST == str(exception)
+    assert TEST == str(notMethodEception)

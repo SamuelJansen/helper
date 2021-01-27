@@ -69,7 +69,15 @@ DICTIONARY_INSTANCE = {
 }
 JSON_INSTANCE = json.loads(StringHelper.prettyJson(DICTIONARY_INSTANCE))
 
-@Test(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+TEST_SETTINGS = {
+    'inspectGlobals' : False,
+    'logResult' : True
+}
+
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
 def basicMethods() :
     # Arrange
     def generatorInstance() :
@@ -341,7 +349,10 @@ def basicMethods() :
     assert not ObjectHelper.isNativeClassIsntance(type(None))
     assert ObjectHelper.isNotNativeClassIsntance(type(None))
 
-@Test(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
 def mustAssertEquals() :
     # Arrange
     dictionaryInstance = {**{},**JSON_INSTANCE}
@@ -476,7 +487,10 @@ def mustAssertEquals() :
     assert unsortedDictionaryToAssert
     assert not notEqualsToAssert
 
-@Test(environmentVariables={**{}, **LOG_HELPER_SETTINGS})
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
 def mustIgnoreKeyCorrectly() :
     # Arrange
     expected = {**{},**DICTIONARY_INSTANCE}

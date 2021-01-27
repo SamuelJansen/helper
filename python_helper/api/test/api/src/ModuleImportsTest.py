@@ -10,10 +10,12 @@ from python_helper import EnvironmentVariable
 from python_helper import Test
 from python_helper import Method
 from python_helper import Function
-from python_helper import FunctionThrough
 from python_helper import ObjectHelperHelper
 from python_helper import SettingHelperHelper
 from python_helper import SettingHelperHelper
 from python_helper import LogHelperHelper
 from python_helper import RandomHelperHelper
-from python_helper import AnnotationHelper
+
+@Test(inspectGlobals=False)
+def allImportedSuccesfuly() :
+    ...

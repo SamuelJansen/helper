@@ -17,5 +17,39 @@ TestHelper.run(
         ],
     testStatus = False,
     logStatus = False,
-    logResult = False
+    logResult = False,
+    inspectGlobals = False
 )
+# TestHelper.run(
+#     __file__,
+#     times = 1,
+#     runOnly = [
+#         'ModuleImportsTest.allImportedSuccesfuly'
+#     ],
+#     testStatus = False,
+#     logStatus = False,
+#     logResult = False,
+#     inspectGlobals = False
+# )
+# TestHelper.run(
+#     __file__,
+#     times = 1,
+#     runOnly = [
+#         'MethodAnnotationTest.Function_withSuccess'
+#         ],
+#     testStatus = False,
+#     logStatus = False,
+#     logResult = False,
+#     inspectGlobals = False
+# )
+# TestHelper.run(
+#     __file__,
+#     times = 1,
+#     runOnly = [
+#         'LogHelperTest.mustLogWithColors'
+#         ],
+#     testStatus = False,
+#     logStatus = False,
+#     logResult = False,
+#     inspectGlobals = True
+# )

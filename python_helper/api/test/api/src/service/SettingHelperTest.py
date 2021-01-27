@@ -24,10 +24,18 @@ LOG_HELPER_SETTINGS = {
     log.TEST : False
 }
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : None,
-    # **LOG_HELPER_SETTINGS
-})
+TEST_SETTINGS = {
+    'inspectGlobals' : False,
+    'logResult' : True
+}
+
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : None,
+        # **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def updateActiveEnvironment_withSuccess() :
     # Arrange
     originalACTIVE_ENVIRONMENT_VALUE = SettingHelper.ACTIVE_ENVIRONMENT_VALUE
@@ -53,13 +61,16 @@ def updateActiveEnvironment_withSuccess() :
     assert SettingHelper.DEFAULT_ENVIRONMENT == originalACTIVE_ENVIRONMENT_VALUEAfterSettingAnotherOne
     assert SettingHelper.ACTIVE_ENVIRONMENT_VALUE == myNewActiveEnvironment
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    'MY_COMPLEX_ENV' : ' -- my complex value -- ',
-    'LATE_VALUE' : '-- late environment value --',
-    'ONLY_ENVIRONMENT_VARIABLE' : 'only environment variable value',
-    **LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        'MY_COMPLEX_ENV' : ' -- my complex value -- ',
+        'LATE_VALUE' : '-- late environment value --',
+        'ONLY_ENVIRONMENT_VARIABLE' : 'only environment variable value',
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def mustReadSettingFile() :
     # Arrange
     settingFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','application.yml'])
@@ -132,10 +143,13 @@ def mustReadSettingFile() :
     assert 'ABCD -- 2.3 -- EFGH' == SettingHelper.getSetting('some-not-string-selfreference.float', readdedSettingTree)
     assert 'ABCD -- True -- EFGH' == SettingHelper.getSetting('some-not-string-selfreference.boolean', readdedSettingTree)
 
-@Test(environmentVariables={
-    **{},
-    **LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        **{},
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def mustNotReadSettingFile() :
     # Arrange
     settingFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','application-circular-reference.yml'])
@@ -175,10 +189,13 @@ def mustNotReadSettingFile() :
     assert {} == readdedSettingTree
     assert exceptionMessage == str(exception)
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def mustPrintSettingTree() :
     # Arrange
     settingFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','application.yml'])
@@ -268,10 +285,13 @@ def querySetting_withSuccess() :
         'key.key.other-key.other-key.key.key.some-query-key': 'value'
     } == queryTree
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def mustHandleSettingValueInFallbackSettingTree() :
     # Arrange
     settingFallbackFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','fallback-application.yml'])
@@ -651,10 +671,13 @@ def mustHandleSettingValueInFallbackSettingTree() :
         }
     } == readdedSettingTree
 
-@Test(environmentVariables={
-    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-    **LOG_HELPER_SETTINGS
-})
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
 def getSettingTree_whenIsSettingKeyActuallyContainsSettingKey() :
     # Arrange
     settingFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','framework.yml'])
