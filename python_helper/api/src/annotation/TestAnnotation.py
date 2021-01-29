@@ -129,7 +129,7 @@ def returnsValueIsPresent(returns) :
 
 def inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, tense, originalLogEnvs) :
     if inspectGlobals :
-        # originalEnvironmentVariables, originalActiveEnvironment = SettingHelper.replaceEnvironmentVariables(originalLogEnvs)
+        originalEnvironmentVariables, originalActiveEnvironment = SettingHelper.replaceEnvironmentVariables(originalLogEnvs)
         import globals
         LogHelper.printDebug(f'''Inspection: {globals.getGlobalsInstance(muteLogs=inspectGlobals)} globals instance {tense} {ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)}''', condition=inspectGlobals, newLine=False, margin=False)
-        # SettingHelper.recoverEnvironmentVariables(originalLogEnvs, originalEnvironmentVariables, originalActiveEnvironment)
+        SettingHelper.recoverEnvironmentVariables(originalLogEnvs, originalEnvironmentVariables, originalActiveEnvironment)
