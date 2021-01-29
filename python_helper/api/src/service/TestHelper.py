@@ -107,6 +107,7 @@ def getModuleTest(inspectGlobals, logResult, globalsInstance) :
             , testStatus = globalsInstance.testStatus
             , logStatus = globalsInstance.logStatus
         )
+        originalLogEnvs = {**LogHelper.LOG_HELPER_SETTINGS}
         LogHelper.test(tddModule, f'{testName} started')
         testReturns = {}
         testTime = 0
@@ -116,6 +117,7 @@ def getModuleTest(inspectGlobals, logResult, globalsInstance) :
             LogHelper.prettyPython(tddModule, f'isTestToRun', testMustRun, logLevel=LogHelper.TEST)
             if testMustRun :
                 for index in range(times) :
+                    originalEnvironmentVariables, originalActiveEnvironment = SettingHelper.replaceEnvironmentVariables(originalLogEnvs)
                     testTimeStart = time.time()
                     if times - 1 == index :
                         runnableUnitTest = getUnitTest(inspectGlobals, globalsInstance)
@@ -124,6 +126,7 @@ def getModuleTest(inspectGlobals, logResult, globalsInstance) :
                         runnableUnitTestBatch = getUnitTestBatch(inspectGlobals, globalsInstance)
                         discountTimeEnd = runnableUnitTestBatch(testModule, data)
                     testTime += time.time() - discountTimeEnd
+                    SettingHelper.recoverEnvironmentVariables(originalLogEnvs, originalEnvironmentVariables, originalActiveEnvironment)
             else :
                 allDidRun = False
         if not allShouldRun == allDidRun and someShouldRun == someDidRun :
