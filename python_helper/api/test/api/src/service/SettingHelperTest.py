@@ -1,33 +1,30 @@
 from python_helper import SettingHelper, StringHelper, Constant, log, EnvironmentHelper, ObjectHelper, Test
 
-LOG_HELPER_SETTINGS = {
-    log.LOG : False,
-    log.SUCCESS : True,
-    log.SETTING : True,
-    log.DEBUG : True,
-    log.WARNING : True,
-    log.WRAPPER : True,
-    log.FAILURE : True,
-    log.ERROR : True,
-    log.TEST : False
-}
-
 # LOG_HELPER_SETTINGS = {
 #     log.LOG : False,
-#     log.SUCCESS : False,
-#     log.SETTING : False,
-#     log.DEBUG : False,
-#     log.WARNING : False,
-#     log.WRAPPER : False,
-#     log.FAILURE : False,
-#     log.ERROR : False,
+#     log.SUCCESS : True,
+#     log.SETTING : True,
+#     log.DEBUG : True,
+#     log.WARNING : True,
+#     log.WRAPPER : True,
+#     log.FAILURE : True,
+#     log.ERROR : True,
 #     log.TEST : False
 # }
 
-TEST_SETTINGS = {
-    'inspectGlobals' : False,
-    'logResult' : True
+LOG_HELPER_SETTINGS = {
+    log.LOG : False,
+    log.SUCCESS : False,
+    log.SETTING : False,
+    log.DEBUG : False,
+    log.WARNING : False,
+    log.WRAPPER : False,
+    log.FAILURE : False,
+    log.ERROR : False,
+    log.TEST : False
 }
+
+TEST_SETTINGS = {}
 
 @Test(
     environmentVariables={

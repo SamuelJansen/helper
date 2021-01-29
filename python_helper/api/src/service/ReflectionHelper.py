@@ -139,11 +139,16 @@ def getAttributeDataDictionary(instance) :
             instanceDataDictionary[name] = getattr(instance, name)
     return instanceDataDictionary
 
-def overrideSignatures(toOverride, original) :
+def overrideSignatures(toOverride, original, forceName=None, forceModuleName=None) :
     try :
-        toOverride.__name__ = original.__name__
-        toOverride.__qualname__ = original.__qualname__
-        toOverride.__module__ = original.__module__
+        if ObjectHelper.isNotNone(original) :
+            toOverride.__name__ = original.__name__ if ObjectHelper.isNone(forceName) else set(forceName)
+            toOverride.__qualname__ = original.__qualname__ if ObjectHelper.isNone(forceName) else set(forceName)
+            toOverride.__module__ = original.__module__ if ObjectHelper.isNone(forceName) else set(c.NOTHING)
+        else :
+            toOverride.__name__ = forceName if ObjectHelper.isNotNone(forceName) else set(toOverride.__name__)
+            toOverride.__qualname__ = forceName if ObjectHelper.isNotNone(forceName) else set(toOverride.__qualname__)
+            toOverride.__module__ = forceModuleName if ObjectHelper.isNotNone(forceModuleName) else set(toOverride.__module__)
     except Exception as exception :
         LogHelper.error(overrideSignatures, f'''Not possible to override signatures of {toOverride} by signatures of {original} method''', exception)
         raise exception

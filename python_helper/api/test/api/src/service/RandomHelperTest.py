@@ -26,10 +26,7 @@ LOG_HELPER_SETTINGS = {
     log.TEST : False
 }
 
-TEST_SETTINGS = {
-    'inspectGlobals' : False,
-    'logResult' : True
-}
+TEST_SETTINGS = {}
 
 @Test(
     environmentVariables={

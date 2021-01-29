@@ -48,10 +48,7 @@ DICTIONARY_INSTANCE = {
     }
 }
 
-TEST_SETTINGS = {
-    'inspectGlobals' : False,
-    'logResult' : True
-}
+TEST_SETTINGS = {}
 
 @Test(
     environmentVariables={

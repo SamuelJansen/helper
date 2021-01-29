@@ -69,10 +69,7 @@ DICTIONARY_INSTANCE = {
 }
 JSON_INSTANCE = json.loads(StringHelper.prettyJson(DICTIONARY_INSTANCE))
 
-TEST_SETTINGS = {
-    'inspectGlobals' : False,
-    'logResult' : True
-}
+TEST_SETTINGS = {}
 
 @Test(
     environmentVariables={**{}, **LOG_HELPER_SETTINGS},

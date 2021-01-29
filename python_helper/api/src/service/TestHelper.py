@@ -15,7 +15,8 @@ RESULTS = {}
 TEST_KWARGS = {
     'argsOfCallBefore' : [GLOBALS_INSTANCE_LIST],
     'argsOfCallAfter' : [GLOBALS_INSTANCE_LIST],
-    'returns' : RESULTS
+    'returns' : RESULTS,
+    'logResult' : False
 }
 
 def getTestEnvironmentVariables(globalsInstance) :
@@ -45,7 +46,6 @@ def getGlobalsTestKwargs(inspectGlobals, globalsInstance) :
         'logLevel' : LogHelper.DEBUG
     }
     return {
-        'logResult' : False,
         'environmentVariables' : getTestEnvironmentVariables(globalsInstance),
         **TEST_KWARGS
     }
@@ -76,11 +76,15 @@ def getUnitTest(inspectGlobals, globalsInstance) :
     def unitTest(testModule, testName, data, testReturns, logResult) :
         discountTimeEnd = time.time()
         if logResult :
-            LogHelper.test(unitTest, f'Sinlge {testName}{c.DOT}{data[1]} started')
+            LogHelper.test(unitTest, f'{testName}{c.DOT}{data[1]} test started')
         moduleTestStartTime = time.time()
-        testReturns[data[1]] = data[0]()
+        try :
+            testReturns[data[1]] = data[0]()
+            LogHelper.printSuccess(f'{data[0].__module__}{c.DOT}{data[0].__name__} succeed', condition=logResult, newLine=False, margin=False)
+        except Exception as exception :
+            LogHelper.printError(f'{data[0].__module__}{c.DOT}{data[0].__name__} failed', condition=True, newLine=False, margin=False, exception=exception)
         if logResult :
-            LogHelper.test(unitTest, f'Single {testName}{c.DOT}{data[1]} completed in {time.time() - moduleTestStartTime} seconds')
+            LogHelper.test(unitTest, f'{testName}{c.DOT}{data[1]} test completed in {time.time() - moduleTestStartTime} seconds')
         someDidRun = True
         return testName, data, testReturns, someDidRun, logResult, discountTimeEnd
     return unitTest
@@ -107,7 +111,6 @@ def getModuleTest(inspectGlobals, logResult, globalsInstance) :
             , testStatus = globalsInstance.testStatus
             , logStatus = globalsInstance.logStatus
         )
-        originalLogEnvs = {**LogHelper.LOG_HELPER_SETTINGS}
         LogHelper.test(tddModule, f'{testName} started')
         testReturns = {}
         testTime = 0
@@ -117,7 +120,6 @@ def getModuleTest(inspectGlobals, logResult, globalsInstance) :
             LogHelper.prettyPython(tddModule, f'isTestToRun', testMustRun, logLevel=LogHelper.TEST)
             if testMustRun :
                 for index in range(times) :
-                    originalEnvironmentVariables, originalActiveEnvironment = SettingHelper.replaceEnvironmentVariables(originalLogEnvs)
                     testTimeStart = time.time()
                     if times - 1 == index :
                         runnableUnitTest = getUnitTest(inspectGlobals, globalsInstance)
@@ -126,7 +128,6 @@ def getModuleTest(inspectGlobals, logResult, globalsInstance) :
                         runnableUnitTestBatch = getUnitTestBatch(inspectGlobals, globalsInstance)
                         discountTimeEnd = runnableUnitTestBatch(testModule, data)
                     testTime += time.time() - discountTimeEnd
-                    SettingHelper.recoverEnvironmentVariables(originalLogEnvs, originalEnvironmentVariables, originalActiveEnvironment)
             else :
                 allDidRun = False
         if not allShouldRun == allDidRun and someShouldRun == someDidRun :
@@ -152,13 +153,13 @@ def runModuleTests(testName, runnableTddModule, times, runSpecificTests, testsTo
     if someShouldRun :
         defaultMessage = f'{testName}{StringHelper.getS(allShouldRun)}'
         methodReturnException = None
-        LogHelper.printTest(f'{defaultMessage} started', condition=logResult, newLine=False, margin=False)
+        LogHelper.test(runModuleTests, f'{defaultMessage} started')
         try :
             allDidRun, someDidRun, testTime, testReturns = runnableTddModule(testName, testModule, dataList, times, runSpecificTests, testsToRun, allShouldRun, someShouldRun, logResult)
-            LogHelper.printTest(f'{defaultMessage} succeed. {getTestRuntimeInfo(times, testTime, time.time() - totalTestTimeStart)}', condition=logResult, newLine=False, margin=False)
+            LogHelper.printSuccess(f'{defaultMessage} succeed. {getTestRuntimeInfo(times, testTime, time.time() - totalTestTimeStart)}', condition=logResult, newLine=True, margin=False)
         except Exception as exception :
             methodReturnException = exception
-            LogHelper.printError(f'{defaultMessage} failed', condition=True, newLine=False, margin=False, exception=methodReturnException)
+            LogHelper.printError(f'{defaultMessage} failed', condition=True, newLine=True, margin=False, exception=methodReturnException)
         exceptionRaised = ObjectHelper.isNotNone(methodReturnException)
         defaultMessage = f'{testName}{StringHelper.getS(not exceptionRaised and allDidRun)}'
         if exceptionRaised :

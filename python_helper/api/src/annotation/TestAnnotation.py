@@ -27,8 +27,8 @@ def Test(
     argsOfCallAfter = TEST_VALUE_NOT_SET,
     kwargsOfCallAfter = TEST_VALUE_NOT_SET,
     returns = None,
-    inspectGlobals = True,
-    logResult = True,
+    inspectGlobals = False,
+    logResult = False,
     **outerKwargs
 ) :
     def innerMethodWrapper(resourceInstanceMethod,*innerMethodArgs,**innerMethodKwargs) :
