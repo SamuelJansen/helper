@@ -2,6 +2,16 @@ from python_helper import TestHelper
 TestHelper.run(__file__, inspectGlobals=False)
 # TestHelper.run(
 #     __file__,
+#     runOnly = [
+#         'SettingHelperTest.getSettingTree_otherApplication'
+#         ],
+#     testStatus = False,
+#     logStatus = False,
+#     logResult = True,
+#     inspectGlobals = False
+# )
+# TestHelper.run(
+#     __file__,
 #     times = 2,
 #     testStatus = False,
 #     logStatus = True,

@@ -86,13 +86,15 @@ def getSettingTree(
     settingInjectionList = []
     fallbackSettingInjectionList = []
     if ObjectHelper.isNotNone(fallbackSettingFilePath) :
-        fallbackSettingTree, fallbackSettingInjectionList = getSettingTree(
+        innerFallbackSettingTree, fallbackSettingInjectionList = getSettingTree(
             fallbackSettingFilePath,
             lazyLoad = True,
             keepDepthInLongString = keepDepthInLongString,
             depthStep = depthStep,
             encoding = encoding
         )
+    else :
+        innerFallbackSettingTree = {}
     with open(settingFilePath,c.READ,encoding=encoding) as settingsFile :
         allSettingLines = settingsFile.readlines()
     longStringCapturing = False
@@ -168,7 +170,10 @@ def getSettingTree(
                     depth = currentDepth
     if lazyLoad :
         return settingTree, settingInjectionList
-    elif ObjectHelper.isNotEmptyCollection(fallbackSettingTree) :
+    elif (
+        ObjectHelper.isNotEmptyCollection(innerFallbackSettingTree) and
+        ObjectHelper.isNotNone(fallbackSettingFilePath)
+    ):
         for fallbackSettingInjection in fallbackSettingInjectionList.copy() :
             for settingInjection in settingInjectionList.copy() :
                 if (
@@ -177,13 +182,11 @@ def getSettingTree(
                 ) :
                     fallbackSettingInjectionList.remove(fallbackSettingInjection)
         settingInjectionList += fallbackSettingInjectionList
-        updateSettingTree(settingTree, fallbackSettingTree)
-        SettingHelperHelper.handleSettingInjectionList(settingInjectionList, settingTree, fallbackSettingTree=fallbackSettingTree)
-        return settingTree
-    else :
-        SettingHelperHelper.handleSettingInjectionList(settingInjectionList, settingTree, fallbackSettingTree=fallbackSettingTree)
-        updateSettingTree(settingTree, fallbackSettingTree)
-        return settingTree
+        updateSettingTree(settingTree, innerFallbackSettingTree)
+        SettingHelperHelper.handleSettingInjectionList(settingInjectionList, settingTree, fallbackSettingTree=innerFallbackSettingTree)
+    SettingHelperHelper.handleSettingInjectionList(settingInjectionList, settingTree, fallbackSettingTree=fallbackSettingTree)
+    updateSettingTree(settingTree, fallbackSettingTree)
+    return settingTree
 
 def updateSettingTree(toUpdateSettingTree, gatheringSettingTree) :
     if ObjectHelper.isNotEmpty(gatheringSettingTree) :
@@ -197,7 +200,7 @@ def updateSettingTree(toUpdateSettingTree, gatheringSettingTree) :
                     else :
                         updateSettingTree(toUpdateSettingTree[key], gatheringSettingTree[key])
                 elif key not in toUpdateSettingTree :
-                    toUpdateSettingTree[key] == value
+                    toUpdateSettingTree[key] = value
 
 
 def getSetting(nodeKey,settingTree) :

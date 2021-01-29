@@ -36,7 +36,8 @@ def Test(
         def innerResourceInstanceMethod(*innerArgs,**innerKwargs) :
             handlerException = None
             handlerReturn = None
-            inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'will impartialy observe')
+            originalLogEnvs = {**LogHelper.LOG_HELPER_SETTINGS}
+            inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'will impartialy observe', originalLogEnvs=originalLogEnvs)
             try :
                 methodReturnException = None
                 methodReturn = TEST_VALUE_NOT_SET
@@ -126,7 +127,11 @@ def returnsValueIsPresent(returns) :
         LogHelper.test(returnsValueIsPresent, f'the key "returns" from {ReflectionHelper.getMethodModuleNameDotName(Test)} annotation call was not defined')
     return isPresent
 
-def inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, tense) :
+def inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, tense, originalLogEnvs=None) :
+    if ObjectHelper.isNotNone(originalLogEnvs) :
+        originalEnvironmentVariables, originalActiveEnvironment = SettingHelper.replaceEnvironmentVariables(originalLogEnvs)
     if inspectGlobals :
         import globals
         LogHelper.printDebug(f'''Inspection: {globals.getGlobalsInstance(muteLogs=inspectGlobals)} globals instance {tense} {ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)}''', condition=inspectGlobals, newLine=False, margin=False)
+    if ObjectHelper.isNotNone(originalLogEnvs) :
+        SettingHelper.recoverEnvironmentVariables(originalLogEnvs, originalEnvironmentVariables, originalActiveEnvironment)
