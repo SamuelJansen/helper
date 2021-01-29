@@ -32,7 +32,7 @@ TEST_SETTINGS = {
 @Test(
     environmentVariables={
         SettingHelper.ACTIVE_ENVIRONMENT : None,
-        # **LOG_HELPER_SETTINGS
+        **LOG_HELPER_SETTINGS
     },
     **TEST_SETTINGS
 )
@@ -187,7 +187,7 @@ def mustNotReadSettingFile() :
 
     # Assert
     assert {} == readdedSettingTree
-    assert exceptionMessage == str(exception)
+    assert exceptionMessage == str(exception), f'assert {exceptionMessage} == {str(exception)}'
 
 @Test(
     environmentVariables={
@@ -321,7 +321,392 @@ def mustHandleSettingValueInFallbackSettingTree() :
     # Act
     readdedSettingFallbackFilePath = SettingHelper.getSettingTree(settingFallbackFilePath)
     readdedSettingTree = SettingHelper.getSettingTree(settingFilePath, keepDepthInLongString=True, fallbackSettingTree=readdedSettingFallbackFilePath)
-    # log.prettyPython(mustHandleSettingValueInFallbackSettingTree, 'readdedSettingTree', readdedSettingTree)
+    # log.prettyPython(mustHandleSettingValueInFallbackSettingTree, 'readdedSettingTree', readdedSettingTree, logLevel=log.SETTING)
+
+    # Assert
+    assert [] == SettingHelper.getSetting('reffer-to.fallback-settings.empty.list', readdedSettingTree)
+    assert 'ABCD -- [] -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.list-in-between', readdedSettingTree)
+    assert (()) == SettingHelper.getSetting('reffer-to.fallback-settings.empty.tuple', readdedSettingTree)
+    assert 'ABCD -- () -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.tuple-in-between', readdedSettingTree)
+    assert {} == SettingHelper.getSetting('reffer-to.fallback-settings.empty.set-or-dictionary', readdedSettingTree)
+    assert 'ABCD -- {} -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.set-or-dictionary-in-between', readdedSettingTree)
+    assert [
+        'a',
+        'b',
+        'c'
+    ] == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.list', readdedSettingTree)
+    assert "ABCD -- ['a', 'b', 'c'] -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.list-in-between', readdedSettingTree)
+    assert (
+        True,
+        False,
+        'None'
+    ) == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.tuple', readdedSettingTree)
+    assert "ABCD -- (True, False, 'None') -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.tuple-in-between', readdedSettingTree)
+    assert {} == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.set', readdedSettingTree)
+    assert 'ABCD -- {} -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.set-in-between', readdedSettingTree)
+    assert {
+        '1': 20,
+        '2': 10,
+        '3': 30
+    } == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.dictionary', readdedSettingTree)
+    assert "ABCD -- {'1': 20, '2': 10, '3': 30} -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.dictionary-in-between', readdedSettingTree)
+    assert "fallback value" == SettingHelper.getSetting('reffer-to.fallback-settings.string', readdedSettingTree)
+    assert "ABCD -- fallback value -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.string-in-between', readdedSettingTree)
+    assert 222233444 == SettingHelper.getSetting('reffer-to.fallback-settings.integer', readdedSettingTree)
+    assert "ABCD -- 222233444 -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.integer-in-between', readdedSettingTree)
+    assert 2.3 == SettingHelper.getSetting('reffer-to.fallback-settings.float', readdedSettingTree)
+    assert "ABCD -- 2.3 -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.float-in-between', readdedSettingTree)
+    assert True == SettingHelper.getSetting('reffer-to.fallback-settings.boolean', readdedSettingTree)
+    assert "ABCD -- True -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.boolean-in-between', readdedSettingTree)
+    assert 'None' == SettingHelper.getSetting('reffer-to.fallback-settings.none', readdedSettingTree)
+    assert "ABCD -- None -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.none-in-between', readdedSettingTree)
+    assert {
+        'some-reference': {
+            'much': {
+                'before-its-assignment': 'delayed assignment value'
+            },
+            'before-its-assignment': 'delayed assignment value'
+        },
+        'other': {
+            'root': {
+                'key': 'other root value'
+            }
+        },
+        'my': {
+            'self-reference-key': 'self reference value',
+            'other': {
+                'self-reference-key': {
+                    'as-well': 'other self reference value as well'
+                },
+                'repeated': {
+                    'self-reference-key': {
+                        'as-well': 'other repeated self reference value as well'
+                    }
+                }
+            },
+            'configuration-without-environment-variable-key': 'my default value',
+            'configuration-without-environment-variable-key-with-value-surrounded-by-single-quotes': 'my default value',
+            'configuration-without-environment-variable-key-and-space-after-colon': 'my default value',
+            'configuration': 'self reference value',
+            'own': {
+                'configuration': 'self reference value',
+                'very': {
+                    'deep': {
+                        'configuration': 'other root value'
+                    }
+                }
+            },
+            'other-with-other-name': {
+                'self-reference-key': {
+                    'as-well': 'other self reference value as well'
+                },
+                'configuration': 'self reference value',
+                'configuration-as-well': 'other self reference value as well',
+                'configuration-repeated-as-well': 'other repeated self reference value as well'
+            },
+            'override-case': {
+                'overrider': 'overrider configuration'
+            }
+        },
+        'long': {
+            'string': FIRST_LONG_STRING
+        },
+        'deepest': {
+            'long': {
+                'string': {
+                    'ever': {
+                        'long': {
+                            'string': SECOND_LONG_STRING
+                        }
+                    }
+                }
+            }
+        },
+        'not': {
+            'idented': {
+                'long': {
+                    'string': THIRD_LONG_STRING
+                }
+            }
+        },
+        'new-key': 'new value',
+        'my-list': {
+            'numbers': [
+                1,
+                2,
+                3,
+                4
+            ],
+            'simple-strings': [
+                'a',
+                'b',
+                'c',
+                'd'
+            ],
+            'complex': [
+                2,
+                'b',
+                'c',
+                'd',
+                1,
+                2,
+                True,
+                True
+            ],
+            'with-elemets-surrounded-by-all-sorts-of-quotes': [
+                'a',
+                'b',
+                'c',
+                'd',
+                'e',
+                'f'
+            ]
+        },
+        'specific-for': {
+            'previous-assignment': 'delayed assignment value'
+        },
+        'some-key': {
+            'with-an-enter-in-between-the-previous-one': '\'\'\'  value  \'\'\' with spaces'
+        },
+        'it': {
+            'contains': {
+                'some-composed-key': {
+                    'pointing-to': {
+                        'a-late-value': 'abcd-- late value ----abcd---- late value ----abcd--efg',
+                        'a-late-value-with-an-environment-variable-in-between': 'abcdit.contains.late-value--abcd--it.contains.late-value--abcd--efg'
+                    }
+                },
+                'late-value': '-- late value --',
+                'environment-variable': {
+                    'only': {
+                        'surrounded-by-default-values': 'ABCD --  -- EFGH',
+                        'in-between-default-values': '''ABCD -- "some value followed by: "\' and some following default value\' -- EFGH'''
+                    }
+                },
+                'refference': {
+                    'to-a-late-definition': 'ABCD -- very late definiton value -- EFGH'
+                },
+                'one-setting-injection': 'abcdefg',
+                'two-consecutive-setting-injection': 'abcdefghijklm',
+                'one-inside-of-the-other-setting-injection': 'abcdefghijklm',
+                'one-setting-injection-with-environment-variable': 'ABCDefgEFG',
+                'one-inside-of-the-other-setting-injection-with-environment-variable': 'ABCDEFGEFGHIJKLMNOP',
+                'two-consecutive-setting-injection-with-missing-environment-variable': 'abcdefghijklm'
+            }
+        },
+        'very-late': {
+            'definition': 'very late definiton value'
+        },
+        'handle': {
+            'late': {
+                'integer': 222233444,
+                'float': 2.3,
+                'boolean': True
+            },
+            'integer': 222233444,
+            'float': 2.3,
+            'boolean': True,
+            'empty': {
+                'list': [],
+                'dictionary-or-set': {},
+                'tuple': ()
+            }
+        },
+        'some-not-string-selfreference': {
+            'integer': 'ABCD -- 222233444 -- EFGH',
+            'float': 'ABCD -- 2.3 -- EFGH',
+            'boolean': 'ABCD -- True -- EFGH'
+        },
+        'reffer-to': {
+            'fallback-settings': {
+                'empty': {
+                    'list': [],
+                    'list-in-between': 'ABCD -- [] -- EFGH',
+                    'tuple': (),
+                    'tuple-in-between': 'ABCD -- () -- EFGH',
+                    'set-or-dictionary': {},
+                    'set-or-dictionary-in-between': 'ABCD -- {} -- EFGH'
+                },
+                'not-empty': {
+                    'list': [
+                        'a',
+                        'b',
+                        'c'
+                    ],
+                    'list-in-between': "ABCD -- ['a', 'b', 'c'] -- EFGH",
+                    'tuple': (
+                        True,
+                        False,
+                        'None'
+                    ),
+                    'tuple-in-between': "ABCD -- (True, False, 'None') -- EFGH",
+                    'set': {},
+                    'set-in-between': 'ABCD -- {} -- EFGH',
+                    'dictionary': {
+                        '1': 20,
+                        '2': 10,
+                        '3': 30
+                    },
+                    'dictionary-in-between': "ABCD -- {'1': 20, '2': 10, '3': 30} -- EFGH"
+                },
+                'string': 'fallback value',
+                'string-in-between': 'ABCD -- fallback value -- EFGH',
+                'integer': 222233444,
+                'integer-in-between': 'ABCD -- 222233444 -- EFGH',
+                'float': 2.3,
+                'float-in-between': 'ABCD -- 2.3 -- EFGH',
+                'boolean': True,
+                'boolean-in-between': 'ABCD -- True -- EFGH',
+                'none': 'None',
+                'none-in-between': 'ABCD -- None -- EFGH'
+            }
+        },
+        'some': {
+            'key': 'value',
+            'very': {
+                'key': 'value',
+                'similar': {
+                    'key': 'value',
+                    'tree': {
+                        'key': 'value',
+                        'with': {
+                            'key': 'value',
+                            'a': {
+                                'key': 'value',
+                                'slight': {
+                                    'key': 'value',
+                                    'difference': {
+                                        'key': 'value',
+                                        'right': {
+                                            'here': 'anoter value'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        'print-status': True,
+        'server': {
+            'scheme': 'http',
+            'port': 5001,
+            'servlet': {
+                'context-path': '/test-api'
+            }
+        },
+        'swagger': {
+            'schemes': [
+                'http'
+            ],
+            'host': 'localhost:5001',
+            'info': {
+                'title': 'TestApi',
+                'version': '0.0.1',
+                'description': 'description',
+                'terms-of-service': 'http://swagger.io/terms/',
+                'contact': {
+                    'name': 'Samuel Jansen',
+                    'email': 'samuel.jansenn@gmail.com'
+                },
+                'license': {
+                    'name': 'Apache 2.0 / MIT License',
+                    'url': 'http://www.apache.org/licenses/LICENSE-2.0.html'
+                }
+            }
+        },
+        'fallback': {
+            'string': 'fallback value',
+            'integer': 222233444,
+            'float': 2.3,
+            'boolean': True,
+            'none': 'None',
+            'empty': {
+                'list': [],
+                'set-or-dictionary': {},
+                'tuple': ()
+            },
+            'not-empty': {
+                'list': [
+                    'a',
+                    'b',
+                    'c'
+                ],
+                'dictionary': {
+                    '1': 20,
+                    '2': 10,
+                    '3': 30
+                },
+                'set': {},
+                'tuple': (
+                    True,
+                    False,
+                    'None'
+                )
+            }
+        },
+        'flask-specific-port': 'flask run --host=0.0.0.0 --port=5001',
+        'api': {
+            'name': 'TestApi',
+            'extension': 'yml',
+            'dependency': {
+                'update': False,
+                'list': {
+                    'web': [
+                        'globals',
+                        'python_helper',
+                        'Popen',
+                        'Path',
+                        'numpy',
+                        'pywin32',
+                        'sqlalchemy'
+                    ]
+                }
+            },
+            'git': {
+                'force-upgrade-command': 'pip install --upgrade --force python_framework'
+            },
+            'static-package': 'AppData\Local\Programs\Python\Python38-32\statics'
+        }
+    } == readdedSettingTree
+
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
+def mustHandleSettingValueInFallbackSettingTree_whenFallbackSettingFilePathIsPassedInsted() :
+    # Arrange
+    settingFallbackFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','fallback-application.yml'])
+    settingFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','referencing-fallback-application.yml'])
+    FIRST_LONG_STRING = '''"""Hi
+                every
+            one
+            """'''
+    SECOND_LONG_STRING = '''"""Hi
+                            every
+                            one
+                            this
+                            is
+                            the
+                            deepest
+                            long
+                                        string
+                            here
+                            """'''
+    THIRD_LONG_STRING = '''"""
+                    me
+                    being
+        not
+                    fshds
+                    """'''
+
+    # Act
+    readdedSettingTree = SettingHelper.getSettingTree(settingFilePath, keepDepthInLongString=True, fallbackSettingFilePath=settingFallbackFilePath)
+    # log.prettyPython(mustHandleSettingValueInFallbackSettingTree_whenFallbackSettingFilePathIsPassedInsted, 'readdedSettingTree', readdedSettingTree, logLevel=log.SETTING)
 
     # Assert
     assert [] == SettingHelper.getSetting('reffer-to.fallback-settings.empty.list', readdedSettingTree)
@@ -747,3 +1132,84 @@ def getSettingTree_whenIsSettingKeyActuallyContainsSettingKey() :
     # Assert
     assert "a:b$c:d://e:f?g:h:i:j!k:l@m:n*o:p:[q:r:s:t]/(u:v:w:x)" == SettingHelper.getSetting('environment.database.value', readdedSettingTree)
     assert ObjectHelper.equal(expected, readdedSettingTree)
+
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
+def getSettingTree_fallbackPriority() :
+    # arrange
+    defaultFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','fallback-priority.yml'])
+    localFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','fallback-priority-local.yml'])
+    expected = {
+        'print-status': True,
+        'server': {
+            'scheme': 'http',
+            'host': 'localhost',
+            'host-and-port': 'localhost:5050',
+            'port': 5050,
+            'servlet': {
+                'context-path': '/test-api'
+            }
+        },
+        'has-it': {
+            'or-not': '?',
+            'here': '?'
+        },
+        'flask-specific-port': 'flask run --host=0.0.0.0 --port=5001',
+        'api': {
+            'name': 'TestApi',
+            'extension': 'yml',
+            'dependency': {
+                'update': False,
+                'list': {
+                    'web': [
+                        'globals',
+                        'python_helper',
+                        'Popen',
+                        'Path',
+                        'numpy',
+                        'pywin32',
+                        'sqlalchemy'
+                    ]
+                }
+            },
+            'git': {
+                'force-upgrade-command': 'pip install --upgrade --force python_framework'
+            },
+            'static-package': 'AppData\Local\Programs\Python\Python38-32\statics',
+            'list': []
+        },
+        'swagger': {
+            'info': {
+                'title': 'TestApi',
+                'version': '0.0.1',
+                'description': 'description',
+                'terms-of-service': 'http://swagger.io/terms/',
+                'contact': {
+                    'name': 'Samuel Jansen',
+                    'email': 'samuel.jansenn@gmail.com'
+                },
+                'license': {
+                    'name': 'Apache 2.0 / MIT License',
+                    'url': 'http://www.apache.org/licenses/LICENSE-2.0.html'
+                }
+            },
+            'host': 'localhost:5050',
+            'schemes': [
+                'http'
+            ]
+        },
+        'python': {
+            'version': 3.9
+        }
+    }
+
+    # act
+    toAssert = SettingHelper.getSettingTree(localFilePath, keepDepthInLongString=True, fallbackSettingFilePath=defaultFilePath)
+    # log.prettyPython(getSettingTree_fallbackPriority, 'localSettings', toAssert, logLevel=log.SETTING)
+
+    assert ObjectHelper.equal(expected, toAssert)

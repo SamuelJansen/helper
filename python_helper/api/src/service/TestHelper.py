@@ -100,7 +100,7 @@ def getModuleTest(inspectGlobals, logResult, globalsInstance) :
         tddModuleGlobalsInstance = globals.newGlobalsInstance(testModule.__file__
             , successStatus = globalsInstance.successStatus
             , errorStatus = globalsInstance.errorStatus
-            , settingStatus = globalsInstance.settingStatus and inspectGlobals
+            , settingStatus = globalsInstance.settingStatus or inspectGlobals
             , debugStatus = globalsInstance.debugStatus
             , warningStatus = globalsInstance.warningStatus
             , wrapperStatus = globalsInstance.wrapperStatus
@@ -149,13 +149,13 @@ def runModuleTests(testName, runnableTddModule, times, runSpecificTests, testsTo
     if someShouldRun :
         defaultMessage = f'{testName}{StringHelper.getS(allShouldRun)}'
         methodReturnException = None
-        LogHelper.printTest(f'{defaultMessage} started', condition=logResult, newLine=False)
+        LogHelper.printTest(f'{defaultMessage} started', condition=logResult, newLine=False, margin=False)
         try :
             allDidRun, someDidRun, testTime, testReturns = runnableTddModule(testName, testModule, dataList, times, runSpecificTests, testsToRun, allShouldRun, someShouldRun, logResult)
-            LogHelper.printTest(f'{defaultMessage} succeed. {getTestRuntimeInfo(times, testTime, time.time() - totalTestTimeStart)}', condition=logResult, newLine=False)
+            LogHelper.printTest(f'{defaultMessage} succeed. {getTestRuntimeInfo(times, testTime, time.time() - totalTestTimeStart)}', condition=logResult, newLine=False, margin=False)
         except Exception as exception :
             methodReturnException = exception
-            LogHelper.printError(f'{defaultMessage} failed', condition=True, exception=methodReturnException)
+            LogHelper.printError(f'{defaultMessage} failed', condition=True, newLine=False, margin=False, exception=methodReturnException)
         exceptionRaised = ObjectHelper.isNotNone(methodReturnException)
         defaultMessage = f'{testName}{StringHelper.getS(not exceptionRaised and allDidRun)}'
         if exceptionRaised :

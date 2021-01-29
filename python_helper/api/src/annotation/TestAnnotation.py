@@ -71,9 +71,9 @@ def handleBefore(resourceInstanceMethod, actionClass, args, kwargs, returns, ins
 def handleAfter(resourceInstanceMethod, actionClass, args, kwargs, returns, methodReturn, inspectGlobals, methodReturnException=None, logResult=True) :
     inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'did run')
     if ObjectHelper.isNone(methodReturnException) :
-        LogHelper.printSuccess(f'{ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)} test succeed', condition=logResult, newLine=False)
+        LogHelper.printSuccess(f'{ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)} test succeed', condition=logResult, newLine=False, margin=False)
     else :
-        LogHelper.printError(f'{ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)} test failed', condition=logResult, newLine=False, exception=methodReturnException)
+        LogHelper.printError(f'{ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)} test failed', condition=logResult, newLine=False, margin=False, exception=methodReturnException)
     actionHandlerException = handle(resourceInstanceMethod, actionClass, args, kwargs, returns, AFTER_THE_TEST, RETURN_VALUE_FROM_CALL_AFTER)
     LogHelper.test(resourceInstanceMethod, 'Test completed')
     if ObjectHelper.isNotNone(methodReturnException) or ObjectHelper.isNotNone(actionHandlerException) :
@@ -98,7 +98,7 @@ def handle(resourceInstanceMethod, actionClass, args, kwargs, returns, moment, r
         if returnsValueIsPresent(returns) :
             returns[returnKey] = returnCall
     except Exception as exception :
-        LogHelper.printError(f'{ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)} test went wrong while handling actions {moment} the test. *args: {args}, **kwargs: {kwargs}. Enable test logs for more information', condition=True, exception=exception)
+        LogHelper.printError(f'{ReflectionHelper.getMethodModuleNameDotName(resourceInstanceMethod)} test went wrong while handling actions {moment} the test. *args: {args}, **kwargs: {kwargs}. Enable test logs for more information', condition=True, newLine=False, margin=False, exception=exception)
         return exception
 
 def getArgsLogMessage(args) :

@@ -73,10 +73,28 @@ def recoverEnvironmentVariables(environmentVariables, originalEnvironmentVariabl
     LogHelper.loadSettings()
     ACTIVE_ENVIRONMENT_VALUE = originalActiveEnvironment
 
-def getSettingTree(settingFilePath, settingTree=None, keepDepthInLongString=False, depthStep=c.TAB_UNITS, fallbackSettingTree=None, encoding=c.ENCODING) :
+def getSettingTree(
+    settingFilePath,
+    settingTree = None,
+    fallbackSettingFilePath = None,
+    fallbackSettingTree = None,
+    lazyLoad = False,
+    keepDepthInLongString = False,
+    depthStep = c.TAB_UNITS,
+    encoding = c.ENCODING
+) :
+    settingInjectionList = []
+    fallbackSettingInjectionList = []
+    if ObjectHelper.isNotNone(fallbackSettingFilePath) :
+        fallbackSettingTree, fallbackSettingInjectionList = getSettingTree(
+            fallbackSettingFilePath,
+            lazyLoad = True,
+            keepDepthInLongString = keepDepthInLongString,
+            depthStep = depthStep,
+            encoding = encoding
+        )
     with open(settingFilePath,c.READ,encoding=encoding) as settingsFile :
         allSettingLines = settingsFile.readlines()
-    settingInjectionList = []
     longStringCapturing = False
     quoteType = None
     longStringList = None
@@ -108,7 +126,8 @@ def getSettingTree(settingFilePath, settingTree=None, keepDepthInLongString=Fals
                         longStringCapturing,
                         quoteType,
                         longStringList,
-                        settingInjectionList
+                        settingInjectionList,
+                        lazyLoad
                     )
                 elif currentDepth > depth :
                     currentNodeRefference = currentDepth // (currentDepth - depth)
@@ -120,7 +139,8 @@ def getSettingTree(settingFilePath, settingTree=None, keepDepthInLongString=Fals
                             longStringCapturing,
                             quoteType,
                             longStringList,
-                            settingInjectionList
+                            settingInjectionList,
+                            lazyLoad
                         )
                         nodeRefference = currentNodeRefference
                         depth = currentDepth
@@ -142,12 +162,28 @@ def getSettingTree(settingFilePath, settingTree=None, keepDepthInLongString=Fals
                         longStringCapturing,
                         quoteType,
                         longStringList,
-                        settingInjectionList
+                        settingInjectionList,
+                        lazyLoad
                     )
                     depth = currentDepth
-    SettingHelperHelper.handleSettingInjectionList(settingInjectionList, settingTree, fallbackSettingTree=fallbackSettingTree)
-    updateSettingTree(settingTree, fallbackSettingTree)
-    return settingTree
+    if lazyLoad :
+        return settingTree, settingInjectionList
+    elif ObjectHelper.isNotEmptyCollection(fallbackSettingTree) :
+        for fallbackSettingInjection in fallbackSettingInjectionList.copy() :
+            for settingInjection in settingInjectionList.copy() :
+                if (
+                    fallbackSettingInjection[SettingHelperHelper.SETTING_KEY] == settingInjection[SettingHelperHelper.SETTING_KEY] and
+                    fallbackSettingInjection[SettingHelperHelper.SETTING_NODE_KEY] == settingInjection[SettingHelperHelper.SETTING_NODE_KEY]
+                ) :
+                    fallbackSettingInjectionList.remove(fallbackSettingInjection)
+        settingInjectionList += fallbackSettingInjectionList
+        updateSettingTree(settingTree, fallbackSettingTree)
+        SettingHelperHelper.handleSettingInjectionList(settingInjectionList, settingTree, fallbackSettingTree=fallbackSettingTree)
+        return settingTree
+    else :
+        SettingHelperHelper.handleSettingInjectionList(settingInjectionList, settingTree, fallbackSettingTree=fallbackSettingTree)
+        updateSettingTree(settingTree, fallbackSettingTree)
+        return settingTree
 
 def updateSettingTree(toUpdateSettingTree, gatheringSettingTree) :
     if ObjectHelper.isNotEmpty(gatheringSettingTree) :

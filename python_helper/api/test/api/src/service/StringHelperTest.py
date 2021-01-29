@@ -329,10 +329,10 @@ def prettifyPerformance() :
     toAssertPython = StringHelper.prettyPython(dictionaryToPrettify, tabCount=1, withColors=True)
     toAssertJson = StringHelper.prettyJson(dictionaryToPrettify, tabCount=1, withColors=True)
     performanceTime += time.time() - performanceTimeInit
-    ###- returning f'{strInstance}{strInstance}' : 365.3402144908905 seconds
-    ###- returning ''.join([strInstance, strInstance]) : 46.94538736343384 seconds
+    ###- 10000 returning f'{strInstance}{strInstance}' : 365.3402144908905 seconds
+    ###- 10000 returning ''.join([strInstance, strInstance]) : 46.94538736343384 seconds
 
     # assert
     assert ObjectHelper.isNotNone(toAssertPython) and StringHelper.isNotBlank(toAssertPython)
     assert ObjectHelper.isNotNone(toAssertJson) and StringHelper.isNotBlank(toAssertJson)
-    log.test(prettifyPerformance, f'performance time on a {len(str(dictionaryToPrettify))} dictionary size: {performanceTime} seconds')
+    log.test(prettifyPerformance, f'performance time on a {len(str(dictionaryToPrettify))} dictionary size: {performanceTime} seconds', None)
