@@ -2,7 +2,7 @@ from python_helper.api.src.domain import Constant as c
 from python_helper.api.src.service import LogHelper, SettingHelper, ObjectHelper, ReflectionHelper, StringHelper, EnvironmentHelper
 
 NO_TRACEBACK_PRESENT = f'NoneType: None{c.NEW_LINE}'
-NO_TRACEBACK_PRESENT_MESSAGE = 'No exception raised'
+NO_TRACEBACK_PRESENT_MESSAGE = 'Exception: '
 
 FIRST_LAYER_COLOR = 'FIRST_LAYER_COLOR'
 SECOND_LAYER_COLOR = 'SECOND_LAYER_COLOR'
@@ -107,7 +107,10 @@ def getOriginPortion(origin, tirdLayerColor, resetColor) :
 def getErrorPortion(exception, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor) :
     if ObjectHelper.isEmpty(exception) :
         return [c.NOTHING]
-    return [firstLayerColor, c.DOT_SPACE_CAUSE, secondLayerColor, LogHelper.getExceptionMessage(exception), c.NEW_LINE, tirdLayerColor, LogHelper.getTracebackMessage(), resetColor]
+    eceptionMessage = LogHelper.getExceptionMessage(exception)
+    traceBackMessage = LogHelper.getTracebackMessage()
+    traceBackMessageSplited = LogHelper.getTracebackMessage().split(eceptionMessage)
+    return [c.NEW_LINE, tirdLayerColor, *[t if t is not traceBackMessageSplited[-1] else t if t[-1] is not c.NEW_LINE else t[:-1] for t in traceBackMessageSplited if ObjectHelper.isNotNone(t)], secondLayerColor, eceptionMessage, resetColor]
 
 def levelStatusError(method, level) :
     LogHelper.failure(method, f'"{level}" log level status is not properly defined: {getStatus(level)}', None)
