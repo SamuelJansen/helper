@@ -75,6 +75,7 @@ def getUnitTest(inspectGlobals, globalsInstance) :
     @Test(**getGlobalsTestKwargs(inspectGlobals, globalsInstance))
     def unitTest(testModule, testName, data, testReturns, logResult) :
         discountTimeEnd = time.time()
+        unitTestException = None
         if logResult :
             LogHelper.test(unitTest, f'{testName}{c.DOT}{data[1]} test started')
         moduleTestStartTime = time.time()
@@ -83,8 +84,11 @@ def getUnitTest(inspectGlobals, globalsInstance) :
             LogHelper.printSuccess(f'{data[0].__module__}{c.DOT}{data[0].__name__} succeed', condition=logResult, newLine=False, margin=False)
         except Exception as exception :
             LogHelper.printError(f'{data[0].__module__}{c.DOT}{data[0].__name__} failed', condition=True, newLine=False, margin=False, exception=exception)
+            unitTestException = exception
         if logResult :
             LogHelper.test(unitTest, f'{testName}{c.DOT}{data[1]} test completed in {time.time() - moduleTestStartTime} seconds')
+        if ObjectHelper.isNotNone(unitTestException) :
+            raise unitTestException
         someDidRun = True
         return testName, data, testReturns, someDidRun, logResult, discountTimeEnd
     return unitTest

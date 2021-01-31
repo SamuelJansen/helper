@@ -1,37 +1,22 @@
 from python_helper import SettingHelper, StringHelper, Constant, log, EnvironmentHelper, ObjectHelper, Test
 
-# LOG_HELPER_SETTINGS = {
-#     log.LOG : False,
-#     log.SUCCESS : True,
-#     log.SETTING : True,
-#     log.DEBUG : True,
-#     log.WARNING : True,
-#     log.WRAPPER : True,
-#     log.FAILURE : True,
-#     log.ERROR : True,
-#     log.TEST : False
-# }
-
 LOG_HELPER_SETTINGS = {
     log.LOG : False,
-    log.SUCCESS : False,
-    log.SETTING : False,
-    log.DEBUG : False,
-    log.WARNING : False,
-    log.WRAPPER : False,
-    log.FAILURE : False,
-    log.ERROR : False,
+    log.SUCCESS : True,
+    log.SETTING : True,
+    log.DEBUG : True,
+    log.WARNING : True,
+    log.WRAPPER : True,
+    log.FAILURE : True,
+    log.ERROR : True,
     log.TEST : False
 }
-
-TEST_SETTINGS = {}
 
 @Test(
     environmentVariables={
         SettingHelper.ACTIVE_ENVIRONMENT : None,
         **LOG_HELPER_SETTINGS
-    },
-    **TEST_SETTINGS
+    }
 )
 def updateActiveEnvironment_withSuccess() :
     # Arrange
@@ -65,8 +50,7 @@ def updateActiveEnvironment_withSuccess() :
         'LATE_VALUE' : '-- late environment value --',
         'ONLY_ENVIRONMENT_VARIABLE' : 'only environment variable value',
         **LOG_HELPER_SETTINGS
-    },
-    **TEST_SETTINGS
+    }
 )
 def mustReadSettingFile() :
     # Arrange
@@ -144,8 +128,7 @@ def mustReadSettingFile() :
     environmentVariables={
         **{},
         **LOG_HELPER_SETTINGS
-    },
-    **TEST_SETTINGS
+    }
 )
 def mustNotReadSettingFile() :
     # Arrange
@@ -190,8 +173,7 @@ def mustNotReadSettingFile() :
     environmentVariables={
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
-    },
-    **TEST_SETTINGS
+    }
 )
 def mustPrintSettingTree() :
     # Arrange
@@ -286,8 +268,7 @@ def querySetting_withSuccess() :
     environmentVariables={
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
-    },
-    **TEST_SETTINGS
+    }
 )
 def mustHandleSettingValueInFallbackSettingTree() :
     # Arrange
@@ -672,8 +653,7 @@ def mustHandleSettingValueInFallbackSettingTree() :
     environmentVariables={
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
-    },
-    **TEST_SETTINGS
+    }
 )
 def mustHandleSettingValueInFallbackSettingTree_whenFallbackSettingFilePathIsPassedInsted() :
     # Arrange
@@ -1057,8 +1037,7 @@ def mustHandleSettingValueInFallbackSettingTree_whenFallbackSettingFilePathIsPas
     environmentVariables={
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
-    },
-    **TEST_SETTINGS
+    }
 )
 def getSettingTree_whenIsSettingKeyActuallyContainsSettingKey() :
     # Arrange
@@ -1134,8 +1113,7 @@ def getSettingTree_whenIsSettingKeyActuallyContainsSettingKey() :
     environmentVariables={
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
-    },
-    **TEST_SETTINGS
+    }
 )
 def getSettingTree_fallbackPriority() :
     # arrange
@@ -1219,8 +1197,7 @@ def getSettingTree_fallbackPriority() :
         'LATE_VALUE' : '-- late environment value --',
         'ONLY_ENVIRONMENT_VARIABLE' : 'only environment variable value',
         **LOG_HELPER_SETTINGS,
-    },
-    **TEST_SETTINGS
+    }
 )
 def getSettingTree_otherApplication() :
     # arrange

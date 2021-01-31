@@ -41,22 +41,23 @@ def updateSettingTreeAndReturnNodeKey(settingKey, settingValue, nodeKey, setting
     return nodeKey
 
 def accessTree(nodeKey,tree) :
-    strippedNodeKey = nodeKey.strip()
-    if nodeKey is None or nodeKey == c.NOTHING :
-        returnTree = None
-        try :
-            returnTree = StringHelper.filterString(tree)
-        except Exception as exception :
-            LogHelper.warning(accessTree, f'Failed to get filtered string from {tree} tree', exception=exception)
-            returnTree = tree
-        return returnTree
-    elif isinstance(nodeKey,str) :
-        nodeKeyList = nodeKey.split(c.DOT)
-        if len(nodeKeyList) == 1 :
-             nextNodeKey = c.NOTHING
-        else :
-            nextNodeKey = c.DOT.join(nodeKeyList[1:])
-        return accessTree(nextNodeKey,tree[nodeKeyList[0]])
+    if ObjectHelper.isNotNone(tree) :
+        strippedNodeKey = nodeKey.strip()
+        if ObjectHelper.isEmpty(nodeKey) :
+            returnTree = None
+            try :
+                returnTree = StringHelper.filterString(tree)
+            except Exception as exception :
+                LogHelper.failure(accessTree, f'Failed to get filtered string from {tree} tree. Returning it the way it is by default', exception)
+                returnTree = tree
+            return returnTree
+        elif isinstance(nodeKey,str) :
+            nodeKeyList = nodeKey.split(c.DOT)
+            if len(nodeKeyList) == 1 :
+                 nextNodeKey = c.NOTHING
+            else :
+                nextNodeKey = c.DOT.join(nodeKeyList[1:])
+            return accessTree(nextNodeKey,tree.get(nodeKeyList[0]))
 
 def safelyAccessTree(nodeKey, settingTree) :
     setting = None
@@ -187,7 +188,7 @@ def handleSettingInjectionList(settingInjectionList, settingTree, fallbackSettin
                 settingTree,
                 settingInjectionList,
                 fallbackSettingTree,
-                getSettingInjectionValue,
+                getSettingInjectionValueIgnoringFallbackSettingTree,
                 verifyer = verifyDefaultSettingInjectionListHandler
             )
         except Exception as exception :
@@ -203,11 +204,11 @@ def lazillyHandleSettingInjectionList(settingInjectionList, settingTree, fallbac
                 settingTree,
                 settingInjectionList,
                 fallbackSettingTree,
-                getSettingInjectionValue,
+                getSettingInjectionValueIgnoringFallbackSettingTree,
                 verifyer = None
             )
         except Exception as exception :
-            LogHelper.error(handleSettingInjectionList,'Not possible to load setting injections properly',exception)
+            LogHelper.error(handleSettingInjectionList,'Not possible to lazilly load setting injections properly',exception)
             raise exception
 
 ################################################################################
@@ -353,7 +354,7 @@ def safelyGetSettingInjectionValue(settingKey, settingValue, nodeKey, settingTre
         newSettingValue = getSettingInjectionValue(settingKey, settingValue, nodeKey, settingTree)
     except Exception as e :
         exception = e
-        LogHelper.log(safelyGetSettingInjectionValue, f'Not possible to load "{settingKey}" setting key from setting tree. Now trying to load it from default setting tree', exception=exception)
+        LogHelper.log(safelyGetSettingInjectionValue, f'Not possible to load "{settingKey}" setting key from setting tree. Now trying to load it from fallback setting tree', exception=exception)
     if ObjectHelper.isNone(newSettingValue) and ObjectHelper.isNotNone(fallbackSettingTree) :
         return getSettingInjectionValue(settingKey, settingValue, nodeKey, fallbackSettingTree)
     if ObjectHelper.isNotNone(exception) :
@@ -536,6 +537,9 @@ def containsSettingInjection(settingValue) :
 
 def containsOnlyOneSettingInjection(settingValue) :
     return False if not containsValidSettingInjection(settingValue) else 1 == len(getSettingInjectionListFromSettingValue(settingValue))
+
+def getSettingInjectionValueIgnoringFallbackSettingTree(settingKey, settingValue, nodeKey, settingTree, fallbackSettingTree=None) :
+    return getSettingInjectionValue(settingKey, settingValue, nodeKey, settingTree)
 
 def getSettingInjectionValue(settingKey, settingValue, nodeKey, settingTree) :
     unwrapedSettingInjectionValue = getUnwrappedSettingInjection(settingValue)

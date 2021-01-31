@@ -1,1 +1,1 @@
-globals==0.2.17
+globals==0.2.18
