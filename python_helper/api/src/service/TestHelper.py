@@ -19,58 +19,6 @@ TEST_KWARGS = {
     'logResult' : False
 }
 
-def getTestEnvironmentVariables(globalsInstance) :
-    return {
-        LogHelper.LOG : globalsInstance.logStatus,
-        LogHelper.SUCCESS : globalsInstance.successStatus,
-        LogHelper.SETTING : globalsInstance.settingStatus,
-        LogHelper.DEBUG : globalsInstance.debugStatus,
-        LogHelper.WARNING : globalsInstance.warningStatus,
-        LogHelper.FAILURE : globalsInstance.failureStatus,
-        LogHelper.WRAPPER : globalsInstance.wrapperStatus,
-        LogHelper.ERROR : globalsInstance.errorStatus,
-        LogHelper.TEST : globalsInstance.testStatus
-    }
-
-def getGlobalsTestKwargs(inspectGlobals, globalsInstance) :
-    import globals
-    TEST_KWARGS['callBefore'] = globals.runBeforeTest
-    TEST_KWARGS['callAfter'] = globals.runAfterTest
-    TEST_KWARGS['inspectGlobals'] = inspectGlobals
-    TEST_KWARGS['kwargsOfCallBefore'] = {
-        'muteLogs' : not inspectGlobals,
-        'logLevel' : LogHelper.DEBUG
-    }
-    TEST_KWARGS['kwargsOfCallAfter'] = {
-        'muteLogs' : not inspectGlobals,
-        'logLevel' : LogHelper.DEBUG
-    }
-    return {
-        'environmentVariables' : getTestEnvironmentVariables(globalsInstance),
-        **TEST_KWARGS
-    }
-
-def updateTestNames(testNames, queryResult) :
-    if not c.NOTHING == queryResult :
-        for key, value in queryResult.items() :
-            if c.NOTHING == value and key.endswith(TEST_DOT_PY) :
-                testNames.append(key[:-len(DOT_PY)])
-            else :
-                updateTestNames(testNames, value)
-
-def isTestToRun(testModule, attributeData, runSpecificTests, testsToRun) :
-    return (
-            not runSpecificTests or
-            (runSpecificTests and f'{ReflectionHelper.getName(testModule)}{c.DOT}{attributeData[1]}' in testsToRun)
-        ) and ReflectionHelper.getAttributeOrMethod(attributeData[0], TestAnnotation.IS_TEST_METHOD, muteLogs=True)
-
-def getTestNames(testQueryTree) :
-    testNames = []
-    for queryResultKey, queryResult in testQueryTree.items() :
-        LogHelper.prettyPython(getTestNames, 'Query result', queryResult, logLevel=LogHelper.TEST)
-        updateTestNames(testNames, queryResult)
-    return testNames
-
 def getUnitTest(inspectGlobals, globalsInstance) :
     @Test(**getGlobalsTestKwargs(inspectGlobals, globalsInstance))
     def unitTest(testModule, testName, data, testReturns, logResult) :
@@ -208,6 +156,7 @@ def getSomeDidOrDidntAsString(allDidRun, someDidRun) :
 def run(
     filePath,
     runOnly = None,
+    ignore=None,
     times = 1,
     successStatus = True,
     errorStatus = True,
@@ -231,25 +180,66 @@ def run(
         , testStatus = testStatus
         , logStatus = logStatus
     )
-    testsToRun = [] if ObjectHelper.isNone(runOnly) or ObjectHelper.isNotCollection(runOnly) else runOnly
-    runSpecificTests = ObjectHelper.isNotEmpty(testsToRun)
+    testModuleNames, testsToRun, runSpecificTests = getTestModuleNames(runOnly, ignore, globalsInstance)
     returns = {}
-    LogHelper.prettyPython(run, f'runSpecificTests: {runSpecificTests}, testsToRun', testsToRun, logLevel=LogHelper.TEST)
-    testQueryTree = SettingHelper.querySetting(TEST_PACKAGE, globalsInstance.apiTree)
-    LogHelper.prettyPython(run, 'Test query tree', testQueryTree, logLevel=LogHelper.TEST)
-    testNames = getTestNames(testQueryTree)
-    LogHelper.prettyPython(run, 'Test names', testNames, logLevel=LogHelper.TEST)
     totalTestTimeStart = time.time()
     testTime = 0
-    for testName in testNames :
+    for testModuleName in testModuleNames :
         runnableTddModule = getModuleTest(inspectGlobals, logResult, globalsInstance)
-        allDidRun, didRun, moduleTestTime, testReturns = runModuleTests(testName, runnableTddModule, times, runSpecificTests, testsToRun, logResult, globalsInstance)
-        returns[testName] = testReturns
+        allDidRun, didRun, moduleTestTime, testReturns = runModuleTests(testModuleName, runnableTddModule, times, runSpecificTests, testsToRun, logResult, globalsInstance)
+        returns[testModuleName] = testReturns
         testTime += moduleTestTime
     totalTestTime = time.time() - totalTestTimeStart
     if logResult :
         LogHelper.success(run, f'{globalsInstance.apiName} tests completed. {getTestRuntimeInfo(times, testTime, totalTestTime)}')
     return returns
+
+def getTestModuleNames(runOnly, ignore, globalsInstance) :
+    testsToRun = [] if ObjectHelper.isNone(runOnly) or ObjectHelper.isNotCollection(runOnly) else runOnly
+    testsToIgnore = [] if ObjectHelper.isNone(ignore) or ObjectHelper.isNotCollection(ignore) else ignore
+    runSpecificTests = ObjectHelper.isNotEmpty(testsToRun)
+    LogHelper.prettyPython(getTestModuleNames, f'runSpecificTests: {runSpecificTests}, testsToRun', testsToRun, logLevel=LogHelper.TEST)
+    testModuleNames = []
+    if ObjectHelper.isEmpty(testsToRun) :
+        testQueryTree = SettingHelper.querySetting(TEST_PACKAGE, globalsInstance.apiTree)
+        LogHelper.prettyPython(getTestModuleNames, 'Test query tree', testQueryTree, logLevel=LogHelper.TEST)
+        testModuleNames += getTestModuleNamesFromQuerryTree(testQueryTree, runOnly, ignore)
+    else :
+        for testName in testsToIgnore :
+            if testName in testsToRun :
+                testModuleNames, testsToRun, runSpecificTests .remove(testName)
+        for testName in testsToRun :
+            testNameSplitted = testName.split(c.DOT)
+            testModuleName = c.NOTHING
+            if 2 == len(testNameSplitted) :
+                testModuleName = testNameSplitted[-2]
+            if testModuleName not in testModuleNames and StringHelper.isNotBlank(testName) :
+                testModuleNames.append(testModuleName)
+    LogHelper.prettyPython(getTestModuleNames, 'Test module names', testModuleNames, logLevel=LogHelper.TEST)
+    return testModuleNames, testsToRun, runSpecificTests
+
+def getTestModuleNamesFromQuerryTree(testQueryTree, runOnly, ignore) :
+    testModuleNames = []
+    for queryResultKey, queryResult in testQueryTree.items() :
+        LogHelper.prettyPython(getTestModuleNamesFromQuerryTree, 'Query result', queryResult, logLevel=LogHelper.TEST)
+        updateTestModuleNames(testModuleNames, queryResult, runOnly, ignore)
+    return testModuleNames
+
+def updateTestModuleNames(testModuleNames, queryResult, runOnly, ignore) :
+    if not c.NOTHING == queryResult :
+        for key, value in queryResult.items() :
+            if c.NOTHING == value and key.endswith(TEST_DOT_PY) :
+                testModuleName = key[:-len(DOT_PY)]
+                if ObjectHelper.isNone(runOnly) or ObjectHelper.isNotNone(runOnly) and testModuleName in runOnly :
+                    testModuleNames.append(testModuleName)
+            else :
+                updateTestModuleNames(testModuleNames, value, runOnly, ignore)
+
+def isTestToRun(testModule, attributeData, runSpecificTests, testsToRun) :
+    return (
+            not runSpecificTests or
+            (runSpecificTests and f'{ReflectionHelper.getName(testModule)}{c.DOT}{attributeData[1]}' in testsToRun)
+        ) and ReflectionHelper.getAttributeOrMethod(attributeData[0], TestAnnotation.IS_TEST_METHOD, muteLogs=True)
 
 def getTestRuntimeInfo(times, testTime, totalTestTime) :
     testRuntimeInfo = None
@@ -259,3 +249,34 @@ def getTestRuntimeInfo(times, testTime, totalTestTime) :
         LogHelper.warning(getTestRuntimeInfo, 'Not possible do get test runtime info', exception=exception)
         testRuntimeInfo = c.NOTHING
     return testRuntimeInfo
+
+def getTestEnvironmentVariables(globalsInstance) :
+    return {
+        LogHelper.LOG : globalsInstance.logStatus,
+        LogHelper.SUCCESS : globalsInstance.successStatus,
+        LogHelper.SETTING : globalsInstance.settingStatus,
+        LogHelper.DEBUG : globalsInstance.debugStatus,
+        LogHelper.WARNING : globalsInstance.warningStatus,
+        LogHelper.FAILURE : globalsInstance.failureStatus,
+        LogHelper.WRAPPER : globalsInstance.wrapperStatus,
+        LogHelper.ERROR : globalsInstance.errorStatus,
+        LogHelper.TEST : globalsInstance.testStatus
+    }
+
+def getGlobalsTestKwargs(inspectGlobals, globalsInstance) :
+    import globals
+    TEST_KWARGS['callBefore'] = globals.runBeforeTest
+    TEST_KWARGS['callAfter'] = globals.runAfterTest
+    TEST_KWARGS['inspectGlobals'] = inspectGlobals
+    TEST_KWARGS['kwargsOfCallBefore'] = {
+        'muteLogs' : not inspectGlobals,
+        'logLevel' : LogHelper.DEBUG
+    }
+    TEST_KWARGS['kwargsOfCallAfter'] = {
+        'muteLogs' : not inspectGlobals,
+        'logLevel' : LogHelper.DEBUG
+    }
+    return {
+        'environmentVariables' : getTestEnvironmentVariables(globalsInstance),
+        **TEST_KWARGS
+    }
