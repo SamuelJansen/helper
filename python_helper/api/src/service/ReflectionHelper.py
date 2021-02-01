@@ -21,7 +21,7 @@ def getAttributeOrMethod(instance, name, muteLogs=False) :
             attributeOrMethodInstance = None if not hasattr(instance, name) else getattr(instance, name)
         except Exception as exception :
             if not muteLogs :
-                LogHelper.warning(getAttributeOrMethod, f'Not possible to get "{name}" from "{getClassName(instance, typeName=c.TYPE_CLASS, muteLogs=muteLogs) if ObjectHelper.isNotNone(instance) else instance}" instance', exception=exception)
+                LogHelper.warning(getAttributeOrMethod, f'Not possible to get "{name}" from "{getClassName(instance, typeClass=c.TYPE_CLASS, muteLogs=muteLogs) if ObjectHelper.isNotNone(instance) else instance}" instance', exception=exception)
     return attributeOrMethodInstance
 
 def setAttributeOrMethod(instance, name, attributeOrMethodInstance, muteLogs=False) :
@@ -30,7 +30,7 @@ def setAttributeOrMethod(instance, name, attributeOrMethodInstance, muteLogs=Fal
             setattr(instance, name, attributeOrMethodInstance)
         except Exception as exception :
             if not muteLogs :
-                LogHelper.warning(setAttributeOrMethod, f'Not possible to set "{name}:{attributeOrMethodInstance}" to "{getClassName(instance, typeName=c.TYPE_CLASS, muteLogs=muteLogs) if ObjectHelper.isNotNone(instance) else instance}" instance', exception=exception)
+                LogHelper.warning(setAttributeOrMethod, f'Not possible to set "{name}:{attributeOrMethodInstance}" to "{getClassName(instance, typeClass=c.TYPE_CLASS, muteLogs=muteLogs) if ObjectHelper.isNotNone(instance) else instance}" instance', exception=exception)
 
 def getAttributeAndMethodNameList(instanceClass) :
     objectNullArgsInstance = instanciateItWithNoArgsConstructor(instanceClass)

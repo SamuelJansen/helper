@@ -163,6 +163,7 @@ def run(
     settingStatus = False,
     debugStatus = True,
     warningStatus = True,
+    failureStatus = True,
     wrapperStatus = False,
     testStatus = False,
     logStatus = False,
@@ -176,6 +177,7 @@ def run(
         , settingStatus = settingStatus or inspectGlobals
         , debugStatus = debugStatus
         , warningStatus = warningStatus
+        , failureStatus = failureStatus
         , wrapperStatus = wrapperStatus
         , testStatus = testStatus
         , logStatus = logStatus
