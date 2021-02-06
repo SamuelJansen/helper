@@ -1,6 +1,6 @@
 from numbers import Number
 from python_helper.api.src.domain import Constant as c
-from python_helper.api.src.service import StringHelper
+from python_helper.api.src.service import StringHelper, LogHelper
 from python_helper.api.src.helper import ObjectHelperHelper
 
 GENERATOR_CLASS_NAME = 'generator'
@@ -24,19 +24,45 @@ COLLECTION_CLASS_LIST = [
     set
 ]
 
-def equal(responseAsDict,expectedResponseAsDict,ignoreKeyList=None,ignoreCharactereList=None) :
-    innerIgnoreCharactereList = [c.SPACE]
-    if isNotNone(ignoreCharactereList) :
-        innerIgnoreCharactereList += ignoreCharactereList
-    filteredResponse = StringHelper.filterJson(
-        str(sortIt(filterIgnoreKeyList(responseAsDict,ignoreKeyList))),
-        extraCharacterList=innerIgnoreCharactereList
-    )
-    filteredExpectedResponse = StringHelper.filterJson(
-        str(sortIt(filterIgnoreKeyList(expectedResponseAsDict,ignoreKeyList))),
-        extraCharacterList=innerIgnoreCharactereList
-    )
-    return filteredResponse == filteredExpectedResponse
+def equals(
+    expected,
+    toAssert,
+    ignoreKeyList = None,
+    ignoreCharactereList = None,
+    visitedInstances = None,
+    debug = False
+) :
+    if isNativeClass(type(expected)) :
+        return expected == toAssert
+    if isNone(visitedInstances) :
+        visitedInstances = []
+    if isDictionary(expected) and isDictionary(toAssert) :
+        innerIgnoreCharactereList = [c.SPACE]
+        if isNotNone(ignoreCharactereList) :
+            innerIgnoreCharactereList += ignoreCharactereList
+        filteredResponse = StringHelper.filterJson(
+            str(sortIt(filterIgnoreKeyList(expected,ignoreKeyList))),
+            extraCharacterList=innerIgnoreCharactereList
+        )
+        filteredExpectedResponse = StringHelper.filterJson(
+            str(sortIt(filterIgnoreKeyList(toAssert,ignoreKeyList))),
+            extraCharacterList=innerIgnoreCharactereList
+        )
+        return filteredResponse == filteredExpectedResponse
+    else :
+        if expected not in visitedInstances :
+            isEqual = True
+            try :
+                LogHelper.prettyPython(equals, f'expected', expected, logLevel = LogHelper.DEBUG, condition=debug)
+                LogHelper.prettyPython(equals, f'toAssert', toAssert, logLevel = LogHelper.DEBUG, condition=debug)
+                isEqual = True and ObjectHelperHelper.leftEqual(expected, toAssert, visitedInstances) and ObjectHelperHelper.leftEqual(toAssert, expected, visitedInstances)
+            except Exception as exception :
+                isEqual = False
+                LogHelper.log(equals, f'Different arguments in {expected} and {toAssert}. Returning "{isEqual}" by default', exception=exception)
+            visitedInstances.append(expected)
+            return isEqual
+        else :
+             return True
 
 def sortIt(thing) :
     if isDictionary(thing) :

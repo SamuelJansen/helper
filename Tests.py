@@ -1,10 +1,17 @@
 from python_helper import TestHelper
-TestHelper.run(__file__, inspectGlobals=False)
+# TestHelper.run(__file__, inspectGlobals=False)
+TestHelper.run(
+    __file__,
+    runOnly = [
+        'ObjectHelperTest.equal_whenListOfDictionaries',
+        'ObjectHelperTest.equal_whenObjects'
+    ]
+)
 # TestHelper.run(
 #     __file__,
 #     runOnly = [
 #         'SettingHelperTest.getSettingTree_otherApplication'
-#         ],
+#     ],
 #     testStatus = False,
 #     logStatus = False,
 #     logResult = True,
@@ -24,7 +31,7 @@ TestHelper.run(__file__, inspectGlobals=False)
 #     runOnly = [
 #         'LogHelperTest.mustLogPretyPythonWithColors',
 #         'LogHelperTest.mustLogPretyJsonWithColors'
-#         ],
+#     ],
 #     testStatus = False,
 #     logStatus = False,
 #     logResult = False,
@@ -35,7 +42,7 @@ TestHelper.run(__file__, inspectGlobals=False)
 #     times = 100,
 #     runOnly = [
 #         'StringHelperTest.prettyJson_withSucces'
-#         ],
+#     ],
 #     testStatus = False,
 #     logStatus = False,
 #     logResult = True,
@@ -46,7 +53,7 @@ TestHelper.run(__file__, inspectGlobals=False)
 #     times = 100,
 #     runOnly = [
 #         'StringHelperTest.prettyPython_withSucces'
-#         ],
+#     ],
 #     testStatus = False,
 #     logStatus = False,
 #     logResult = True,
@@ -65,7 +72,7 @@ TestHelper.run(__file__, inspectGlobals=False)
 #     times = 1,
 #     runOnly = [
 #         'StringHelperTest.prettifyPerformance'
-#         ],
+#     ],
 #     testStatus = False,
 #     logStatus = False,
 #     logResult = True,
@@ -99,7 +106,7 @@ TestHelper.run(__file__, inspectGlobals=False)
 #     times = 1,
 #     runOnly = [
 #         'MethodAnnotationTest.Function_withSuccess'
-#         ],
+#     ],
 #     testStatus = False,
 #     logStatus = False,
 #     logResult = False,
@@ -110,7 +117,7 @@ TestHelper.run(__file__, inspectGlobals=False)
 #     times = 1,
 #     runOnly = [
 #         'LogHelperTest.mustLogWithColors'
-#         ],
+#     ],
 #     testStatus = False,
 #     logStatus = False,
 #     logResult = False,

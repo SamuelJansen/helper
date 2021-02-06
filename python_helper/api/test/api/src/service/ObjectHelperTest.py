@@ -1,5 +1,5 @@
 import json
-from python_helper import ObjectHelper, StringHelper, SettingHelper, Constant, log, Test
+from python_helper import ObjectHelper, StringHelper, SettingHelper, Constant, log, Test, ReflectionHelper, RandomHelper
 
 # LOG_HELPER_SETTINGS = {
 #     log.LOG : True,
@@ -25,6 +25,21 @@ LOG_HELPER_SETTINGS = {
     log.ERROR : False,
     log.TEST : False
 }
+
+class MyDto:
+    def __init__(self, myAttribute, myOther, myThirdList) :
+        self.myAttribute = myAttribute
+        self.myOther = myOther
+        self.myThirdList = myThirdList
+
+class MyOtherDto:
+    def __init__(self, myAttribute) :
+        self.myAttribute = myAttribute
+
+class MyThirdDto :
+    def __init__(self, my, myAttribute) :
+        self.my = my
+        self.myAttribute = myAttribute
 
 DICTIONARY_INSTANCE = {
     'my_none_value' : None,
@@ -76,7 +91,7 @@ TEST_SETTINGS = {}
     **TEST_SETTINGS
 )
 def basicMethods() :
-    # Arrange
+    # arrange
     def generatorInstance() :
         while True :
             yield False
@@ -100,9 +115,9 @@ def basicMethods() :
     TUPLE_FILLED_INSTANCE = (tuple(),tuple())
     SET_FILLED_INSTANCE = {'set()',2}
 
-    # Act
+    # act
 
-    # Assert
+    # assert
     assert ObjectHelper.isNotNone(STR_INSTANCE)
     assert ObjectHelper.isNotNone(BOOLEAN_INSTANCE)
     assert ObjectHelper.isNotNone(INTEGER_INSTANCE)
@@ -351,7 +366,7 @@ def basicMethods() :
     **TEST_SETTINGS
 )
 def mustAssertEquals() :
-    # Arrange
+    # arrange
     dictionaryInstance = {**{},**JSON_INSTANCE}
     someDictionary = {
         'a' : 'b',
@@ -474,12 +489,12 @@ def mustAssertEquals() :
         )
     }
 
-    # Act
-    toAssert = ObjectHelper.equal(dictionaryInstance, JSON_INSTANCE, ignoreCharactereList=[Constant.NEW_LINE])
-    unsortedDictionaryToAssert = ObjectHelper.equal(someDictionary, someOtherDictionary)
-    notEqualsToAssert = ObjectHelper.equal(someDictionary, differentDictionary)
+    # act
+    toAssert = ObjectHelper.equals(dictionaryInstance, JSON_INSTANCE, ignoreCharactereList=[Constant.NEW_LINE])
+    unsortedDictionaryToAssert = ObjectHelper.equals(someDictionary, someOtherDictionary)
+    notEqualsToAssert = ObjectHelper.equals(someDictionary, differentDictionary)
 
-    # Assert
+    # assert
     assert toAssert
     assert unsortedDictionaryToAssert
     assert not notEqualsToAssert
@@ -489,14 +504,208 @@ def mustAssertEquals() :
     **TEST_SETTINGS
 )
 def mustIgnoreKeyCorrectly() :
-    # Arrange
+    # arrange
     expected = {**{},**DICTIONARY_INSTANCE}
     anotherDictionaryInstance = {**{},**DICTIONARY_INSTANCE}
     IGNORABLE_KEY = 'ignorableKey'
     anotherDictionaryInstance[IGNORABLE_KEY] = 'ignorableValue'
 
-    # Act
+    # act
     toAssert = ObjectHelper.filterIgnoreKeyList(anotherDictionaryInstance,[IGNORABLE_KEY])
 
-    # Assert
-    assert ObjectHelper.equal(expected, toAssert)
+    # assert
+    assert ObjectHelper.equals(expected, toAssert)
+
+@Test()
+def equal_whenListOfDictionaries() :
+    # arrange
+    null = 'null'
+    LIST_OF_DICTIONARIES = [
+        {
+            "myAttribute": "NW2",
+            "myOther": {
+                "myAttribute": "34PDZB"
+            },
+            "myThirdList": [
+                {
+                    "my": {
+                        "myAttribute": "X1HC",
+                        "myOther": {
+                            "myAttribute": "34PDZB"
+                        },
+                        "myThirdList": null
+                    },
+                    "myAttribute": 9
+                }
+            ]
+        },
+        {
+            "myAttribute": "",
+            "myOther": null,
+            "myThirdList": [
+                {
+                    "my": {
+                        "myAttribute": "U",
+                        "myOther": null,
+                        "myThirdList": null
+                    },
+                    "myAttribute": 3
+                }
+            ]
+        },
+        {
+            "myAttribute": "HNQ7QKW2",
+            "myOther": {
+                "myAttribute": "V9OXKD8"
+            },
+            "myThirdList": [
+                {
+                    "my": {
+                        "myAttribute": "PVYA",
+                        "myOther": {
+                            "myAttribute": "V9OXKD8"
+                        },
+                        "myThirdList": null
+                    },
+                    "myAttribute": 10
+                }
+            ]
+        }
+    ]
+    DIFFERENT_LIST_OF_DICTIONARIES = [
+        {
+            "myAttribute": "NW2",
+            "myOther": {
+                "myAttribute": "34PDZB"
+            },
+            "myThirdList": [
+                {
+                    "my": {
+                        "myAttribute": "X1HC",
+                        "myOther": {
+                            "myAttribute": RandomHelper.integer()
+                        },
+                        "myThirdList": null
+                    },
+                    "myAttribute": 9
+                }
+            ]
+        },
+        {
+            "myAttribute": "",
+            "myOther": null,
+            "myThirdList": [
+                {
+                    "my": {
+                        "myAttribute": "U",
+                        "myOther": null,
+                        "myThirdList": null
+                    },
+                    "myAttribute": 3
+                }
+            ]
+        },
+        {
+            "myAttribute": "HNQ7QKW2",
+            "myOther": {
+                "myAttribute": "V9OXKD8"
+            },
+            "myThirdList": [
+                {
+                    "my": {
+                        "myAttribute": "PVYA",
+                        "myOther": {
+                            "myAttribute": "V9OXKD8"
+                        },
+                        "myThirdList": null
+                    },
+                    "myAttribute": 10
+                }
+            ]
+        }
+    ]
+
+    # act
+    # assert
+    assert ObjectHelper.equals(LIST_OF_DICTIONARIES, [
+        {
+            "myAttribute": "NW2",
+            "myOther": {
+                "myAttribute": "34PDZB"
+            },
+            "myThirdList": [
+                {
+                    "my": {
+                        "myAttribute": "X1HC",
+                        "myOther": {
+                            "myAttribute": "34PDZB"
+                        },
+                        "myThirdList": null
+                    },
+                    "myAttribute": 9
+                }
+            ]
+        },
+        {
+            "myAttribute": "",
+            "myOther": null,
+            "myThirdList": [
+                {
+                    "my": {
+                        "myAttribute": "U",
+                        "myOther": null,
+                        "myThirdList": null
+                    },
+                    "myAttribute": 3
+                }
+            ]
+        },
+        {
+            "myAttribute": "HNQ7QKW2",
+            "myOther": {
+                "myAttribute": "V9OXKD8"
+            },
+            "myThirdList": [
+                {
+                    "my": {
+                        "myAttribute": "PVYA",
+                        "myOther": {
+                            "myAttribute": "V9OXKD8"
+                        },
+                        "myThirdList": null
+                    },
+                    "myAttribute": 10
+                }
+            ]
+        }
+    ])
+    assert False == ObjectHelper.equals(LIST_OF_DICTIONARIES, [{}, {}, {}])
+    assert False == ObjectHelper.equals(LIST_OF_DICTIONARIES, DIFFERENT_LIST_OF_DICTIONARIES)
+
+@Test()
+def equal_whenObjects() :
+    # arrange
+    a = RandomHelper.string()
+    b = RandomHelper.string()
+    c = RandomHelper.string()
+    otherA = MyOtherDto(RandomHelper.string())
+    otherB = MyOtherDto(RandomHelper.string())
+    otherC = MyOtherDto(RandomHelper.string())
+    myFirst = MyDto(RandomHelper.string(), otherA, None)
+    mySecond = MyDto(RandomHelper.string(), otherB, None)
+    myThird = MyDto(RandomHelper.string(), otherC, None)
+    thirdOne = RandomHelper.integer()
+    thirdTwo = RandomHelper.integer()
+    thirdThree = RandomHelper.integer()
+    myThirdOne = MyThirdDto(myFirst, thirdOne)
+    myThirdTwo = MyThirdDto(mySecond, thirdTwo)
+    myThirdThree = MyThirdDto(myThird, thirdThree)
+    expected = [MyDto(a, otherA, myThirdOne), MyDto(b, otherB, myThirdTwo), MyDto(c, otherC, myThirdThree)]
+
+    # act
+    toAssert = [MyDto(a, otherA, myThirdOne), MyDto(b, otherB, myThirdTwo), MyDto(c, otherC, myThirdThree)]
+
+    # assert
+    assert False == (expected == toAssert)
+    assert ObjectHelper.equals(expected, toAssert)
+    assert False == ObjectHelper.equals(expected, [MyDto(None, None, None), MyDto(None, None, None), MyDto(None, None, None)])

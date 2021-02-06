@@ -1107,7 +1107,7 @@ def getSettingTree_whenIsSettingKeyActuallyContainsSettingKey() :
 
     # Assert
     assert "a:b$c:d://e:f?g:h:i:j!k:l@m:n*o:p:[q:r:s:t]/(u:v:w:x)" == SettingHelper.getSetting('environment.database.value', readdedSettingTree)
-    assert ObjectHelper.equal(expected, readdedSettingTree)
+    assert ObjectHelper.equals(expected, readdedSettingTree)
 
 @Test(
     environmentVariables={
@@ -1187,7 +1187,7 @@ def getSettingTree_fallbackPriority() :
     toAssert = SettingHelper.getSettingTree(localFilePath, keepDepthInLongString=True, fallbackSettingFilePath=defaultFilePath)
     # log.prettyPython(getSettingTree_fallbackPriority, 'localSettings', toAssert, logLevel=log.SETTING)
 
-    assert ObjectHelper.equal(expected, toAssert)
+    assert ObjectHelper.equals(expected, toAssert)
 
 
 @Test(
@@ -1484,5 +1484,5 @@ def getSettingTree_otherApplication() :
     assert expected['long']['string'] == toAssert['long']['string']
     assert expected['deepest']['long']['string']['ever']['long']['string'] == toAssert['deepest']['long']['string']['ever']['long']['string']
     assert expected['not']['idented']['long']['string'] == toAssert['not']['idented']['long']['string']
-    assert ObjectHelper.equal(expected['some']['dictionary'], toAssert['some']['dictionary'])
-    assert ObjectHelper.equal(expected, toAssert)
+    assert ObjectHelper.equals(expected['some']['dictionary'], toAssert['some']['dictionary'])
+    assert ObjectHelper.equals(expected, toAssert)
