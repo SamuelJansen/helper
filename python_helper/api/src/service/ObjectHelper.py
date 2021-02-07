@@ -29,13 +29,15 @@ def equals(
     toAssert,
     ignoreKeyList = None,
     ignoreCharactereList = None,
-    visitedInstances = None,
-    debug = False
+    visitedIdInstances = None,
+    muteLogs = True
 ) :
+    if isNone(expected) or isNone(toAssert) :
+        return expected is None and toAssert is None
     if isNativeClass(type(expected)) :
         return expected == toAssert
-    if isNone(visitedInstances) :
-        visitedInstances = []
+    if isNone(visitedIdInstances) :
+        visitedIdInstances = []
     if isDictionary(expected) and isDictionary(toAssert) :
         innerIgnoreCharactereList = [c.SPACE]
         if isNotNone(ignoreCharactereList) :
@@ -50,20 +52,20 @@ def equals(
         )
         return filteredResponse == filteredExpectedResponse
     else :
-        if expected not in visitedInstances :
+        if isNotNone(toAssert) and id(toAssert) not in visitedIdInstances :
             isEqual = True
             try :
-                LogHelper.prettyPython(equals, f'expected', expected, logLevel = LogHelper.DEBUG, condition=debug)
-                LogHelper.prettyPython(equals, f'toAssert', toAssert, logLevel = LogHelper.DEBUG, condition=debug)
-                isEqual = True and ObjectHelperHelper.leftEqual(expected, toAssert, visitedInstances) and ObjectHelperHelper.leftEqual(toAssert, expected, visitedInstances)
+                if not muteLogs :
+                    LogHelper.prettyPython(equals, f'expected', expected, logLevel = LogHelper.DEBUG, condition=not muteLogs)
+                    LogHelper.prettyPython(equals, f'toAssert', toAssert, logLevel = LogHelper.DEBUG, condition=not muteLogs)
+                isEqual = True and ObjectHelperHelper.leftEqual(expected, toAssert, visitedIdInstances, muteLogs=muteLogs) and ObjectHelperHelper.leftEqual(toAssert, expected, visitedIdInstances, muteLogs=muteLogs)
             except Exception as exception :
                 isEqual = False
                 LogHelper.log(equals, f'Different arguments in {expected} and {toAssert}. Returning "{isEqual}" by default', exception=exception)
-            visitedInstances.append(expected)
+            visitedIdInstances.append(id(toAssert))
             return isEqual
         else :
              return True
-
 def sortIt(thing) :
     if isDictionary(thing) :
         sortedDictionary = {}

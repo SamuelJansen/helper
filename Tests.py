@@ -1,12 +1,12 @@
 from python_helper import TestHelper
-# TestHelper.run(__file__, inspectGlobals=False)
-TestHelper.run(
-    __file__,
-    runOnly = [
-        'ObjectHelperTest.equal_whenListOfDictionaries',
-        'ObjectHelperTest.equal_whenObjects'
-    ]
-)
+TestHelper.run(__file__, inspectGlobals=False)
+# TestHelper.run(
+#     __file__,
+#     runOnly = [
+#         'ObjectHelperTest.equal_whenListOfDictionaries',
+#         'ObjectHelperTest.equal_whenObjects'
+#     ]
+# )
 # TestHelper.run(
 #     __file__,
 #     runOnly = [

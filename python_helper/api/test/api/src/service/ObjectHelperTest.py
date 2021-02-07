@@ -691,21 +691,70 @@ def equal_whenObjects() :
     otherA = MyOtherDto(RandomHelper.string())
     otherB = MyOtherDto(RandomHelper.string())
     otherC = MyOtherDto(RandomHelper.string())
-    myFirst = MyDto(RandomHelper.string(), otherA, None)
-    mySecond = MyDto(RandomHelper.string(), otherB, None)
-    myThird = MyDto(RandomHelper.string(), otherC, None)
+    myFirst = MyDto(None, None, None)
+    mySecond = MyDto(None, None, None)
+    myThird = MyDto(None, None, None)
     thirdOne = RandomHelper.integer()
     thirdTwo = RandomHelper.integer()
     thirdThree = RandomHelper.integer()
-    myThirdOne = MyThirdDto(myFirst, thirdOne)
-    myThirdTwo = MyThirdDto(mySecond, thirdTwo)
-    myThirdThree = MyThirdDto(myThird, thirdThree)
+    myThirdOne = [MyThirdDto(myFirst, thirdOne)]
+    myThirdTwo = [MyThirdDto(mySecond, thirdTwo)]
+    myThirdThree = [MyThirdDto(myThird, thirdThree)]
     expected = [MyDto(a, otherA, myThirdOne), MyDto(b, otherB, myThirdTwo), MyDto(c, otherC, myThirdThree)]
+    null = 'null'
+    inspectEquals = False
 
     # act
     toAssert = [MyDto(a, otherA, myThirdOne), MyDto(b, otherB, myThirdTwo), MyDto(c, otherC, myThirdThree)]
+    another = [MyDto(a, otherA, [MyThirdDto(myFirst, thirdOne)]), MyDto(b, otherB, myThirdTwo), MyDto(c, otherC, myThirdThree)]
+    another[0].myThirdList[0].my = MyDto(
+        MyDto(None, None, None),
+        expected[0].myThirdList[0].my.myOther,
+        expected[0].myThirdList[0].my.myThirdList
+    )
 
     # assert
-    assert False == (expected == toAssert)
+    assert False == (expected == toAssert), f'False == ({expected} == {toAssert}): {False == (expected == toAssert)}'
     assert ObjectHelper.equals(expected, toAssert)
+    assert ObjectHelper.equals(toAssert, expected)
+    assert ObjectHelper.isNotNone(expected[0].myThirdList[0].my), expected[0].myThirdList[0].my
+    assert expected[0].myThirdList[0].my == toAssert[0].myThirdList[0].my
+    assert ObjectHelper.equals(expected[0].myThirdList[0].my, toAssert[0].myThirdList[0].my)
+    assert ObjectHelper.isNone(expected[0].myThirdList[0].my.myThirdList)
+    assert ObjectHelper.equals(expected[0].myThirdList[0].my.myThirdList, toAssert[0].myThirdList[0].my.myThirdList)
+    assert ObjectHelper.equals(expected[1].myThirdList[0], toAssert[1].myThirdList[0])
+    assert ObjectHelper.equals(toAssert[1].myThirdList[0], expected[1].myThirdList[0])
+    assert False == (expected == another), f'False == ({expected} == {another}): False == {(expected == another)}'
+    assert False == ObjectHelper.equals(expected, another, muteLogs=not inspectEquals)
+    assert False == ObjectHelper.equals(another, expected, muteLogs=not inspectEquals)
+    assert False == ObjectHelper.equals(another, toAssert, muteLogs=not inspectEquals)
+    assert False == ObjectHelper.equals(toAssert, another, muteLogs=not inspectEquals)
     assert False == ObjectHelper.equals(expected, [MyDto(None, None, None), MyDto(None, None, None), MyDto(None, None, None)])
+
+
+
+
+    # a = RandomHelper.string()
+    # b = RandomHelper.string()
+    # c = RandomHelper.string()
+    # otherA = MyOtherDto(RandomHelper.string())
+    # otherB = MyOtherDto(RandomHelper.string())
+    # otherC = MyOtherDto(RandomHelper.string())
+    # myFirst = MyDto(RandomHelper.string(), otherA, None)
+    # mySecond = MyDto(RandomHelper.string(), otherB, None)
+    # myThird = MyDto(RandomHelper.string(), otherC, None)
+    # thirdOne = RandomHelper.integer()
+    # thirdTwo = RandomHelper.integer()
+    # thirdThree = RandomHelper.integer()
+    # myThirdOne = MyThirdDto(myFirst, thirdOne)
+    # myThirdTwo = MyThirdDto(mySecond, thirdTwo)
+    # myThirdThree = MyThirdDto(myThird, thirdThree)
+    # expected = [MyDto(a, otherA, myThirdOne), MyDto(b, otherB, myThirdTwo), MyDto(c, otherC, myThirdThree)]
+    #
+    # # act
+    # toAssert = [MyDto(a, otherA, myThirdOne), MyDto(b, otherB, myThirdTwo), MyDto(c, otherC, myThirdThree)]
+    #
+    # # assert
+    # assert False == (expected == toAssert)
+    # assert ObjectHelper.equals(expected, toAssert)
+    # assert False == ObjectHelper.equals(expected, [MyDto(None, None, None), MyDto(None, None, None), MyDto(None, None, None)])
