@@ -32,7 +32,7 @@ def setAttributeOrMethod(instance, name, attributeOrMethodInstance, muteLogs=Fal
             if not muteLogs :
                 LogHelper.warning(setAttributeOrMethod, f'Not possible to set "{name}:{attributeOrMethodInstance}" to "{getClassName(instance, typeClass=c.TYPE_CLASS, muteLogs=muteLogs) if ObjectHelper.isNotNone(instance) else instance}" instance', exception=exception)
 
-def getAttributeAndMethodNameList(instanceClass) :
+def getAttributeOrMethodNameList(instanceClass) :
     objectNullArgsInstance = instanciateItWithNoArgsConstructor(instanceClass)
     return [
         attributeOrMethodName
@@ -214,7 +214,26 @@ def getUndefindeName(typeThing) :
     else :
         return f'({typeThing} {UNDEFINED})'
 
-def printDetails(toDetail):
+def getItNaked(it) :
+    printDetails(it)
+    printClass(it)
+    try :
+        LogHelper.prettyPython(getAttributeDataDictionary, 'getAttributeDataDictionary', getAttributePointerList(it), logLevel=LogHelper.DEBUG)
+    except : pass
+    try :
+        LogHelper.prettyPython(getAttributeAndMethodNameList, 'getAttributeAndMethodNameList', getAttributeAndMethodNameList(it), logLevel=LogHelper.DEBUG)
+    except : pass
+    try :
+        LogHelper.prettyPython(getAttributeNameList, 'getAttributeNameList', getAttributeNameList(it), logLevel=LogHelper.DEBUG)
+    except : pass
+    try :
+        LogHelper.prettyPython(getAttributeDataList, 'getAttributeDataList', getAttributeDataList(it), logLevel=LogHelper.DEBUG)
+    except : pass
+    try :
+        LogHelper.prettyPython(getAttributeDataDictionary, 'getAttributeDataDictionary', getAttributeDataDictionary(it), logLevel=LogHelper.DEBUG)
+    except : pass
+
+def printDetails(toDetail) :
     print(f'{2 * c.TAB}printDetails({toDetail}):')
     try :
         print(f'{2 * c.TAB}type({toDetail}).__name__ = {getName(type(toDetail), typeName=UNKNOWN_TYPE_NAME)}')

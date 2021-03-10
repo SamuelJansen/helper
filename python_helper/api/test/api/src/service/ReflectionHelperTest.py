@@ -46,7 +46,7 @@ def isNotMethodInstance_withSuccess() :
     MY_NOT_EXISTING_ATTRIBUTE_OR_METHOD_NAME = 'myNotExistingMethodOrAtrributeName'
 
     # Act
-    attributeOrMethodNameList = ReflectionHelper.getAttributeAndMethodNameList(myObject.__class__)
+    attributeOrMethodNameList = ReflectionHelper.getAttributeOrMethodNameList(myObject.__class__)
     attributeNameList = ReflectionHelper.getAttributeNameList(myObject.__class__)
     methodNameList = ReflectionHelper.getMethodNameList(myObject.__class__)
     myAttribute = getattr(myObject, MY_ATTRIBUTE_NAME)

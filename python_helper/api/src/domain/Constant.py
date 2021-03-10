@@ -116,6 +116,7 @@ TRUE_VALUE = 'true'
 FALSE_VALUE = 'false'
 
 ENCODING = 'utf-8'
+UTF_8 = 'utf-8'
 OVERRIDE = 'w+'
 READ = 'r'
 
