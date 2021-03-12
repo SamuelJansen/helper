@@ -51,19 +51,37 @@ def equals(
             extraCharacterList=innerIgnoreCharactereList
         )
         return filteredResponse == filteredExpectedResponse
+    elif isCollection(expected) and isCollection(toAssert) :
+        areEquals = True
+        try :
+            for a, b in zip(expected, toAssert) :
+                areEquals = equals(
+                    a,
+                    b,
+                    ignoreKeyList = ignoreKeyList,
+                    ignoreCharactereList = ignoreCharactereList,
+                    visitedIdInstances = visitedIdInstances,
+                    muteLogs = muteLogs
+                )
+                if not areEquals :
+                    break
+            return areEquals
+        except Exception as exception :
+            areEquals = False
+            LogHelper.log(equals, f'Different arguments in {expected} and {toAssert}. Returning "{areEquals}" by default', exception=exception)
     else :
         if isNotNone(toAssert) and id(toAssert) not in visitedIdInstances :
-            isEqual = True
+            areEquals = True
             try :
                 if not muteLogs :
                     LogHelper.prettyPython(equals, f'expected', expected, logLevel = LogHelper.DEBUG, condition=not muteLogs)
                     LogHelper.prettyPython(equals, f'toAssert', toAssert, logLevel = LogHelper.DEBUG, condition=not muteLogs)
-                isEqual = True and ObjectHelperHelper.leftEqual(expected, toAssert, visitedIdInstances, muteLogs=muteLogs) and ObjectHelperHelper.leftEqual(toAssert, expected, visitedIdInstances, muteLogs=muteLogs)
+                areEquals = True and ObjectHelperHelper.leftEqual(expected, toAssert, visitedIdInstances, muteLogs=muteLogs) and ObjectHelperHelper.leftEqual(toAssert, expected, visitedIdInstances, muteLogs=muteLogs)
             except Exception as exception :
-                isEqual = False
-                LogHelper.log(equals, f'Different arguments in {expected} and {toAssert}. Returning "{isEqual}" by default', exception=exception)
+                areEquals = False
+                LogHelper.log(equals, f'Different arguments in {expected} and {toAssert}. Returning "{areEquals}" by default', exception=exception)
             visitedIdInstances.append(id(toAssert))
-            return isEqual
+            return areEquals
         else :
              return True
 def sortIt(thing) :

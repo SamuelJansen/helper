@@ -408,6 +408,10 @@ def mustAssertEquals() :
             9
         )
     }
+    someDictionaryList = [
+        someDictionary,
+        someDictionary
+    ]
     someOtherDictionary = {
         'c' : 'd',
         'a' : 'b',
@@ -448,6 +452,10 @@ def mustAssertEquals() :
             '3'
         )
     }
+    someOtherDictionaryList = [
+        someOtherDictionary,
+        someOtherDictionary
+    ]
     differentDictionary = {
         'c' : 'd',
         'a' : 'b',
@@ -488,16 +496,74 @@ def mustAssertEquals() :
             '3'
         )
     }
+    differentDictionaryList = [
+        differentDictionary,
+        differentDictionary
+    ]
+    aList = [
+        {
+            'beginAtDate': '2021-03-11',
+            'beginAtDatetime': '2021-03-11 08:30:00',
+            'beginAtTime': '08:30:00',
+            'endAtDate': '2021-03-11',
+            'endAtDatetime': '2021-03-11 08:30:00',
+            'endAtTime': '08:30:00',
+            'id': None,
+            'intervalTime': '2021-03-11 08:30:00',
+            'timedelta': '08:30:00'
+        },
+        {
+            'beginAtDate': '2021-03-11',
+            'beginAtDatetime': '2021-03-11 08:30:00',
+            'beginAtTime': '08:30:00',
+            'endAtDate': '2021-03-11',
+            'endAtDatetime': '2021-03-11 08:30:00',
+            'endAtTime': '08:30:00',
+            'id': None,
+            'intervalTime': '2021-03-11 08:30:00',
+            'timedelta': '08:30:00'
+        }
+    ]
+    bList = [
+        {
+            'beginAtDate': '2021-03-11',
+            'beginAtDatetime': '2021-03-11 08:30:00',
+            'beginAtTime': '08:30:00',
+            'endAtDate': '2021-03-11',
+            'endAtDatetime': '2021-03-11 08:30:00',
+            'endAtTime': '08:30:00',
+            'id': None,
+            'intervalTime': '2021-03-11 08:30:00',
+            'timedelta': '8:30:00'
+        },
+        {
+            'beginAtDate': '2021-03-11',
+            'beginAtDatetime': '2021-03-11 08:30:00',
+            'beginAtTime': '08:30:00',
+            'endAtDate': '2021-03-11',
+            'endAtDatetime': '2021-03-11 08:30:00',
+            'endAtTime': '08:30:00',
+            'id': None,
+            'intervalTime': '2021-03-11 08:30:00',
+            'timedelta': '8:30:00'
+        }
+    ]
 
     # act
     toAssert = ObjectHelper.equals(dictionaryInstance, JSON_INSTANCE, ignoreCharactereList=[Constant.NEW_LINE])
     unsortedDictionaryToAssert = ObjectHelper.equals(someDictionary, someOtherDictionary)
+    unsortedDictionaryListToAssert = ObjectHelper.equals(someDictionaryList, someOtherDictionaryList)
     notEqualsToAssert = ObjectHelper.equals(someDictionary, differentDictionary)
+    notEqualsListToAssert = ObjectHelper.equals(someDictionaryList, differentDictionaryList)
 
     # assert
     assert toAssert
     assert unsortedDictionaryToAssert
     assert not notEqualsToAssert
+    assert unsortedDictionaryListToAssert
+    assert not notEqualsListToAssert
+    assert not ObjectHelper.equals(aList, bList)
+    assert ObjectHelper.equals(aList, bList, ignoreKeyList = ['timedelta'])
 
 @Test(
     environmentVariables={**{}, **LOG_HELPER_SETTINGS},

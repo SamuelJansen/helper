@@ -75,7 +75,7 @@ def isNotMethod(objectInstance, name) :
         return False
     return isNotMethodInstance(getAttributeOrMethod(objectInstance, name))
 
-def instanciateItWithNoArgsConstructor(targetClass, amountOfNoneArgs=0, args=None) :
+def instanciateItWithNoArgsConstructor(targetClass, amountOfNoneArgs=0, args=None, muteLogs=None) :
     if ObjectHelper.isNone(args) :
         args = []
     for _ in range(amountOfNoneArgs) :
@@ -88,7 +88,7 @@ def instanciateItWithNoArgsConstructor(targetClass, amountOfNoneArgs=0, args=Non
         except :
             args.append(None)
     if not isinstance(objectInstance, targetClass) :
-        raise Exception(f'Not possible to instanciate {targetClass} class in instanciateItWithNoArgsConstructor() method with None as args constructor')
+        raise Exception(f'Not possible to instanciate {getClassName(targetClass, typeClass=c.TYPE_CLASS, muteLogs=muteLogs)} with None as args constructor')
     return objectInstance
 
 def getArgsOrder(targetClass) :
