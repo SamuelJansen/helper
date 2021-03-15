@@ -6,6 +6,9 @@ OS = os
 SYS = sys
 OS_SEPARATOR = OS.path.sep
 
+LINUX_OS_NAME = 'linux'
+WINDOWS_OS_NAME = 'win32'
+
 clear = lambda: OS.system('cls')
 
 def get(environmentKey, default=None) :
@@ -65,3 +68,9 @@ def getCurrentSoutStatus(avoidRecursiveCall=False) :
 def overrideSoutStatus(stdout, stderr) :
     SYS.stdout = stdout
     SYS.stderr = stderr
+
+def isLinux() :
+    return SYS.platform == LINUX_OS_NAME
+
+def isWindows() :
+    return SYS.platform == WINDOWS_OS_NAME

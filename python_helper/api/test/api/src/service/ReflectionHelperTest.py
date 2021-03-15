@@ -40,7 +40,14 @@ def isNotMethodInstance_withSuccess() :
             self.myAttribute = myAttribute
         def myMethod(self):
             return self.myAttribute
+    class MyOtherObject:
+        def __init__(self, myAttribute) :
+            self.myAttribute = myAttribute
+            self.myHiddenAttribute = 2
+        def myMethod(self):
+            return self.myAttribute
     myObject = ReflectionHelper.instanciateItWithNoArgsConstructor(MyObject)
+    myOtherObject = ReflectionHelper.instanciateItWithNoArgsConstructor(MyObject)
     MY_ATTRIBUTE_NAME = 'myAttribute'
     MY_METHOD_NAME = 'myMethod'
     MY_NOT_EXISTING_ATTRIBUTE_OR_METHOD_NAME = 'myNotExistingMethodOrAtrributeName'
@@ -71,6 +78,50 @@ def isNotMethodInstance_withSuccess() :
     assert not ReflectionHelper.isMethod(myObject, MY_ATTRIBUTE_NAME)
     assert ReflectionHelper.isMethod(myObject, MY_METHOD_NAME)
     assert not ReflectionHelper.isMethod(myObject, MY_NOT_EXISTING_ATTRIBUTE_OR_METHOD_NAME)
+
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
+def instanciateItWithNoArgsConstructor_withSuccess() :
+    # Arrange
+    class MyObject:
+        def __init__(self, myAttribute) :
+            self.myAttribute = myAttribute
+    class MyOtherObject:
+        def __init__(self, myAttribute, myArg, myKeyword=None) :
+            self.myAttribute = myAttribute
+            self.myHiddenAttribute = 2
+    # from python_framework import Enum, EnumItem
+    # @Enum(associateReturnsTo='number')
+    # class WeekDayEnumeration :
+    #     MONDAY = EnumItem(number=0)
+    #     TUESDAY = EnumItem(number=1)
+    #     WEDNESDAY = EnumItem(number=2)
+    #     THURSDAY = EnumItem(number=3)
+    #     FRIDAY = EnumItem(number=4)
+    #     SATURDAY = EnumItem(number=5)
+    #     SUNDAY = EnumItem(number=6)
+    # WeekDay = WeekDayEnumeration()
+    # class MyEnumOtherObject:
+    #     def __init__(self, myAttribute=None, enum=None, myKeyword=None) :
+    #         self.myAttribute = myAttribute
+    #         self.myEnum = WeekDay.map(enum)
+    # myEnumOtherObject = ReflectionHelper.instanciateItWithNoArgsConstructor(MyOtherObject)
+
+    # Act
+    myObject = ReflectionHelper.instanciateItWithNoArgsConstructor(MyObject)
+    myOtherObject = ReflectionHelper.instanciateItWithNoArgsConstructor(MyOtherObject)
+
+    # Assert
+    assert ObjectHelper.isNotNone(myObject)
+    assert ObjectHelper.isNone(myObject.myAttribute)
+    assert ObjectHelper.isNotNone(myOtherObject)
+    assert ObjectHelper.isNone(myOtherObject.myAttribute)
+    assert 2 == myOtherObject.myHiddenAttribute
 
 @Test(
     environmentVariables={
