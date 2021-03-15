@@ -1,5 +1,5 @@
 from python_helper import TestHelper
-# TestHelper.run(__file__, inspectGlobals=False)
+TestHelper.run(__file__, inspectGlobals=False)
 # TestHelper.run(
 #     __file__,
 #     runOnly = [
@@ -129,9 +129,9 @@ from python_helper import TestHelper
 #         'ReflectionHelperTest.instanciateItWithNoArgsConstructor_withSuccess'
 #     ]
 # )
-TestHelper.run(
-    __file__,
-    runOnly = [
-        'EnvironmentHelperTest.osIdentifierTest'
-    ]
-)
+# TestHelper.run(
+#     __file__,
+#     runOnly = [
+#         'EnvironmentHelperTest.osIdentifierTest'
+#     ]
+# )
