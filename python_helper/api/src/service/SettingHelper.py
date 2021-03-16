@@ -108,19 +108,23 @@ def getSettingTree(
     for line, settingLine in enumerate(allSettingLines) :
         if SettingHelperHelper.lineAproved(settingLine) :
             if longStringCapturing :
+                # print('lineAproved')
                 if not currentDepth :
                     currentDepth = 0
                 longStringList.append(depthStep*c.SPACE + settingLine if keepDepthInLongString else settingLine[depth:])
                 if quoteType in str(settingLine) :
                     longStringList[-1] = c.NOTHING.join(longStringList[-1].split(quoteType))[:-1] + quoteType
                     settingValue = c.NOTHING.join(longStringList)
-                    nodeKey = SettingHelperHelper.updateSettingTreeAndReturnNodeKey(settingKey,settingValue,nodeKey,settingTree)
+                    nodeKey = SettingHelperHelper.updateSettingTreeAndReturnNodeKey(settingKey,settingValue,nodeKey,settingTree, False)
                     longStringCapturing = False
                     quoteType = None
                     longStringList = None
             else :
                 currentDepth = SettingHelperHelper.getDepth(settingLine)
+                isSameDepth = SettingHelperHelper.nextValidLineIsAtTheSameDepthOrLess(currentDepth, line, allSettingLines)
+                # print(f'isSameDepth: {isSameDepth}')
                 if currentDepth == depth :
+                    # print('currentDepth == depth')
                     settingKey,settingValue,nodeKey,longStringCapturing,quoteType,longStringList = SettingHelperHelper.settingTreeInnerLoop(
                         settingLine,
                         nodeKey,
@@ -129,9 +133,11 @@ def getSettingTree(
                         quoteType,
                         longStringList,
                         settingInjectionList,
-                        lazyLoad
+                        lazyLoad,
+                        isSameDepth
                     )
                 elif currentDepth > depth :
+                    # print('currentDepth > depth')
                     currentNodeRefference = currentDepth // (currentDepth - depth)
                     if currentNodeRefference - nodeRefference == 1 :
                         settingKey,settingValue,nodeKey,longStringCapturing,quoteType,longStringList = SettingHelperHelper.settingTreeInnerLoop(
@@ -142,13 +148,21 @@ def getSettingTree(
                             quoteType,
                             longStringList,
                             settingInjectionList,
-                            lazyLoad
+                            lazyLoad,
+                            isSameDepth
                         )
                         nodeRefference = currentNodeRefference
                         depth = currentDepth
                 elif currentDepth < depth :
-                    nodeRefference = currentDepth // depthStep
+                    # print('currentDepth < depth')
+                    nodeRefference = currentDepth // depthStep ###- if line.split(':')[0] == currentDepth + c.TAB_UNITS * ' ' +
                     depth = currentDepth
+                    # print()
+                    # print()
+                    # print()
+                    # print(str(line))
+                    # print(str(nodeKey))
+                    # print(str(settingLine))
                     splitedNodeKey = nodeKey.split(c.DOT)[:nodeRefference]
                     splitedNodeKeyLength = len(splitedNodeKey)
                     if splitedNodeKeyLength == 0 :
@@ -165,8 +179,10 @@ def getSettingTree(
                         quoteType,
                         longStringList,
                         settingInjectionList,
-                        lazyLoad
+                        lazyLoad,
+                        isSameDepth
                     )
+                    # if ObjectHelper.isNotNone(settingValue) and ObjectHelper.isNotEmpty(settingValue) :
                     depth = currentDepth
     if lazyLoad :
         return settingTree, settingInjectionList

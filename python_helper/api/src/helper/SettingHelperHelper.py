@@ -10,15 +10,18 @@ SETTING_VALUE = 'SETTING_VALUE'
 SETTING_NODE_KEY = 'SETTING_NODE_KEY'
 
 def getFilteredSetting(settingKey, settingValue, nodeKey, settingTree) :
+    # print(f'getFilteredSetting: settingValue: "{settingValue}"')
     if StringHelper.isNotBlank(settingValue) :
         settingEvaluationList = settingValue.split(c.COLON)
         if len(settingEvaluationList) > 1 :
             defaultSettingValue = c.COLON.join(settingValue.split(c.COLON)[1:]).strip()
+            # print(f'    defaultSettingValue: {defaultSettingValue}')
         else :
             defaultSettingValue = c.NONE
         if isSettingInjection(defaultSettingValue) :
             return getSettingInjectionValue(settingKey, defaultSettingValue, nodeKey, settingTree)
         return StringHelper.filterString(defaultSettingValue)
+    # print(f'    settingValue: {settingValue}')
     return settingValue
 
 def lineAproved(settingLine) :
@@ -31,8 +34,20 @@ def lineAproved(settingLine) :
             approved = False
     return approved
 
-def updateSettingTreeAndReturnNodeKey(settingKey, settingValue, nodeKey, settingTree) :
-    updateSettingValue(settingKey, settingValue, nodeKey, settingTree)
+def nextValidLineIsAtTheSameDepthOrLess(currentDepth, line, allSettingLines) :
+    ###- currentDepth == depth and
+    if line + 1 == len(allSettingLines) :
+        return True
+    for settingLine in allSettingLines[line+1:] :
+        if lineAproved(settingLine) :
+            # print(f'currentDepth: {currentDepth}, line: {line}, isValid: {currentDepth == getDepth(settingLine)}, settingLine: {settingLine}')
+            return currentDepth >= getDepth(settingLine)
+    # print(f'currentDepth: {currentDepth}, line: {line}, isValid: {False}')
+    return False
+
+def updateSettingTreeAndReturnNodeKey(settingKey, settingValue, nodeKey, settingTree, isSameDepth) :
+    # print(f'nodeKey: {nodeKey}, settingKey: {settingKey}')
+    updateSettingValue(settingKey, settingValue, nodeKey, settingTree, isSameDepth=isSameDepth)
     if not isSettingValue(settingValue) :
         if c.NOTHING == nodeKey :
             nodeKey += f'{settingKey}'
@@ -67,9 +82,26 @@ def safelyAccessTree(nodeKey, settingTree) :
         LogHelper.log(safelyAccessTree, f'Not possible to safely access "{nodeKey}" node key while looping through setting tree. Returning "{setting}" by default', exception=exception)
     return setting
 
-def updateSettingValue(settingKey, settingValue, nodeKey, settingTree) :
+def updateSettingValue(
+    settingKey,
+    settingValue,
+    nodeKey,
+    settingTree,
+    isSameDepth = False,
+    isSettingInjection = False
+) :
+    # print(f'settingKey: {settingKey}, settingValue: {settingValue}, nodeKey: {nodeKey}, settingTree: {settingTree}, isSameDepth: {isSameDepth}')
     if StringHelper.isNotBlank(settingKey) and ObjectHelper.isNotNone(settingKey) :
-        accessTree(nodeKey,settingTree)[settingKey] = getSettingValueOrNewNode(settingValue)
+        # print(f'accessTree({nodeKey},{settingTree})[{settingKey}]: {accessTree(nodeKey,settingTree)}[{settingKey}]')
+        # print(f'type(accessTree(nodeKey,settingTree)): {type(accessTree(nodeKey,settingTree))}')
+
+        accessTree(nodeKey,settingTree)[settingKey] = getSettingValueOrNewNode(
+            nodeKey,
+            settingKey,
+            settingValue,
+            isSameDepth=isSameDepth,
+            isSettingInjection=isSettingInjection
+        )
     elif StringHelper.isNotBlank(nodeKey) and ObjectHelper.isNotNone(nodeKey) :
         splittedNodeKey = nodeKey.split(c.DOT)
         if 1 < len(splittedNodeKey) :
@@ -78,7 +110,13 @@ def updateSettingValue(settingKey, settingValue, nodeKey, settingTree) :
         else :
             accessSettingKey = splittedNodeKey[-1]
             accessNodeKey = None
-        accessTree(accessNodeKey,settingTree)[accessSettingKey] = getSettingValueOrNewNode(settingValue)
+        accessTree(accessNodeKey,settingTree)[accessSettingKey] = getSettingValueOrNewNode(
+            nodeKey,
+            settingKey,
+            settingValue,
+            isSameDepth=isSameDepth,
+            isSettingInjection=isSettingInjection
+        )
     else :
         errorMessage = 'Node key and setting key cannot be None at the same time'
         exception = Exception(errorMessage)
@@ -103,9 +141,14 @@ def settingTreeInnerLoop(
     quoteType,
     longStringList,
     settingInjectionList,
-    lazyLoad
+    lazyLoad,
+    isSameDepth
 ) :
+    # print(f'settingTreeInnerLoop: nodeKey: {nodeKey}')
+    # print(f'    isSameDepth: {isSameDepth}')
     settingKey, settingValue = getAttributeKeyValue(settingLine)
+    # print(f'    settingKey: {settingKey}, settingValue: {settingValue}')
+    # print(f'    value:{settingLine}')
 
     if containsSettingInjection(settingValue) :
         try :
@@ -118,7 +161,8 @@ def settingTreeInnerLoop(
                 quoteType,
                 longStringList,
                 settingInjectionList,
-                lazyLoad
+                lazyLoad,
+                isSameDepth
             )
         except Exception as exception :
             LogHelper.log(settingTreeInnerLoop, f'Not possible to handle association of "{nodeKey}{c.DOT}{settingKey}" setting key to "{settingValue}" value', exception=exception)
@@ -129,7 +173,8 @@ def settingTreeInnerLoop(
             })
         return settingKey, settingValue, nodeKey, longStringCapturing, quoteType, longStringList
     else :
-        return handleLongStringOrSetting(
+        # print(f'    nodeKey: {nodeKey}')
+        settingKey, filteredSettingValue, nodeKey, longStringCapturing, quoteType, longStringList = handleLongStringOrSetting(
             settingKey,
             settingValue,
             nodeKey,
@@ -137,8 +182,11 @@ def settingTreeInnerLoop(
             longStringCapturing,
             quoteType,
             longStringList,
-            settingInjectionList
+            settingInjectionList,
+            isSameDepth
         )
+        # print(f'----------> nodeKey: {nodeKey}')
+        return settingKey, filteredSettingValue, nodeKey, longStringCapturing, quoteType, longStringList
 
 def handleSettingInjection(
     settingKey,
@@ -149,7 +197,8 @@ def handleSettingInjection(
     quoteType,
     longStringList,
     settingInjectionList,
-    lazyLoad
+    lazyLoad,
+    isSameDepth
 ) :
     if isSettingInjection(settingValue) :
         if lazyLoad :
@@ -176,7 +225,8 @@ def handleSettingInjection(
         longStringCapturing,
         quoteType,
         longStringList,
-        settingInjectionList
+        settingInjectionList,
+        isSameDepth
     )
 
 def handleSettingInjectionList(settingInjectionList, settingTree, fallbackSettingTree=None) :
@@ -299,7 +349,7 @@ def handleSettingInjectionListByCallingHandler(
                 fallbackSettingTree = fallbackSettingTree
             )
             settingInjectionArgs = list(settingInjection.values()) + [settingTree]
-            updateSettingValue(*settingInjectionArgs)
+            updateSettingValue(*settingInjectionArgs, isSettingInjection=True)
             if not containsSettingInjection(settingInjection[SETTING_VALUE]) :
                 settingInjectionList.remove(settingInjection)
                 isSettingInjectionCount += 1
@@ -323,7 +373,7 @@ def handleSettingInjectionListByCallingHandler(
                     newSettingInjection = newSettingInjection.replace(settingValue,str(newSettingValue))
             settingInjection[SETTING_VALUE] = newSettingInjection
             settingInjectionArgs = list(settingInjection.values()) + [settingTree]
-            updateSettingValue(*settingInjectionArgs)
+            updateSettingValue(*settingInjectionArgs, isSettingInjection=True)
             if not containsSettingInjection(settingInjection[SETTING_VALUE]) :
                 settingInjectionList.remove(settingInjection)
                 containsSettingInjectionCount += 1
@@ -369,8 +419,10 @@ def handleLongStringOrSetting(
     longStringCapturing,
     quoteType,
     longStringList,
-    settingInjectionList
+    settingInjectionList,
+    isSameDepth
 ) :
+    # print(f'handleLongStringOrSetting: settingValue: {settingValue}')
     if StringHelper.isLongString(settingValue) :
         longStringCapturing = True
         splitedSettingValueAsString = settingValue.split(c.TRIPLE_SINGLE_QUOTE)
@@ -380,7 +432,7 @@ def handleLongStringOrSetting(
             quoteType = c.TRIPLE_DOUBLE_QUOTE
         longStringList = [settingValue + c.NEW_LINE]
     else :
-        nodeKey = updateSettingTreeAndReturnNodeKey(settingKey, settingValue, nodeKey, settingTree)
+        nodeKey = updateSettingTreeAndReturnNodeKey(settingKey, settingValue, nodeKey, settingTree, isSameDepth)
     filteredSettingValue = getFilteredSetting(settingKey, settingValue, nodeKey, settingTree)
     return settingKey, filteredSettingValue, nodeKey, longStringCapturing, quoteType, longStringList
 
@@ -407,8 +459,12 @@ def isSettingKey(possibleSettingKey) :
 def isSettingValue(settingValue) :
     return ObjectHelper.isNotEmpty(settingValue) or ObjectHelper.isCollection(settingValue)
 
-def getSettingValueOrNewNode(settingValue) :
-    return settingValue if isSettingValue(settingValue) else dict()
+def getSettingValueOrNewNode(nodeKey, settingKey, settingValue, isSameDepth=False, isSettingInjection=False) :
+    isActuallyASettingValue = isSettingValue(settingValue)
+    # print(f'settingValue: {settingValue}, isActuallyASettingValue: {isActuallyASettingValue}, isSameDepth: {isSameDepth}')
+    if not isActuallyASettingValue and isSameDepth :
+        raise Exception(f'The key: "{nodeKey}{c.DOT}{settingKey}" has the following invalid value: "{settingValue}"')
+    return settingValue if isActuallyASettingValue else None if isSettingInjection or isSameDepth else dict()
 
 def getValue(value) :
     filteredValue = StringHelper.filterString(value)

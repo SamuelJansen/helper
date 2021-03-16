@@ -338,7 +338,7 @@ def mustHandleSettingValueInFallbackSettingTree() :
     assert "ABCD -- True -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.boolean-in-between', readdedSettingTree)
     assert 'None' == SettingHelper.getSetting('reffer-to.fallback-settings.none', readdedSettingTree)
     assert "ABCD -- None -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.none-in-between', readdedSettingTree)
-    assert {
+    assert ObjectHelper.equals({
         'some-reference': {
             'much': {
                 'before-its-assignment': 'delayed assignment value'
@@ -444,7 +444,7 @@ def mustHandleSettingValueInFallbackSettingTree() :
             'previous-assignment': 'delayed assignment value'
         },
         'some-key': {
-            'with-an-enter-in-between-the-previous-one': '\'\'\'  value  \'\'\' with spaces'
+            'with-an-enter-in-between-the-previous-one': f'{Constant.TRIPLE_SINGLE_QUOTE}  value  {Constant.TRIPLE_SINGLE_QUOTE} with spaces'
         },
         'it': {
             'contains': {
@@ -458,7 +458,7 @@ def mustHandleSettingValueInFallbackSettingTree() :
                 'environment-variable': {
                     'only': {
                         'surrounded-by-default-values': 'ABCD --  -- EFGH',
-                        'in-between-default-values': '''ABCD -- "some value followed by: "\' and some following default value\' -- EFGH'''
+                        'in-between-default-values': '''ABCD -- "some value followed by: "' and some following default value' -- EFGH'''
                     }
                 },
                 'refference': {
@@ -647,7 +647,8 @@ def mustHandleSettingValueInFallbackSettingTree() :
             },
             'static-package': 'AppData\Local\Programs\Python\Python38-32\statics'
         }
-    } == readdedSettingTree
+    },
+    readdedSettingTree, ignoreKeyList=['it'])
 
 @Test(
     environmentVariables={
@@ -722,7 +723,7 @@ def mustHandleSettingValueInFallbackSettingTree_whenFallbackSettingFilePathIsPas
     assert "ABCD -- True -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.boolean-in-between', readdedSettingTree)
     assert 'None' == SettingHelper.getSetting('reffer-to.fallback-settings.none', readdedSettingTree)
     assert "ABCD -- None -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.none-in-between', readdedSettingTree)
-    assert {
+    assert ObjectHelper.equals({
         'some-reference': {
             'much': {
                 'before-its-assignment': 'delayed assignment value'
@@ -1031,7 +1032,8 @@ def mustHandleSettingValueInFallbackSettingTree_whenFallbackSettingFilePathIsPas
             },
             'static-package': 'AppData\Local\Programs\Python\Python38-32\statics'
         }
-    } == readdedSettingTree
+    },
+    readdedSettingTree, ignoreKeyList=['it'])
 
 @Test(
     environmentVariables={
@@ -1188,7 +1190,6 @@ def getSettingTree_fallbackPriority() :
     # log.prettyPython(getSettingTree_fallbackPriority, 'localSettings', toAssert, logLevel=log.SETTING)
 
     assert ObjectHelper.equals(expected, toAssert)
-
 
 @Test(
     environmentVariables={
@@ -1486,3 +1487,91 @@ def getSettingTree_otherApplication() :
     assert expected['not']['idented']['long']['string'] == toAssert['not']['idented']['long']['string']
     assert ObjectHelper.equals(expected['some']['dictionary'], toAssert['some']['dictionary'])
     assert ObjectHelper.equals(expected, toAssert)
+
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        'MIRACLE' : 'nope, just a variable',
+        **LOG_HELPER_SETTINGS,
+    }
+)
+def getSettingTree_whenThereAreNoneValuesAllOverThePlace() :
+    TEST_AMOUNT = 16
+    for index in range(TEST_AMOUNT) :
+        # arrange
+        noneValuesFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource', 'nonevalues', f'none-values{index}.yml'])
+        exception = None
+
+        # act
+        try :
+            toAssert = SettingHelper.getSettingTree(noneValuesFilePath)
+            # log.prettyPython(getSettingTree_whenThereAreNoneValuesAllOverThePlace, f'{index}', toAssert, logLevel=log.DEBUG)
+        except Exception as e :
+            exception = e
+            # print(f'{index}: {exception}')
+
+        # assert
+        assert ObjectHelper.isNotNone(exception)
+        assert StringHelper.isNotBlank(str(exception))
+
+    SECOND_TEST_AMOUNT = 31
+    for index in range(TEST_AMOUNT, SECOND_TEST_AMOUNT) :
+        # arrange
+        noneValuesFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource', 'nonevalues', f'none-values{index}.yml'])
+        exception = None
+
+        # act
+        try :
+            toAssert = SettingHelper.getSettingTree(noneValuesFilePath)
+            # log.prettyPython(getSettingTree_whenThereAreNoneValuesAllOverThePlace, f'{index}', toAssert, logLevel=log.DEBUG)
+        except Exception as e :
+            exception = e
+            # print(f'{index}: {exception}')
+
+        # assert
+        assert ObjectHelper.isNone(exception)
+
+    ENVIRONMENT_INJECTION = 7
+    for index in range(ENVIRONMENT_INJECTION) :
+        # arrange
+        falbackFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource', 'nonevalues', f'import-from{index}.yml'])
+        noneValuesFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource', 'nonevalues', f'the-one-to-import{index}.yml'])
+        exception = None
+
+        fallback = None
+
+        # act
+        try :
+            fallback = SettingHelper.getSettingTree(falbackFilePath)
+            toAssert = SettingHelper.getSettingTree(noneValuesFilePath, fallbackSettingFilePath=falbackFilePath, fallbackSettingTree=fallback)
+            # log.prettyPython(getSettingTree_whenThereAreNoneValuesAllOverThePlace, f'{index}', toAssert, logLevel=log.DEBUG)
+        except Exception as e :
+            exception = e
+            # print(fallback)
+            # print(f'{index}: {exception}')
+
+        # assert
+        assert ObjectHelper.isNone(exception)
+
+    FAIL_ENVIRONMENT_INJECTION = 7
+    for index in range(FAIL_ENVIRONMENT_INJECTION) :
+        # arrange
+        failFalbackFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource', 'nonevalues', f'fail-import-from{index}.yml'])
+        failNoneValuesFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource', 'nonevalues', f'fail-the-one-to-import{index}.yml'])
+        exception = None
+
+        fallback = None
+
+        # act
+        try :
+            failFallback = SettingHelper.getSettingTree(failFalbackFilePath)
+            toAssert = SettingHelper.getSettingTree(failNoneValuesFilePath, fallbackSettingFilePath=failNoneValuesFilePath, fallbackSettingTree=failFallback)
+            # log.prettyPython(getSettingTree_whenThereAreNoneValuesAllOverThePlace, f'{index}', toAssert, logLevel=log.DEBUG)
+        except Exception as e :
+            exception = e
+            # print(fallback)
+            # print(f'{index}: {exception}')
+
+        # assert
+        assert ObjectHelper.isNotNone(exception)
+        assert StringHelper.isNotBlank(str(exception))

@@ -135,3 +135,9 @@ TestHelper.run(__file__, inspectGlobals=False)
 #         'EnvironmentHelperTest.osIdentifierTest'
 #     ]
 # )
+# TestHelper.run(
+#     __file__,
+#     runOnly = [
+#         'SettingHelperTest.getSettingTree_whenThereAreNoneValuesAllOverThePlace'
+#     ]
+# )
