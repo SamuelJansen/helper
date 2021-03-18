@@ -165,7 +165,7 @@ def settingTreeInnerLoop(
                 isSameDepth
             )
         except Exception as exception :
-            LogHelper.log(settingTreeInnerLoop, f'Not possible to handle association of "{nodeKey}{c.DOT}{settingKey}" setting key to "{settingValue}" value', exception=exception)
+            LogHelper.log(settingTreeInnerLoop, f'Not possible to handle association of "{nodeKey}{c.DOT}{settingKey}" setting key to "{settingValue}" setting value', exception=exception)
             settingInjectionList.append({
                 SETTING_KEY : settingKey,
                 SETTING_VALUE : settingValue,

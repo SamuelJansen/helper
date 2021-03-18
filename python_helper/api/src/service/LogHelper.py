@@ -141,7 +141,6 @@ def prettyJson(
         LogHelperHelper.softLog(origin, StringHelper.join([message, c.COLON_SPACE, *prettyJsonValue]), logLevel)
         EnvironmentHelper.overrideSoutStatus(stdout, stderr)
 
-
 def getExceptionMessage(exception) :
     if ObjectHelper.isEmpty(exception) :
         return c.UNKNOWN

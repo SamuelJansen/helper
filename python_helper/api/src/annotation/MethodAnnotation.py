@@ -18,8 +18,8 @@ def Method(method,*args,**kwargs) :
         try :
             methodReturn = method(*args,**kwargs)
         except Exception as exception :
-            className = ReflectionHelper.getName(args[0].__class__, typeName=c.TYPE_CLASS)
-            methodName = ReflectionHelper.getName(method, typeName=c.TYPE_METHOD)
+            className = ReflectionHelper.getClassName(args[0].__class__, typeClass=c.TYPE_CLASS)
+            methodName = ReflectionHelper.getClassName(method, typeClass=c.TYPE_METHOD)
             LogHelper.wraper(Method,f'''Failed to execute "{className}{c.DOT}{methodName}(args={args}, kwargs={kwargs})" {c.TYPE_METHOD} call''',exception)
             raise exception
         return methodReturn

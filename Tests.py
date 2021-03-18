@@ -132,6 +132,12 @@ TestHelper.run(__file__, inspectGlobals=False)
 # TestHelper.run(
 #     __file__,
 #     runOnly = [
+#         'ReflectionHelperTest.getName_manyCases'
+#     ]
+# )
+# TestHelper.run(
+#     __file__,
+#     runOnly = [
 #         'EnvironmentHelperTest.osIdentifierTest'
 #     ]
 # )

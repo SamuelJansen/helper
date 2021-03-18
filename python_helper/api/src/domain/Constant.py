@@ -81,6 +81,7 @@ BIGGER = '>'
 
 UNKNOWN = 'Unknown'
 
+TYPE_TYPE = 'type'
 TYPE_MODULE = 'module'
 TYPE_CLASS = 'class'
 TYPE_METHOD = 'method'
@@ -96,6 +97,7 @@ TYPE_DICT = 'dict'
 TYPE_SET = 'set'
 
 NATIVE_TYPES = [
+    TYPE_TYPE,
     TYPE_MODULE,
     TYPE_CLASS,
     TYPE_METHOD,

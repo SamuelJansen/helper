@@ -100,9 +100,12 @@ def getOriginPortion(origin, tirdLayerColor, resetColor) :
     else :
         moduleName = ReflectionHelper.getModuleName(origin)
         className = ReflectionHelper.getClassName(origin)
-        moduleProtion = [] if moduleName in c.NATIVE_TYPES or (c.OPEN_TUPLE in moduleName and c.CLOSE_TUPLE in moduleName) else [moduleName, c.DOT]
-        classPortion = [] if className in c.NATIVE_TYPES or (c.OPEN_TUPLE in className and c.CLOSE_TUPLE in className) else [className, c.DOT]
+        moduleProtion = getLogThingName(moduleName)
+        classPortion = getLogThingName(className)
         return [tirdLayerColor, *moduleProtion, *classPortion, ReflectionHelper.getName(origin), c.COLON_SPACE, resetColor]
+
+def getLogThingName(thing) :
+    return [] if thing in c.NATIVE_TYPES or (c.OPEN_TUPLE in thing and c.CLOSE_TUPLE in thing) else [thing, c.DOT]
 
 def getErrorPortion(exception, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor) :
     if ObjectHelper.isEmpty(exception) :

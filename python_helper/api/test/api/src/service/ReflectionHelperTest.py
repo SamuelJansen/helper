@@ -273,3 +273,168 @@ def getArgsOrder_withSuccess() :
         'attributeKey'
     ] == myClassWithMoreAttributesThanArgsArgsOrder
     assert [] == myClassWithoutInitMethodArgsOrder
+
+@Test(
+    environmentVariables={
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
+def getName_manyCases() :
+    # arrange
+    def functionMine() :
+        return None
+    class Me:
+        an = 2
+        def __init__(self) :
+            self.na = 'yey'
+        def methodIsMine() :
+            return True
+
+    # act
+    functionNameToAsert = ReflectionHelper.getName(functionMine)
+    instanceNameToAsert = ReflectionHelper.getName(Me())
+    classNameToAsert = ReflectionHelper.getName(Me)
+    methodNameToAsert = ReflectionHelper.getName(Me().methodIsMine)
+    attributeNameToAsert = ReflectionHelper.getName(Me().an)
+    staticAttributeNameToAsert = ReflectionHelper.getName(Me().na)
+
+    class_functionNameToAsert = ReflectionHelper.getClassName(functionMine)
+    class_instanceNameToAsert = ReflectionHelper.getClassName(Me())
+    class_classNameToAsert = ReflectionHelper.getClassName(Me)
+    class_methodNameToAsert = ReflectionHelper.getClassName(Me().methodIsMine)
+    class_attributeNameToAsert = ReflectionHelper.getClassName(Me().an)
+    class_staticAttributeNameToAsert = ReflectionHelper.getClassName(Me().na)
+
+    type_functionNameToAsert = ReflectionHelper.getName(type(functionMine))
+    type_instanceNameToAsert = ReflectionHelper.getName(type(Me()))
+    type_classNameToAsert = ReflectionHelper.getName(type(Me))
+    type_methodNameToAsert = ReflectionHelper.getName(type(Me().methodIsMine))
+    type_attributeNameToAsert = ReflectionHelper.getName(type(Me().an))
+    type_staticAttributeNameToAsert = ReflectionHelper.getName(type(Me().na))
+
+    type_class_functionNameToAsert = ReflectionHelper.getClassName(type(functionMine))
+    type_class_instanceNameToAsert = ReflectionHelper.getClassName(type(Me()))
+    type_class_classNameToAsert = ReflectionHelper.getClassName(type(Me))
+    type_class_methodNameToAsert = ReflectionHelper.getClassName(type(Me().methodIsMine))
+    type_class_attributeNameToAsert = ReflectionHelper.getClassName(type(Me().an))
+    type_class_staticAttributeNameToAsert = ReflectionHelper.getClassName(type(Me().na))
+
+    None_functionNameToAsert = ReflectionHelper.getName(None)
+    None_instanceNameToAsert = ReflectionHelper.getName(None)
+    None_classNameToAsert = ReflectionHelper.getName(None)
+    None_methodNameToAsert = ReflectionHelper.getName(None)
+    None_attributeNameToAsert = ReflectionHelper.getName(None)
+    None_staticAttributeNameToAsert = ReflectionHelper.getName(None)
+
+    None_class_functionNameToAsert = ReflectionHelper.getClassName(None)
+    None_class_instanceNameToAsert = ReflectionHelper.getClassName(None)
+    None_class_classNameToAsert = ReflectionHelper.getClassName(None)
+    None_class_methodNameToAsert = ReflectionHelper.getClassName(None)
+    None_class_attributeNameToAsert = ReflectionHelper.getClassName(None)
+    None_class_staticAttributeNameToAsert = ReflectionHelper.getClassName(None)
+    print(
+        functionNameToAsert,
+        instanceNameToAsert,
+        classNameToAsert,
+        methodNameToAsert,
+        attributeNameToAsert,
+        staticAttributeNameToAsert
+    )
+    print(
+        class_functionNameToAsert,
+        class_instanceNameToAsert,
+        class_classNameToAsert,
+        class_methodNameToAsert,
+        class_attributeNameToAsert,
+        class_staticAttributeNameToAsert
+    )
+    print(
+        type_functionNameToAsert,
+        type_instanceNameToAsert,
+        type_classNameToAsert,
+        type_methodNameToAsert,
+        type_attributeNameToAsert,
+        type_staticAttributeNameToAsert
+    )
+    print(
+        type_class_functionNameToAsert,
+        type_class_instanceNameToAsert,
+        type_class_classNameToAsert,
+        type_class_methodNameToAsert,
+        type_class_attributeNameToAsert,
+        type_class_staticAttributeNameToAsert
+    )
+    print(
+        None_functionNameToAsert,
+        None_instanceNameToAsert,
+        None_classNameToAsert,
+        None_methodNameToAsert,
+        None_attributeNameToAsert,
+        None_staticAttributeNameToAsert
+    )
+    print(
+        None_class_functionNameToAsert,
+        None_class_instanceNameToAsert,
+        None_class_classNameToAsert,
+        None_class_methodNameToAsert,
+        None_class_attributeNameToAsert,
+        None_class_staticAttributeNameToAsert
+    )
+    # assert
+    assert 'functionMine' == functionNameToAsert
+    assert '(undefined)' == instanceNameToAsert
+    assert 'Me' == classNameToAsert
+    assert 'methodIsMine' == methodNameToAsert
+    assert '(undefined)' == attributeNameToAsert
+    assert '(undefined)' == staticAttributeNameToAsert
+
+    assert 'function' == class_functionNameToAsert
+    assert 'Me' == class_instanceNameToAsert
+    assert 'type' == class_classNameToAsert
+    assert 'method' == class_methodNameToAsert
+    assert 'int' == class_attributeNameToAsert
+    assert 'str' == class_staticAttributeNameToAsert
+
+    assert 'functionMine' == type_functionNameToAsert
+    assert 'Me' == type_instanceNameToAsert
+    assert 'type' == type_classNameToAsert
+    assert 'method' == type_methodNameToAsert
+    assert 'int' == type_attributeNameToAsert
+    assert 'str' == type_staticAttributeNameToAsert
+
+    assert 'type' == type_class_functionNameToAsert
+    assert 'type' == type_class_instanceNameToAsert
+    assert 'type' == type_class_classNameToAsert
+    assert 'type' == type_class_methodNameToAsert
+    assert 'int' == type_class_attributeNameToAsert
+    assert 'str' == type_class_staticAttributeNameToAsert
+
+    assert '(undefined)' == None_functionNameToAsert
+    assert '(undefined)' == None_instanceNameToAsert
+    assert '(undefined)' == None_classNameToAsert
+    assert '(undefined)' == None_methodNameToAsert
+    assert '(undefined)' == None_attributeNameToAsert
+    assert '(undefined)' == None_staticAttributeNameToAsert
+
+    assert '(undefined)' == None_class_functionNameToAsert
+    assert '(undefined)' == None_class_instanceNameToAsert
+    assert '(undefined)' == None_class_classNameToAsert
+    assert '(undefined)' == None_class_methodNameToAsert
+    assert '(undefined)' == None_class_attributeNameToAsert
+    assert '(undefined)' == None_class_staticAttributeNameToAsert
+
+    # functionMine (undefined) Me methodIsMine (undefined) (undefined)
+    # function Me type method int str
+    # function Me type method int str
+    # type type type type type type
+    # (undefined) (undefined) (undefined) (undefined) (undefined) (undefined)
+    # (undefined) (undefined) (undefined) (undefined) (undefined) (undefined)
+
+    functionMine (undefined) Me methodIsMine (undefined) (undefined)
+    function Me type method int str
+    function Me type method int str
+    type type type type type type
+    (undefined) (undefined) (undefined) (undefined) (undefined) (undefined)
+    (undefined) (undefined) (undefined) (undefined) (undefined) (undefined)

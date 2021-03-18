@@ -59,8 +59,14 @@ def getMethodNameList(instanceClass) :
         if isNotPrivate(methodName) and isMethod(objectNullArgsInstance, methodName)
     ]
 
+def isMethodClass(methodClass) :
+    return False if ObjectHelper.isNone(methodClass) else methodClass.__name__ in METHOD_TYPE_NAME_LIST
+
+def isNotMethodClass(methodClass) :
+    return False if ObjectHelper.isNone(methodClass) else not isMethodClass(methodClass)
+
 def isMethodInstance(methodInstance) :
-    return getName(methodInstance.__class__) in METHOD_TYPE_NAME_LIST if ObjectHelper.isNotNone(methodInstance) else False
+    return isMethodClass(type(methodInstance))
 
 def isNotMethodInstance(methodInstance) :
     return not isMethodInstance(methodInstance)
@@ -159,7 +165,7 @@ def getClass(thing, typeClass=None, muteLogs=False) :
         if ObjectHelper.isEmpty(thing) :
             thingClass = typeClass
         else :
-            thingClass = thing.__class__
+            thingClass = thing.__class__ 
     except Exception as exception :
         thingClass = type(None)
         if not muteLogs :
@@ -191,6 +197,9 @@ def getClassName(thing, typeClass=None, muteLogs=False) :
         if not muteLogs :
             LogHelper.warning(None, f'Not possible to get class name of {thing}. Returning {name} insted', exception=exception)
     return name
+
+def getMethodClassName(instanceClass):
+    return instanceClass.__qualname__.split(c.DOT)[0]
 
 def getModuleName(thing, typeModule=None, muteLogs=False) :
     name = None
