@@ -1,4 +1,4 @@
-import colorama, traceback, logging
+import colorama, traceback
 from python_helper.api.src.domain import Constant as c
 from python_helper.api.src.service import SettingHelper, StringHelper, EnvironmentHelper, ObjectHelper, ReflectionHelper
 
@@ -66,7 +66,7 @@ global LOG_HELPER_SETTINGS
 #     OUTPUT_PRINT_LIST.append([it, kwargs])
 #     if shouldPrint :
 #         printOutput()
-
+# import logging
 # LOGGER_INSTANCE = None
 
 # def loadLogger(logger) :
@@ -96,7 +96,7 @@ def loadSettings() :
     #     LOG_HELPER_SETTINGS[PRINTING] = False
     if SettingHelper.activeEnvironmentIsLocal() :
         colorama.init()
-        logging.basicConfig(level=logging.DEBUG)
+        # logging.basicConfig(level=logging.DEBUG)
         logIt(RESET_ALL_COLORS, end=c.NOTHING)
 
 loadSettings()
