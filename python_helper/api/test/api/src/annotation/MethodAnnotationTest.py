@@ -100,7 +100,7 @@ def Method_withSuccess() :
         myNotMethodResult = myNotMethod(None,SOMETHING)
     except Exception as ext :
         notMethodEception = ext
-        print(notMethodEception)
+        # print(notMethodEception)
 
     # Assert
     assert (TEST, SOMETHING) == myRestult

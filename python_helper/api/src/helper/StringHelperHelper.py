@@ -22,7 +22,7 @@ def getItAsColoredString(thing, prettyFunction, withColors, replaceBy=None, colo
     return [thingValue] if not withColors else [getColorValue(thing, color), thingValue, c.RESET_COLOR]
 
 def getFilteredAndColoredQuote(keyOrValue, string, prettyFunction, withColors, color) :
-    if ObjectHelper.isNativeClassIsntance(keyOrValue) and not isinstance(keyOrValue, str) :
+    if ObjectHelper.isNativeClassInstance(keyOrValue) and not isinstance(keyOrValue, str) :
         return [c.NOTHING] if StringHelper.prettyPython == prettyFunction else getItAsColoredString(string, prettyFunction, withColors, color=color)
     return getItAsColoredString(string, prettyFunction, withColors, color=color)
 

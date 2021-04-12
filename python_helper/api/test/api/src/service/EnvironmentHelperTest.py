@@ -42,8 +42,8 @@ def osIdentifierTest() :
     # assert
     assert ObjectHelper.isNotNone(isWindows)
     assert ObjectHelper.isNotNone(isLinux)
-    assert ObjectHelper.isNativeClassIsntance(isWindows)
-    assert ObjectHelper.isNativeClassIsntance(isLinux)
+    assert ObjectHelper.isNativeClassInstance(isWindows)
+    assert ObjectHelper.isNativeClassInstance(isLinux)
     assert bool == type(isWindows)
     assert bool == type(isLinux)
     assert isLinux or isWindows 

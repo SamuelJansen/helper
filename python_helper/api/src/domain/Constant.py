@@ -14,6 +14,7 @@ BACK_SLASH = '\\'
 NEW_LINE = '\n'
 BAR_N = f'{BACK_SLASH}n'
 NOTHING = ''
+BLANK = ''
 SPACE = ' '
 SINGLE_QUOTE = "'"
 DOUBLE_QUOTE = '"'

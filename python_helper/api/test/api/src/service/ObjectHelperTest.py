@@ -307,15 +307,15 @@ def basicMethods() :
     assert ObjectHelper.isNotNativeClass(type(SET_FILLED_INSTANCE))
     assert not ObjectHelper.isNotNativeClass(type(GENERATOR_INSTANCE))
 
-    assert ObjectHelper.isNativeClassIsntance(STR_FILLED_INSTANCE)
-    assert ObjectHelper.isNativeClassIsntance(BOOLEAN_FILLED_INSTANCE)
-    assert ObjectHelper.isNativeClassIsntance(INTEGER_FILLED_INSTANCE)
-    assert ObjectHelper.isNativeClassIsntance(FLOAT_FILLED_INSTANCE)
-    assert not ObjectHelper.isNativeClassIsntance(DICTIONARY_FILLED_INSTANCE)
-    assert not ObjectHelper.isNativeClassIsntance(LIST_FILLED_INSTANCE)
-    assert not ObjectHelper.isNativeClassIsntance(TUPLE_FILLED_INSTANCE)
-    assert not ObjectHelper.isNativeClassIsntance(SET_FILLED_INSTANCE)
-    assert ObjectHelper.isNativeClassIsntance(GENERATOR_INSTANCE)
+    assert ObjectHelper.isNativeClassInstance(STR_FILLED_INSTANCE)
+    assert ObjectHelper.isNativeClassInstance(BOOLEAN_FILLED_INSTANCE)
+    assert ObjectHelper.isNativeClassInstance(INTEGER_FILLED_INSTANCE)
+    assert ObjectHelper.isNativeClassInstance(FLOAT_FILLED_INSTANCE)
+    assert not ObjectHelper.isNativeClassInstance(DICTIONARY_FILLED_INSTANCE)
+    assert not ObjectHelper.isNativeClassInstance(LIST_FILLED_INSTANCE)
+    assert not ObjectHelper.isNativeClassInstance(TUPLE_FILLED_INSTANCE)
+    assert not ObjectHelper.isNativeClassInstance(SET_FILLED_INSTANCE)
+    assert ObjectHelper.isNativeClassInstance(GENERATOR_INSTANCE)
 
     assert not ObjectHelper.isNotNativeClassIsntance(STR_FILLED_INSTANCE)
     assert not ObjectHelper.isNotNativeClassIsntance(BOOLEAN_FILLED_INSTANCE)
@@ -343,7 +343,7 @@ def basicMethods() :
     assert ObjectHelper.isNotDictionaryClass(None)
     assert not ObjectHelper.isNativeClass(None)
     assert ObjectHelper.isNotNativeClass(None)
-    assert not ObjectHelper.isNativeClassIsntance(None)
+    assert not ObjectHelper.isNativeClassInstance(None)
     assert ObjectHelper.isNotNativeClassIsntance(None)
 
     assert not ObjectHelper.isNone(type(None))
@@ -358,7 +358,7 @@ def basicMethods() :
     assert ObjectHelper.isNotDictionaryClass(type(None))
     assert not ObjectHelper.isNativeClass(type(None))
     assert ObjectHelper.isNotNativeClass(type(None))
-    assert not ObjectHelper.isNativeClassIsntance(type(None))
+    assert not ObjectHelper.isNativeClassInstance(type(None))
     assert ObjectHelper.isNotNativeClassIsntance(type(None))
 
 @Test(

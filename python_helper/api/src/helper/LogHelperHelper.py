@@ -78,21 +78,21 @@ def softLog(origin, message, level, exception=None, newLine=False) :
         hardLog(origin,message,exception,level)
     elif c.TRUE == getStatus(level) :
         firstLayerColor, secondLayerColor, tirdLayerColor, resetColor = getColors(level)
-        print(StringHelper.join([firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], *getOriginPortion(origin, tirdLayerColor, resetColor), secondLayerColor, message, resetColor, getNewLine(newLine, exception=exception)]))
+        LogHelper.logIt(StringHelper.join([firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], *getOriginPortion(origin, tirdLayerColor, resetColor), secondLayerColor, message, resetColor, getNewLine(newLine, exception=exception)]))
     elif not c.FALSE == getStatus(level) :
         levelStatusError(method, level)
 
 def hardLog(origin, message, exception, level, newLine=False) :
     if c.TRUE == getStatus(level) :
         firstLayerColor, secondLayerColor, tirdLayerColor, resetColor = getColors(level)
-        print(StringHelper.join([firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], *getOriginPortion(origin, tirdLayerColor, resetColor), secondLayerColor, message, *getErrorPortion(exception, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor), resetColor, getNewLine(newLine, exception=exception)]))
+        LogHelper.logIt(StringHelper.join([firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], *getOriginPortion(origin, tirdLayerColor, resetColor), secondLayerColor, message, *getErrorPortion(exception, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor), resetColor, getNewLine(newLine, exception=exception)]))
     elif not c.FALSE == getStatus(level) :
         levelStatusError(method, level)
 
 def printMessageLog(level, message, condition=False, newLine=True, margin=True, exception=None) :
     if condition :
         firstLayerColor, secondLayerColor, tirdLayerColor, resetColor = getColors(level)
-        print(StringHelper.join([c.TAB if margin else c.NOTHING, firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], secondLayerColor, message, *getErrorPortion(exception, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor), resetColor, getNewLine(newLine, exception=exception)]))
+        LogHelper.logIt(StringHelper.join([c.TAB if margin else c.NOTHING, firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], secondLayerColor, message, *getErrorPortion(exception, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor), resetColor, getNewLine(newLine, exception=exception)]))
 
 def getOriginPortion(origin, tirdLayerColor, resetColor) :
     if not origin or origin == c.NOTHING :
