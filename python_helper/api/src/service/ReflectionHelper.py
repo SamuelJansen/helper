@@ -14,15 +14,15 @@ METHOD_TYPE_NAME_LIST = [
 def hasAttributeOrMethod(instance, name) :
     return False if ObjectHelper.isNone(instance) or ObjectHelper.isNone(name) else hasattr(instance, name)
 
-def getAttributeOrMethod(instance, name, muteLogs=False) :
+def getAttributeOrMethod(instance, name, muteLogs=False, default=None) :
     attributeOrMethodInstance = None
     if ObjectHelper.isNotNone(instance) and ObjectHelper.isNotNone(name) :
         try :
-            attributeOrMethodInstance = None if not hasattr(instance, name) else getattr(instance, name)
+            attributeOrMethodInstance = default if not hasattr(instance, name) else getattr(instance, name)
         except Exception as exception :
             if not muteLogs :
                 LogHelper.warning(getAttributeOrMethod, f'Not possible to get "{name}" from "{getClassName(instance, typeClass=c.TYPE_CLASS, muteLogs=muteLogs) if ObjectHelper.isNotNone(instance) else instance}" instance', exception=exception)
-    return attributeOrMethodInstance
+    return default if ObjectHelper.isNone(attributeOrMethodInstance) else attributeOrMethodInstance
 
 def setAttributeOrMethod(instance, name, attributeOrMethodInstance, muteLogs=False) :
     if ObjectHelper.isNotNone(instance) and ObjectHelper.isNotNone(name) :
@@ -165,7 +165,7 @@ def getClass(thing, typeClass=None, muteLogs=False) :
         if ObjectHelper.isEmpty(thing) :
             thingClass = typeClass
         else :
-            thingClass = thing.__class__ 
+            thingClass = thing.__class__
     except Exception as exception :
         thingClass = type(None)
         if not muteLogs :
