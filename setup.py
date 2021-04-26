@@ -3,7 +3,7 @@ import os
 
 OS_SEPARATOR = os.path.sep
 
-version = '0.3.0-01'
+version = '0.3.0-03'
 name = 'python_helper'
 url = f'https://github.com/SamuelJansen/{name}/'
 
@@ -29,7 +29,7 @@ setup(
     install_requires = [
         'colorama==0.4.3',
         'requests==2.24.0',
-        'python-Levenshtein=0.12.2'
+        'python-Levenshtein==0.12.2'
     ],
     classifiers = [
         'Development Status :: 3 - Alpha',
