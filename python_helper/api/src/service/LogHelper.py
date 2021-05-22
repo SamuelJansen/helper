@@ -101,59 +101,59 @@ def loadSettings() :
 
 loadSettings()
 
-def log(origin, message, level=LOG, exception=None, newLine=False) :
-    LogHelperHelper.softLog(origin, message, LOG, newLine=newLine, exception=exception)
+def log(origin, message, level=LOG, exception=None, muteStackTrace=False, newLine=False) :
+    LogHelperHelper.softLog(origin, message, LOG, muteStackTrace=muteStackTrace, newLine=newLine, exception=exception)
 
-def success(origin, message, newLine=False) :
-    LogHelperHelper.softLog(origin, message, SUCCESS, newLine=newLine)
+def success(origin, message, muteStackTrace=False, newLine=False) :
+    LogHelperHelper.softLog(origin, message, SUCCESS, muteStackTrace=muteStackTrace, newLine=newLine)
 
-def setting(origin, message, newLine=False) :
-    LogHelperHelper.softLog(origin, message, SETTING, newLine=newLine)
+def setting(origin, message, muteStackTrace=False, newLine=False) :
+    LogHelperHelper.softLog(origin, message, SETTING, muteStackTrace=muteStackTrace, newLine=newLine)
 
-def debug(origin, message, exception=None, newLine=False) :
-    LogHelperHelper.softLog(origin, message, DEBUG, newLine=newLine, exception=exception)
+def debug(origin, message, exception=None, muteStackTrace=False, newLine=False) :
+    LogHelperHelper.softLog(origin, message, DEBUG, muteStackTrace=muteStackTrace, newLine=newLine, exception=exception)
 
-def warning(origin, message, exception=None, newLine=False) :
-    LogHelperHelper.softLog(origin, message, WARNING, newLine=newLine, exception=exception)
+def warning(origin, message, exception=None, muteStackTrace=False, newLine=False) :
+    LogHelperHelper.softLog(origin, message, WARNING, muteStackTrace=muteStackTrace, newLine=newLine, exception=exception)
 
-def wraper(origin, message, exception, newLine=False) :
-    LogHelperHelper.hardLog(origin, message, exception, WRAPPER, newLine=newLine)
+def wraper(origin, message, exception, muteStackTrace=False, newLine=False) :
+    LogHelperHelper.hardLog(origin, message, exception, WRAPPER, muteStackTrace=muteStackTrace, newLine=newLine)
 
-def failure(origin, message, exception, newLine=False) :
-    LogHelperHelper.hardLog(origin, message, exception, FAILURE, newLine=newLine)
+def failure(origin, message, exception, muteStackTrace=False, newLine=False) :
+    LogHelperHelper.hardLog(origin, message, exception, FAILURE, muteStackTrace=muteStackTrace, newLine=newLine)
 
-def error(origin, message, exception, newLine=False) :
-    LogHelperHelper.hardLog(origin, message, exception, ERROR, newLine=newLine)
+def error(origin, message, exception, muteStackTrace=False, newLine=False) :
+    LogHelperHelper.hardLog(origin, message, exception, ERROR, muteStackTrace=muteStackTrace, newLine=newLine)
 
-def test(origin, message, exception=None, newLine=False) :
-    LogHelperHelper.softLog(origin, message, TEST, newLine=newLine, exception=exception)
+def test(origin, message, exception=None, muteStackTrace=False, newLine=False) :
+    LogHelperHelper.softLog(origin, message, TEST, muteStackTrace=muteStackTrace, newLine=newLine, exception=exception)
 
-def printLog(message, condition=False, newLine=True, margin=True, exception=None) :
-    LogHelperHelper.printMessageLog(LOG, message, condition=condition, newLine=newLine, margin=margin, exception=exception)
+def printLog(message, condition=False, muteStackTrace=False, newLine=True, margin=True, exception=None) :
+    LogHelperHelper.printMessageLog(LOG, message, condition=condition, muteStackTrace=muteStackTrace, newLine=newLine, margin=margin, exception=exception)
 
-def printSuccess(message, condition=False, newLine=True, margin=True) :
-    LogHelperHelper.printMessageLog(SUCCESS, message, condition=condition, newLine=newLine, margin=margin)
+def printSuccess(message, condition=False, muteStackTrace=False, newLine=True, margin=True) :
+    LogHelperHelper.printMessageLog(SUCCESS, message, condition=condition, muteStackTrace=muteStackTrace, newLine=newLine, margin=margin)
 
-def printSetting(message, condition=False, newLine=True, margin=True) :
-    LogHelperHelper.printMessageLog(SETTING, message, condition=condition, newLine=newLine, margin=margin)
+def printSetting(message, condition=False, muteStackTrace=False, newLine=True, margin=True) :
+    LogHelperHelper.printMessageLog(SETTING, message, condition=condition, muteStackTrace=muteStackTrace, newLine=newLine, margin=margin)
 
-def printDebug(message, condition=False, newLine=True, margin=True, exception=None) :
-    LogHelperHelper.printMessageLog(DEBUG, message, condition=condition, newLine=newLine, margin=margin, exception=exception)
+def printDebug(message, condition=False, muteStackTrace=False, newLine=True, margin=True, exception=None) :
+    LogHelperHelper.printMessageLog(DEBUG, message, condition=condition, muteStackTrace=muteStackTrace, newLine=newLine, margin=margin, exception=exception)
 
-def printWarning(message, condition=False, newLine=True, margin=True, exception=None) :
-    LogHelperHelper.printMessageLog(WARNING, message, condition=condition, newLine=newLine, margin=margin, exception=exception)
+def printWarning(message, condition=False, muteStackTrace=False, newLine=True, margin=True, exception=None) :
+    LogHelperHelper.printMessageLog(WARNING, message, condition=condition, muteStackTrace=muteStackTrace, newLine=newLine, margin=margin, exception=exception)
 
-def printWarper(message, condition=False, newLine=True, margin=True, exception=None) :
-    LogHelperHelper.printMessageLog(WRAPPER, message, condition=condition, newLine=newLine, margin=margin, exception=exception)
+def printWarper(message, condition=False, muteStackTrace=False, newLine=True, margin=True, exception=None) :
+    LogHelperHelper.printMessageLog(WRAPPER, message, condition=condition, muteStackTrace=muteStackTrace, newLine=newLine, margin=margin, exception=exception)
 
-def printFailure(message, condition=False, newLine=True, margin=True, exception=None) :
-    LogHelperHelper.printMessageLog(FAILURE, message, condition=condition, newLine=newLine, margin=margin, exception=exception)
+def printFailure(message, condition=False, muteStackTrace=False, newLine=True, margin=True, exception=None) :
+    LogHelperHelper.printMessageLog(FAILURE, message, condition=condition, muteStackTrace=muteStackTrace, newLine=newLine, margin=margin, exception=exception)
 
-def printError(message, condition=False, newLine=True, margin=True, exception=None) :
-    LogHelperHelper.printMessageLog(ERROR, message, condition=condition, newLine=newLine, margin=margin, exception=exception)
+def printError(message, condition=False, muteStackTrace=False, newLine=True, margin=True, exception=None) :
+    LogHelperHelper.printMessageLog(ERROR, message, condition=condition, muteStackTrace=muteStackTrace, newLine=newLine, margin=margin, exception=exception)
 
-def printTest(message, condition=False, newLine=True, margin=True, exception=None) :
-    LogHelperHelper.printMessageLog(TEST, message, condition=condition, newLine=newLine, margin=margin, exception=exception)
+def printTest(message, condition=False, muteStackTrace=False, newLine=True, margin=True, exception=None) :
+    LogHelperHelper.printMessageLog(TEST, message, condition=condition, muteStackTrace=muteStackTrace, newLine=newLine, margin=margin, exception=exception)
 
 def prettyPython(
         origin,
@@ -218,10 +218,12 @@ def getExceptionMessage(exception) :
     else :
         return exceptionAsString
 
-def getTracebackMessage() :
-    tracebackMessage = None
-    try :
-        tracebackMessage = traceback.format_exc()
-    except :
-        tracebackMessage = f'{c.NEW_LINE}'
-    return LogHelperHelper.NO_TRACEBACK_PRESENT_MESSAGE if LogHelperHelper.NO_TRACEBACK_PRESENT == str(tracebackMessage) else tracebackMessage
+def getTracebackMessage(muteStackTrace) :
+    if muteStackTrace :
+        return LogHelperHelper.NO_TRACEBACK_PRESENT
+    else :
+        try :
+            tracebackMessage = traceback.format_exc()
+        except :
+            tracebackMessage = f'{c.NEW_LINE}'
+        return LogHelperHelper.NO_TRACEBACK_PRESENT_MESSAGE if LogHelperHelper.NO_TRACEBACK_PRESENT == str(tracebackMessage) else tracebackMessage
