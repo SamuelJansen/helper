@@ -75,7 +75,7 @@ def getColors(level) :
 
 def softLog(origin, message, level, exception=None, muteStackTrace=False, newLine=False) :
     if ObjectHelper.isNotNone(exception) :
-        hardLog(origin,message,exception,level)
+        hardLog(origin, message, exception, level, muteStackTrace=muteStackTrace)
     elif c.TRUE == getStatus(level) :
         firstLayerColor, secondLayerColor, tirdLayerColor, resetColor = getColors(level)
         LogHelper.logIt(StringHelper.join([firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], *getOriginPortion(origin, tirdLayerColor, resetColor), secondLayerColor, message, resetColor, getNewLine(newLine, exception=exception, muteStackTrace=muteStackTrace)]))

@@ -1,5 +1,5 @@
 from python_helper import TestHelper
-TestHelper.run(__file__, inspectGlobals=False)
+# TestHelper.run(__file__, inspectGlobals=False)
 # TestHelper.run(
 #     __file__,
 #     runOnly = [
@@ -25,18 +25,21 @@ TestHelper.run(__file__, inspectGlobals=False)
 #     logResult = True,
 #     inspectGlobals = True
 # )
-# TestHelper.run(
-#     __file__,
-#     times = 10,
-#     runOnly = [
-#         'LogHelperTest.mustLogPretyPythonWithColors',
-#         'LogHelperTest.mustLogPretyJsonWithColors'
-#     ],
-#     testStatus = False,
-#     logStatus = False,
-#     logResult = False,
-#     inspectGlobals = False
-# )
+TestHelper.run(
+    __file__,
+    # times = 10,
+    runOnly = [
+        # 'LogHelperTest.mustLogPretyPythonWithColors',
+        # 'LogHelperTest.mustLogPretyJsonWithColors',
+        'LogHelperTest.mustLogWithColors',
+        'LogHelperTest.mustLogWithoutColors',
+        'LogHelperTest.mustLogWithoutColorsAsWell'
+    ],
+    testStatus = False,
+    logStatus = False,
+    logResult = False,
+    inspectGlobals = False
+)
 # TestHelper.run(
 #     __file__,
 #     times = 100,

@@ -72,20 +72,23 @@ def mustLogWithColors() :
     someExceptionMessage = 'some exception message'
     someInnerExceptionMessage = 'some inner exception message'
     exception = None
-    def controlableException(logType) :
+    someExceptionMessageWithStackTrace = f'{someExceptionMessage} with stacktrace'
+    someExceptionMessageWithoutStackTrace = f'{someExceptionMessage} without stacktrace'
+    def controlableException(logType, muteStackTrace=False) :
         try :
-            raise Exception(someExceptionMessage)
-        except Exception as e :
+            raise Exception(someExceptionMessageWithoutStackTrace if muteStackTrace else someExceptionMessageWithStackTrace)
+        except Exception as exception :
             if logType in OPTIONAL_EXCEPTION_LOG_TYPES :
-                logType(logType, someLogMessage, exception=e)
+                logType(logType, someLogMessage, exception=exception, muteStackTrace=muteStackTrace)
             else :
-                logType(logType, someLogMessage, e)
+                logType(logType, someLogMessage, exception, muteStackTrace=muteStackTrace)
 
     # Act
     log.success(log.success, someLogMessage)
     log.setting(log.setting, someLogMessage)
     log.debug(log.debug, someLogMessage)
     log.warning(log.warning, someLogMessage)
+
     controlableException(log.log)
     controlableException(log.debug)
     controlableException(log.warning)
@@ -93,6 +96,15 @@ def mustLogWithColors() :
     controlableException(log.failure)
     controlableException(log.error)
     controlableException(log.test)
+
+    controlableException(log.log, muteStackTrace=True)
+    controlableException(log.debug, muteStackTrace=True)
+    controlableException(log.warning, muteStackTrace=True)
+    controlableException(log.wraper, muteStackTrace=True)
+    controlableException(log.failure, muteStackTrace=True)
+    controlableException(log.error, muteStackTrace=True)
+    controlableException(log.test, muteStackTrace=True)
+
     log.log(log.log, someLogMessage, None)
     log.debug(log.debug, someLogMessage, None)
     log.warning(log.warning, someLogMessage, None)
@@ -127,20 +139,23 @@ def mustLogWithoutColors() :
     someExceptionMessage = 'some exception message'
     someInnerExceptionMessage = 'some inner exception message'
     exception = None
-    def controlableException(logType) :
+    someExceptionMessageWithStackTrace = f'{someExceptionMessage} with stacktrace'
+    someExceptionMessageWithoutStackTrace = f'{someExceptionMessage} without stacktrace'
+    def controlableException(logType, muteStackTrace=False) :
         try :
-            raise Exception(someExceptionMessage)
-        except Exception as e :
+            raise Exception(someExceptionMessageWithoutStackTrace if muteStackTrace else someExceptionMessageWithStackTrace)
+        except Exception as exception :
             if logType in OPTIONAL_EXCEPTION_LOG_TYPES :
-                logType(logType, someLogMessage, exception=e)
+                logType(logType, someLogMessage, exception=exception, muteStackTrace=muteStackTrace)
             else :
-                logType(logType, someLogMessage, e)
+                logType(logType, someLogMessage, exception, muteStackTrace=muteStackTrace)
 
     # Act
     log.success(log.success, someLogMessage)
     log.setting(log.setting, someLogMessage)
     log.debug(log.debug, someLogMessage)
     log.warning(log.warning, someLogMessage)
+
     controlableException(log.log)
     controlableException(log.debug)
     controlableException(log.warning)
@@ -148,6 +163,15 @@ def mustLogWithoutColors() :
     controlableException(log.failure)
     controlableException(log.error)
     controlableException(log.test)
+
+    controlableException(log.log, muteStackTrace=True)
+    controlableException(log.debug, muteStackTrace=True)
+    controlableException(log.warning, muteStackTrace=True)
+    controlableException(log.wraper, muteStackTrace=True)
+    controlableException(log.failure, muteStackTrace=True)
+    controlableException(log.error, muteStackTrace=True)
+    controlableException(log.test, muteStackTrace=True)
+
     log.log(log.log, someLogMessage, None)
     log.debug(log.debug, someLogMessage, None)
     log.warning(log.warning, someLogMessage, None)
@@ -181,20 +205,28 @@ def mustLogWithoutColorsAsWell() :
     someExceptionMessage = 'some exception message'
     someInnerExceptionMessage = 'some inner exception message'
     exception = None
-    def controlableException(logType) :
+    someExceptionMessageWithStackTrace = f'{someExceptionMessage} with stacktrace'
+    someExceptionMessageWithoutStackTrace = f'{someExceptionMessage} without stacktrace'
+    def controlableException(logType, muteStackTrace=False) :
         try :
-            raise Exception(someExceptionMessage)
+            raise Exception(someExceptionMessageWithoutStackTrace if muteStackTrace else someExceptionMessageWithStackTrace)
         except Exception as exception :
             if logType in OPTIONAL_EXCEPTION_LOG_TYPES :
-                logType(logType, someLogMessage, exception=exception)
+                logType(logType, someLogMessage, exception=exception, muteStackTrace=muteStackTrace)
             else :
-                logType(logType, someLogMessage, exception)
+                logType(logType, someLogMessage, exception, muteStackTrace=muteStackTrace)
 
     # Act
-    log.success(log.success, someLogMessage)
-    log.setting(log.setting, someLogMessage)
-    log.debug(log.debug, someLogMessage)
-    log.warning(log.warning, someLogMessage)
+    # log.success(log.success, someLogMessage)
+    # log.setting(log.setting, someLogMessage)
+    # log.debug(log.debug, someLogMessage)
+    # log.warning(log.warning, someLogMessage)
+    #
+    # log.success(log.success, someLogMessage)
+    # log.setting(log.setting, someLogMessage)
+    # log.debug(log.debug, someLogMessage)
+    # log.warning(log.warning, someLogMessage)
+
     controlableException(log.log)
     controlableException(log.debug)
     controlableException(log.warning)
@@ -202,13 +234,22 @@ def mustLogWithoutColorsAsWell() :
     controlableException(log.failure)
     controlableException(log.error)
     controlableException(log.test)
-    log.log(log.log, someLogMessage, None)
-    log.debug(log.debug, someLogMessage, None)
-    log.warning(log.warning, someLogMessage, None)
-    log.wraper(log.wraper, noExceptionThrown, None)
-    log.failure(log.failure, noExceptionThrown, None)
-    log.error(log.error, noExceptionThrown, None)
-    log.test(log.test, someLogMessage, None)
+
+    controlableException(log.log, muteStackTrace=True)
+    controlableException(log.debug, muteStackTrace=True)
+    controlableException(log.warning, muteStackTrace=True)
+    controlableException(log.wraper, muteStackTrace=True)
+    controlableException(log.failure, muteStackTrace=True)
+    controlableException(log.error, muteStackTrace=True)
+    controlableException(log.test, muteStackTrace=True)
+
+    # log.log(log.log, someLogMessage, None)
+    # log.debug(log.debug, someLogMessage, None)
+    # log.warning(log.warning, someLogMessage, None)
+    # log.wraper(log.wraper, noExceptionThrown, None)
+    # log.failure(log.failure, noExceptionThrown, None)
+    # log.error(log.error, noExceptionThrown, None)
+    # log.test(log.test, someLogMessage, None)
 
     # Assert
     assert True == SettingHelper.activeEnvironmentIsDefault()

@@ -219,11 +219,11 @@ def getExceptionMessage(exception) :
         return exceptionAsString
 
 def getTracebackMessage(muteStackTrace) :
+    tracebackMessage = c.BLANK
+    try :
+        tracebackMessage = traceback.format_exc()
+    except :
+        tracebackMessage = f'{c.NEW_LINE}'
     if muteStackTrace :
-        return LogHelperHelper.NO_TRACEBACK_PRESENT
-    else :
-        try :
-            tracebackMessage = traceback.format_exc()
-        except :
-            tracebackMessage = f'{c.NEW_LINE}'
-        return LogHelperHelper.NO_TRACEBACK_PRESENT_MESSAGE if LogHelperHelper.NO_TRACEBACK_PRESENT == str(tracebackMessage) else tracebackMessage
+        return StringHelper.join(tracebackMessage.split(c.NEW_LINE)[-2:], character=c.NEW_LINE)
+    return LogHelperHelper.NO_TRACEBACK_PRESENT_MESSAGE if LogHelperHelper.NO_TRACEBACK_PRESENT == str(tracebackMessage) else tracebackMessage
