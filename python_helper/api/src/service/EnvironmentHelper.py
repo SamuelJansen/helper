@@ -59,6 +59,18 @@ def getSet(avoidRecursiveCall=False) :
 def listDirectoryContent(path) :
     return OS.listdir(path)
 
+def isDirectory(path) :
+    return OS.path.isdir(path)
+
+def isFile(path) :
+    return OS.path.isfile(path)
+
+def makeDirectory(path, accessRights=0o777) :
+    ###- accessRights = 0o777 --> write, access and read
+    ###- accessRights = 0o755 --> access and read
+    ###- accessRights = 0o755 --> access and read
+    OS.makedirs(path, mode=accessRights)
+
 def appendPath(path) :
     SYS.path.append(path)
 
