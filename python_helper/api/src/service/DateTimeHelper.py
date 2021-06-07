@@ -144,7 +144,7 @@ def timeOf(dateTime=None) :
 
 def getTodayDateAndTodayTime() :
     dateTime = dateTimeNow()
-    return date(dateTime=dateTime), time(dateTime=dateTime)
+    return dateOf(dateTime=dateTime), timeOf(dateTime=dateTime)
 
 def getTodayDateTimeBegin() :
     return parseToDateTime(f'{dateNow()} {DEFAULT_TIME_BEGIN}')

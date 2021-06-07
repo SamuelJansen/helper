@@ -797,8 +797,19 @@ def equal_whenObjects() :
     assert False == ObjectHelper.equals(toAssert, another, muteLogs=not inspectEquals)
     assert False == ObjectHelper.equals(expected, [MyDto(None, None, None), MyDto(None, None, None), MyDto(None, None, None)])
 
+@Test()
+def equal_whenDictionary() :
+    #arrange
+    firstDict = {'b': 'c', 'a': 'd'}
+    secondDict = {'a': 'd', 'b': 'c'}
 
+    #act
+    firstDictSorted = ObjectHelper.sortIt(firstDict)
+    secondDictSorted = ObjectHelper.sortIt(secondDict)
 
+    #assert
+    assert firstDictSorted == secondDictSorted
+    # print(f'{firstDictSorted} == {secondDictSorted}: {firstDictSorted == secondDictSorted}')
 
     # a = RandomHelper.string()
     # b = RandomHelper.string()

@@ -3,8 +3,8 @@ TestHelper.run(__file__, inspectGlobals=False)
 # TestHelper.run(
 #     __file__,
 #     runOnly = [
-#         'ObjectHelperTest.equal_whenListOfDictionaries',
-#         'ObjectHelperTest.equal_whenObjects'
+#         # 'ObjectHelperTest.equal_whenListOfDictionaries',
+#         'ObjectHelperTest.equal_whenDictionary'
 #     ]
 # )
 # TestHelper.run(
