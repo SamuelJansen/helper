@@ -3,7 +3,7 @@ import os
 
 OS_SEPARATOR = os.path.sep
 
-version = '0.3.4'
+version = '0.3.5'
 name = 'python_helper'
 url = f'https://github.com/SamuelJansen/{name}/'
 
@@ -27,7 +27,7 @@ setup(
     download_url = f'{url}archive/v{version}.tar.gz',
     keywords = ['helper', 'python helper package', 'python helper', 'helper package'],
     install_requires = [
-        'colorama 0.4.4'
+        'colorama==0.4.4' ###- 'colorama==0.4.3'
     ],
     classifiers = [
         'Development Status :: 3 - Alpha',
