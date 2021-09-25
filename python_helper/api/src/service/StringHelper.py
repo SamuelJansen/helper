@@ -7,10 +7,10 @@ PRESENT = 'present'
 FUTURE = 'future'
 
 def isBlank(thing) :
-    return isinstance(thing, str) and c.NOTHING == thing
+    return isinstance(thing, str) and c.BLANK == thing
 
 def isNotBlank(thing) :
-    return isinstance(thing, str) and not c.NOTHING == thing
+    return isinstance(thing, str) and not c.BLANK == thing
 
 def filterJson(json, extraCharacterList=None) :
     charactereList = [c.NEW_LINE,c.BAR_N]
@@ -23,11 +23,11 @@ def filterJson(json, extraCharacterList=None) :
 
 def removeCharactere(charactere,string) :
     if isNotBlank(charactere) and isNotBlank(string) :
-        filteredString = c.NOTHING.join(string.strip().split(charactere))
-        return filteredString.replace(charactere,c.NOTHING)
+        filteredString = c.BLANK.join(string.strip().split(charactere))
+        return filteredString.replace(charactere,c.BLANK)
     return string
 
-def join(stringList, character=c.NOTHING):
+def join(stringList, character=c.BLANK):
     return character.join(stringList)
 
 def prettyPython(
@@ -124,7 +124,7 @@ def filterString(string) :
     if ObjectHelper.isNone(string) or not isinstance(string, str) :
         return string
     strippedString = string.strip()
-    if c.NOTHING == strippedString :
+    if c.BLANK == strippedString :
         return strippedString
     if strippedString[-1] == c.NEW_LINE :
         strippedString = strippedString[:-1]
@@ -166,11 +166,11 @@ def removeColors(thing) :
     if ObjectHelper.isNotNone(thing) and isNotBlank(thing) :
         for color in c.IMPLEMENTED_PROMP_COLORS :
             if color in thing :
-                thing = thing.replace(color,c.NOTHING)
+                thing = thing.replace(color,c.BLANK)
     return thing if isinstance(thing, str) else str(string)
 
-def getS(contition, es=False) :
-    return c.NOTHING if not contition else 'es' if es else 's'
+def getS(condition, es=False) :
+    return c.BLANK if not condition else 'es' if es else 's'
 
 def getToBe(condition, singular=True, tense=PRESENT, negative=False) :
     if condition :
@@ -190,4 +190,4 @@ def getToBe(condition, singular=True, tense=PRESENT, negative=False) :
                 return 'will'
         return 'to be'
     else :
-        return c.NOTHING
+        return c.BLANK

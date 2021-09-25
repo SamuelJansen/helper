@@ -84,12 +84,14 @@ def mustLogWithColors() :
                 logType(logType, someLogMessage, exception, muteStackTrace=muteStackTrace)
 
     # Act
+    log.info(log.info, someLogMessage)
     log.success(log.success, someLogMessage)
     log.setting(log.setting, someLogMessage)
     log.debug(log.debug, someLogMessage)
     log.warning(log.warning, someLogMessage)
 
     controlableException(log.log)
+    controlableException(log.info)
     controlableException(log.debug)
     controlableException(log.warning)
     controlableException(log.wraper)
@@ -98,6 +100,7 @@ def mustLogWithColors() :
     controlableException(log.test)
 
     controlableException(log.log, muteStackTrace=True)
+    controlableException(log.info, muteStackTrace=True)
     controlableException(log.debug, muteStackTrace=True)
     controlableException(log.warning, muteStackTrace=True)
     controlableException(log.wraper, muteStackTrace=True)
@@ -106,6 +109,7 @@ def mustLogWithColors() :
     controlableException(log.test, muteStackTrace=True)
 
     log.log(log.log, someLogMessage, None)
+    log.info(log.info, someLogMessage, None)
     log.debug(log.debug, someLogMessage, None)
     log.warning(log.warning, someLogMessage, None)
     log.wraper(log.wraper, noExceptionThrown, None)
@@ -151,12 +155,14 @@ def mustLogWithoutColors() :
                 logType(logType, someLogMessage, exception, muteStackTrace=muteStackTrace)
 
     # Act
+    log.info(log.info, someLogMessage)
     log.success(log.success, someLogMessage)
     log.setting(log.setting, someLogMessage)
     log.debug(log.debug, someLogMessage)
     log.warning(log.warning, someLogMessage)
 
     controlableException(log.log)
+    controlableException(log.info)
     controlableException(log.debug)
     controlableException(log.warning)
     controlableException(log.wraper)
@@ -165,6 +171,7 @@ def mustLogWithoutColors() :
     controlableException(log.test)
 
     controlableException(log.log, muteStackTrace=True)
+    controlableException(log.info, muteStackTrace=True)
     controlableException(log.debug, muteStackTrace=True)
     controlableException(log.warning, muteStackTrace=True)
     controlableException(log.wraper, muteStackTrace=True)
@@ -173,6 +180,7 @@ def mustLogWithoutColors() :
     controlableException(log.test, muteStackTrace=True)
 
     log.log(log.log, someLogMessage, None)
+    log.info(log.info, someLogMessage, None)
     log.debug(log.debug, someLogMessage, None)
     log.warning(log.warning, someLogMessage, None)
     log.wraper(log.wraper, noExceptionThrown, None)
@@ -228,6 +236,7 @@ def mustLogWithoutColorsAsWell() :
     # log.warning(log.warning, someLogMessage)
 
     controlableException(log.log)
+    controlableException(log.info)
     controlableException(log.debug)
     controlableException(log.warning)
     controlableException(log.wraper)
@@ -236,6 +245,7 @@ def mustLogWithoutColorsAsWell() :
     controlableException(log.test)
 
     controlableException(log.log, muteStackTrace=True)
+    controlableException(log.info, muteStackTrace=True)
     controlableException(log.debug, muteStackTrace=True)
     controlableException(log.warning, muteStackTrace=True)
     controlableException(log.wraper, muteStackTrace=True)
@@ -444,6 +454,7 @@ def mustPrintMessageLog_withColors() :
 
     # Act
     log.printLog(mustLogWithNewLine, condition=True, newLine=True)
+    log.printInfo(mustLogWithNewLine, condition=True, newLine=True)
     log.printSuccess(mustLogWithNewLine, condition=True, newLine=True)
     log.printSetting(mustLogWithNewLine, condition=True, newLine=True)
     log.printDebug(mustLogWithNewLine, condition=True, newLine=True, exception=None)
@@ -454,6 +465,7 @@ def mustPrintMessageLog_withColors() :
     log.printTest(mustLogWithNewLine, condition=True, newLine=True, exception=None)
 
     log.printLog(mustNotLogWithNewLine, condition=False, newLine=True)
+    log.printInfo(mustNotLogWithNewLine, condition=False, newLine=True)
     log.printSuccess(mustNotLogWithNewLine, condition=False, newLine=True)
     log.printSetting(mustNotLogWithNewLine, condition=False, newLine=True)
     log.printDebug(mustNotLogWithNewLine, condition=False, newLine=True, exception=None)
@@ -464,6 +476,7 @@ def mustPrintMessageLog_withColors() :
     log.printTest(mustNotLogWithNewLine, condition=False, newLine=True, exception=None)
 
     log.printLog(mustLogWithoutNewLine, condition=True, newLine=False)
+    log.printInfo(mustLogWithoutNewLine, condition=True, newLine=False)
     log.printSuccess(mustLogWithoutNewLine, condition=True, newLine=False)
     log.printSetting(mustLogWithoutNewLine, condition=True, newLine=False)
     log.printDebug(mustLogWithoutNewLine, condition=True, newLine=False, exception=None)
@@ -474,6 +487,7 @@ def mustPrintMessageLog_withColors() :
     log.printTest(mustLogWithoutNewLine, condition=True, newLine=False, exception=None)
 
     log.printLog(mustNotLogWithoutNewLine, condition=False, newLine=False)
+    log.printInfo(mustNotLogWithoutNewLine, condition=False, newLine=False)
     log.printSuccess(mustNotLogWithoutNewLine, condition=False, newLine=False)
     log.printSetting(mustNotLogWithoutNewLine, condition=False, newLine=False)
     log.printDebug(mustNotLogWithoutNewLine, condition=False, newLine=False, exception=None)
@@ -484,6 +498,7 @@ def mustPrintMessageLog_withColors() :
     log.printTest(mustNotLogWithoutNewLine, condition=False, newLine=False, exception=None)
 
     log.printLog(mustLogWithNewLineWithException, condition=True, newLine=True, exception=thrownException)
+    log.printInfo(mustLogWithNewLineWithException, condition=True, newLine=True, exception=thrownException)
     log.printDebug(mustLogWithNewLineWithException, condition=True, newLine=True, exception=thrownException)
     log.printWarning(mustLogWithNewLineWithException, condition=True, newLine=True, exception=thrownException)
     log.printWarper(mustLogWithNewLineWithException, condition=True, newLine=True, exception=thrownException)
@@ -492,6 +507,7 @@ def mustPrintMessageLog_withColors() :
     log.printTest(mustLogWithNewLineWithException, condition=True, newLine=True, exception=thrownException)
 
     log.printLog(mustLogWithoutNewLineWithException, condition=True, newLine=False, exception=thrownException)
+    log.printInfo(mustLogWithoutNewLineWithException, condition=True, newLine=False, exception=thrownException)
     log.printDebug(mustLogWithoutNewLineWithException, condition=True, newLine=False, exception=thrownException)
     log.printWarning(mustLogWithoutNewLineWithException, condition=True, newLine=False, exception=thrownException)
     log.printWarper(mustLogWithoutNewLineWithException, condition=True, newLine=False, exception=thrownException)
@@ -500,6 +516,7 @@ def mustPrintMessageLog_withColors() :
     log.printTest(mustLogWithoutNewLineWithException, condition=True, newLine=False, exception=thrownException)
 
     log.printLog(mustNotLogWithNewLineWithException, condition=False, newLine=True, exception=thrownException)
+    log.printInfo(mustNotLogWithNewLineWithException, condition=False, newLine=True, exception=thrownException)
     log.printDebug(mustNotLogWithNewLineWithException, condition=False, newLine=True, exception=thrownException)
     log.printWarning(mustNotLogWithNewLineWithException, condition=False, newLine=True, exception=thrownException)
     log.printWarper(mustNotLogWithNewLineWithException, condition=False, newLine=True, exception=thrownException)
@@ -508,6 +525,7 @@ def mustPrintMessageLog_withColors() :
     log.printTest(mustNotLogWithNewLineWithException, condition=False, newLine=True, exception=thrownException)
 
     log.printLog(mustNotLogWithoutNewLineWithException, condition=False, newLine=False, exception=thrownException)
+    log.printInfo(mustNotLogWithoutNewLineWithException, condition=False, newLine=False, exception=thrownException)
     log.printDebug(mustNotLogWithoutNewLineWithException, condition=False, newLine=False, exception=thrownException)
     log.printWarning(mustNotLogWithoutNewLineWithException, condition=False, newLine=False, exception=thrownException)
     log.printWarper(mustNotLogWithoutNewLineWithException, condition=False, newLine=False, exception=thrownException)

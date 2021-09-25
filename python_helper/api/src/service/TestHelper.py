@@ -96,6 +96,11 @@ def getModuleTest(inspectGlobals, logResult, globalsInstance) :
 def runModuleTests(testName, runnableTddModule, times, runSpecificTests, testsToRun, logResult, globalsInstance) :
     import globals
     testModule = globals.importModule(testName)
+    if ObjectHelper.isNone(testModule):
+        errorMessage = f'Not possible to import {testName}'
+        exception = Exception(f'Not possible to import {testName}')
+        LogHelper.error(runModuleTests, f'{errorMessage}. Please check warnings for more details', exception)
+        raise exception
     dataList = ReflectionHelper.getAttributeDataList(testModule)
     LogHelper.prettyPython(runnableTddModule, f'{ReflectionHelper.getName(testModule)} tests loaded', dataList, logLevel=LogHelper.TEST)
     allShouldRun, someShouldRun, allDidRun, someDidRun = getRunStatus(testModule, dataList, runSpecificTests, testsToRun)

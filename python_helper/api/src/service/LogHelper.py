@@ -3,6 +3,7 @@ from python_helper.api.src.domain import Constant as c
 from python_helper.api.src.service import SettingHelper, StringHelper, EnvironmentHelper, ObjectHelper, ReflectionHelper
 
 LOG = 'LOG'
+INFO = 'INFO'
 SUCCESS = 'SUCCESS'
 SETTING = 'SETTING'
 DEBUG = 'DEBUG'
@@ -104,6 +105,9 @@ loadSettings()
 def log(origin, message, level=LOG, exception=None, muteStackTrace=False, newLine=False) :
     LogHelperHelper.softLog(origin, message, LOG, muteStackTrace=muteStackTrace, newLine=newLine, exception=exception)
 
+def info(origin, message, level=INFO, exception=None, muteStackTrace=False, newLine=False) :
+    LogHelperHelper.softLog(origin, message, INFO, muteStackTrace=muteStackTrace, newLine=newLine, exception=exception)
+
 def success(origin, message, muteStackTrace=False, newLine=False) :
     LogHelperHelper.softLog(origin, message, SUCCESS, muteStackTrace=muteStackTrace, newLine=newLine)
 
@@ -130,6 +134,9 @@ def test(origin, message, exception=None, muteStackTrace=False, newLine=False) :
 
 def printLog(message, condition=False, muteStackTrace=False, newLine=True, margin=True, exception=None) :
     LogHelperHelper.printMessageLog(LOG, message, condition=condition, muteStackTrace=muteStackTrace, newLine=newLine, margin=margin, exception=exception)
+
+def printInfo(message, condition=False, muteStackTrace=False, newLine=True, margin=True, exception=None) :
+    LogHelperHelper.printMessageLog(INFO, message, condition=condition, muteStackTrace=muteStackTrace, newLine=newLine, margin=margin, exception=exception)
 
 def printSuccess(message, condition=False, muteStackTrace=False, newLine=True, margin=True) :
     LogHelperHelper.printMessageLog(SUCCESS, message, condition=condition, muteStackTrace=muteStackTrace, newLine=newLine, margin=margin)

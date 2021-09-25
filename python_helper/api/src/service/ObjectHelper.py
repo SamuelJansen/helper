@@ -84,6 +84,7 @@ def equals(
             return areEquals
         else :
              return True
+
 def sortIt(thing) :
     if isDictionary(thing) :
         sortedDictionary = {}
@@ -99,7 +100,11 @@ def sortIt(thing) :
         return thing
 
 def getSortedCollection(thing) :
-    return thing if isNotCollection(thing) else sorted(
+    return thing if (
+        isNotCollection(thing) or isEmpty(thing)
+    ) or (
+        isNotDictionary(thing) and isNotSet(thing) and isDictionary(thing[0])
+    ) else sorted(
         thing,
         key=lambda x: (
             x is not None, c.NOTHING if isinstance(x, Number) else type(x).__name__, x

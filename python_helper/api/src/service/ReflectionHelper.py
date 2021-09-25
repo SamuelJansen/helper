@@ -1,3 +1,4 @@
+import inspect, functools
 from python_helper.api.src.domain  import Constant as c
 from python_helper.api.src.service import LogHelper, ObjectHelper, StringHelper, RandomHelper
 
@@ -222,6 +223,28 @@ def getUndefindeName(typeThing) :
         return f'({UNDEFINED})'
     else :
         return f'({typeThing} {UNDEFINED})'
+
+def getParentClass(instance):
+    instanceParent = None
+    try :
+        instanceParent = unsafelyGetInstanceParent(instance)
+    except Exception as exception:
+        LogHelper.wraper(getInstanceParent, 'Failed to get instance parent', exception)
+    return instanceParent
+
+def unsafelyGetInstanceParent(instance):
+    if isinstance(instance, functools.partial):
+        return unsafelyGetInstanceParent(instance.func)
+    if inspect.ismethod(instance) or (inspect.isbuiltin(instance) and getattr(instance, '__self__', None) is not None and getattr(instance.__self__, '__class__', None)):
+        for cls in inspect.getmro(instance.__self__.__class__):
+            if instance.__name__ in cls.__dict__:
+                return cls
+        instance = getattr(instance, '__func__', instance)
+    if inspect.isfunction(instance):
+        cls = getattr(inspect.getmodule(instance), instance.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0], None)
+        if isinstance(cls, type):
+            return cls
+    return getattr(instance, '__objclass__', None)
 
 def getItNaked(it) :
     printDetails(it)

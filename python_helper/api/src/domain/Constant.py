@@ -1,6 +1,7 @@
 from python_helper.api.src.service import LogHelper
 
 LOG =       '[LOG    ] '
+INFO =      '[INFO   ] '
 SUCCESS =   '[SUCCESS] '
 SETTING =   '[SETTING] '
 DEBUG =     '[DEBUG  ] '
@@ -21,6 +22,7 @@ DOUBLE_QUOTE = '"'
 TRIPLE_SINGLE_QUOTE = f"{3*SINGLE_QUOTE}"
 TRIPLE_DOUBLE_QUOTE = f'{3*DOUBLE_QUOTE}'
 
+PIPE = '|'
 BACK_SLASH_SINGLE_QUOTE = "'\'"
 BACK_SLASH_DOUBLE_QUOTE = '\"'
 SLASH = '/'

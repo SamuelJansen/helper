@@ -48,10 +48,10 @@ def reset(environmentVariables, originalEnvironmentVariables) :
 def delete(environmentKey) :
     if ObjectHelper.isNotNone(environmentKey) :
         OS.environ.pop(environmentKey)
-
+        
 def getSet(avoidRecursiveCall=False) :
     try :
-        return json.loads(str(OS.environ)[8:-1].replace(c.DOUBLE_QUOTE, c.BACK_SLASH_DOUBLE_QUOTE).replace(c.SINGLE_QUOTE, c.DOUBLE_QUOTE))
+        return {key : OS.environ[key] for key in OS.environ}
     except Exception as exception :
         LogHelper.error(getSet, 'Not possible to load os.environ as a json. Returning os.environ as string by default', exception)
         return str(OS.environ)[8:-1]

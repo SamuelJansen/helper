@@ -334,6 +334,15 @@ def getName_manyCases() :
     None_class_methodNameToAsert = ReflectionHelper.getClassName(None)
     None_class_attributeNameToAsert = ReflectionHelper.getClassName(None)
     None_class_staticAttributeNameToAsert = ReflectionHelper.getClassName(None)
+
+    parent_functionNameToAsert = ReflectionHelper.getParentClass(functionMine)
+    parent_instanceNameToAsert = ReflectionHelper.getParentClass(Me())
+    parent_classNameToAsert = ReflectionHelper.getParentClass(Me)
+    actual_parent_methodNameToAsert = Me()
+    parent_methodNameToAsert = ReflectionHelper.getParentClass(actual_parent_methodNameToAsert.methodIsMine)
+    parent_attributeNameToAsert = ReflectionHelper.getParentClass(Me().an)
+    parent_staticAttributeNameToAsert = ReflectionHelper.getParentClass(Me().na)
+    parent_testFunctionNameToAsert = ReflectionHelper.getParentClass(getName_manyCases)
     # print(
     #     functionNameToAsert,
     #     instanceNameToAsert,
@@ -397,7 +406,7 @@ def getName_manyCases() :
     assert 'int' == class_attributeNameToAsert
     assert 'str' == class_staticAttributeNameToAsert
 
-    assert 'functionMine' == type_functionNameToAsert
+    assert 'function' == type_functionNameToAsert
     assert 'Me' == type_instanceNameToAsert
     assert 'type' == type_classNameToAsert
     assert 'method' == type_methodNameToAsert
@@ -408,8 +417,8 @@ def getName_manyCases() :
     assert 'type' == type_class_instanceNameToAsert
     assert 'type' == type_class_classNameToAsert
     assert 'type' == type_class_methodNameToAsert
-    assert 'int' == type_class_attributeNameToAsert
-    assert 'str' == type_class_staticAttributeNameToAsert
+    assert 'type' == type_class_attributeNameToAsert
+    assert 'type' == type_class_staticAttributeNameToAsert
 
     assert '(undefined)' == None_functionNameToAsert
     assert '(undefined)' == None_instanceNameToAsert
@@ -425,16 +434,10 @@ def getName_manyCases() :
     assert '(undefined)' == None_class_attributeNameToAsert
     assert '(undefined)' == None_class_staticAttributeNameToAsert
 
-    # functionMine (undefined) Me methodIsMine (undefined) (undefined)
-    # function Me type method int str
-    # function Me type method int str
-    # type type type type type type
-    # (undefined) (undefined) (undefined) (undefined) (undefined) (undefined)
-    # (undefined) (undefined) (undefined) (undefined) (undefined) (undefined)
-
-    functionMine (undefined) Me methodIsMine (undefined) (undefined)
-    function Me type method int str
-    function Me type method int str
-    type type type type type type
-    (undefined) (undefined) (undefined) (undefined) (undefined) (undefined)
-    (undefined) (undefined) (undefined) (undefined) (undefined) (undefined)
+    assert None == parent_functionNameToAsert, parent_functionNameToAsert
+    assert None == parent_instanceNameToAsert, parent_instanceNameToAsert
+    assert None == parent_classNameToAsert, parent_classNameToAsert
+    assert actual_parent_methodNameToAsert.__class__ == parent_methodNameToAsert, f'{actual_parent_methodNameToAsert} == {parent_methodNameToAsert}'
+    assert None == parent_attributeNameToAsert, parent_attributeNameToAsert
+    assert None == parent_staticAttributeNameToAsert, parent_staticAttributeNameToAsert
+    assert parent_testFunctionNameToAsert == ReflectionHelper.getParentClass(getName_manyCases), f'{parent_testFunctionNameToAsert} == {ReflectionHelper.getName(getName_manyCases)}'
