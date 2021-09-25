@@ -19,6 +19,14 @@ TEST_KWARGS = {
     'logResult' : False
 }
 
+def getRaisedException(callableThing, *args, **kwargs):
+    raisedException = None
+    try:
+        callableThing(*args, **kwargs)
+    except Exception as exception:
+        raisedException = exception
+    return raisedException
+
 def getUnitTest(inspectGlobals, globalsInstance) :
     @Test(**getGlobalsTestKwargs(inspectGlobals, globalsInstance))
     def unitTest(testModule, testName, data, testReturns, logResult) :
@@ -62,6 +70,7 @@ def getModuleTest(inspectGlobals, logResult, globalsInstance) :
             , wrapperStatus = globalsInstance.wrapperStatus
             , testStatus = globalsInstance.testStatus
             , logStatus = globalsInstance.logStatus
+            , infoStatus = globalsInstance.infoStatus,
         )
         LogHelper.test(tddModule, f'{testName} started')
         testReturns = {}
@@ -172,6 +181,7 @@ def run(
     wrapperStatus = False,
     testStatus = False,
     logStatus = False,
+    infoStatus = True,
     inspectGlobals = False,
     logResult = True
 ) :
@@ -186,6 +196,7 @@ def run(
         , wrapperStatus = wrapperStatus
         , testStatus = testStatus
         , logStatus = logStatus
+        , infoStatus = infoStatus
     )
     testModuleNames, testsToRun, runSpecificTests = getTestModuleNames(runOnly, ignore, globalsInstance)
     returns = {}
@@ -260,6 +271,7 @@ def getTestRuntimeInfo(times, testTime, totalTestTime) :
 def getTestEnvironmentVariables(globalsInstance) :
     return {
         LogHelper.LOG : globalsInstance.logStatus,
+        LogHelper.INFO : globalsInstance.infoStatus,
         LogHelper.SUCCESS : globalsInstance.successStatus,
         LogHelper.SETTING : globalsInstance.settingStatus,
         LogHelper.DEBUG : globalsInstance.debugStatus,
