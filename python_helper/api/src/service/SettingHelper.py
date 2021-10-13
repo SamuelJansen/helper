@@ -1,4 +1,4 @@
-from python_helper.api.src.service import StringHelper, LogHelper, ObjectHelper, EnvironmentHelper
+from python_helper.api.src.service import StringHelper, LogHelper, ObjectHelper, EnvironmentHelper, FileHelper
 from python_helper.api.src.domain import Constant as c
 from python_helper.api.src.helper import StringHelperHelper, SettingHelperHelper
 
@@ -95,8 +95,7 @@ def getSettingTree(
         )
     else :
         innerFallbackSettingTree = {}
-    with open(settingFilePath,c.READ,encoding=encoding) as settingsFile :
-        allSettingLines = settingsFile.readlines()
+    allSettingLines = FileHelper.getFileLines(settingFilePath, encoding=encoding)
     longStringCapturing = False
     quoteType = None
     longStringList = None

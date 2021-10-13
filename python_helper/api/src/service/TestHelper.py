@@ -20,12 +20,10 @@ TEST_KWARGS = {
 }
 
 def getRaisedException(callableThing, *args, **kwargs):
-    raisedException = None
     try:
         callableThing(*args, **kwargs)
     except Exception as exception:
-        raisedException = exception
-    return raisedException
+        return exception
 
 def getUnitTest(inspectGlobals, globalsInstance) :
     @Test(**getGlobalsTestKwargs(inspectGlobals, globalsInstance))
