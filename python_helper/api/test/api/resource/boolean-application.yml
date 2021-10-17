@@ -1,0 +1,5 @@
+boolean:
+    value: False
+    environment-injection:
+        this-is-true: ${THIS_VALUE_OF_ENVIRONMENT_VARIABLE_IS_NONE:False}
+        value: False

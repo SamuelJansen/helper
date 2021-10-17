@@ -155,7 +155,15 @@ def mustNotReadSettingFile() :
             'SETTING_NODE_KEY': 'circular'
         }
     }
-    exceptionMessage = f'Circular reference detected in following setting injections: {StringHelper.prettyPython(circularReferenceSettingInjectionDictionary)}'
+    fallbackSettingTree = None
+    settingTree = {
+        'circular': {
+            'reference': {
+                'on': {}
+            }
+        }
+    }
+    exceptionMessage = f'Circular reference detected in following setting injections: {StringHelper.prettyPython(circularReferenceSettingInjectionDictionary)}{Constant.NEW_LINE}FallbackSettingTree: {StringHelper.prettyPython(fallbackSettingTree)}{Constant.NEW_LINE}SettingTree: {StringHelper.prettyPython(settingTree)}'
 
     # Act
     readdedSettingTree = {}
@@ -1189,7 +1197,7 @@ def getSettingTree_fallbackPriority() :
     toAssert = SettingHelper.getSettingTree(localFilePath, keepDepthInLongString=True, fallbackSettingFilePath=defaultFilePath)
     # log.prettyPython(getSettingTree_fallbackPriority, 'localSettings', toAssert, logLevel=log.SETTING)
 
-    assert ObjectHelper.equals(expected, toAssert)
+    assert ObjectHelper.equals(expected, toAssert), f'{StringHelper.prettyPython(expected)} == {StringHelper.prettyPython(toAssert)}'
 
 @Test(
     environmentVariables={
@@ -1481,7 +1489,7 @@ def getSettingTree_otherApplication() :
     assert LOCAL_CONFIG_VALUE == SettingHelper.getSetting('local.config.setting-key', toAssert)
     assert True == SettingHelper.getSetting('print-status', toAssert)
     assert 'Globals' == SettingHelper.getSetting('api.name', toAssert)
-    assert "a:b$c:d://e:f?g:h:i:j!k:l@m:n*o:p:[q:r:s:t]/(u:v:w:x)" == SettingHelper.getSetting('environment.database.value', toAssert)
+    assert "a:b$c:d://e:f?g:h:i:j!k:l@m:n*o:p:[q:r:s:t]/(u:v:w:x)" == SettingHelper.getSetting('environment.database.value', toAssert), SettingHelper.getSetting('environment.database.value', toAssert)
     assert expected['long']['string'] == toAssert['long']['string']
     assert expected['deepest']['long']['string']['ever']['long']['string'] == toAssert['deepest']['long']['string']['ever']['long']['string']
     assert expected['not']['idented']['long']['string'] == toAssert['not']['idented']['long']['string']
@@ -1491,7 +1499,7 @@ def getSettingTree_otherApplication() :
 @Test(
     environmentVariables={
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
-        'MIRACLE' : 'nope, just a variable',
+        'MIRACLE' : 'yes.this.is.possible',
         **LOG_HELPER_SETTINGS,
     }
 )
@@ -1540,6 +1548,8 @@ def getSettingTree_whenThereAreNoneValuesAllOverThePlace() :
 
         fallback = None
 
+        assert 'yes.this.is.possible' == EnvironmentHelper.get('MIRACLE')
+
         # act
         try :
             fallback = SettingHelper.getSettingTree(falbackFilePath)
@@ -1548,7 +1558,7 @@ def getSettingTree_whenThereAreNoneValuesAllOverThePlace() :
         except Exception as e :
             exception = e
             # print(fallback)
-            # print(f'{index}: {exception}')
+            print(f'{index}: {exception}')
 
         # assert
         assert ObjectHelper.isNone(exception)
@@ -1575,3 +1585,48 @@ def getSettingTree_whenThereAreNoneValuesAllOverThePlace() :
         # assert
         assert ObjectHelper.isNotNone(exception)
         assert StringHelper.isNotBlank(str(exception))
+
+@Test(
+    environmentVariables={
+        'ENVIRONMENT_BOOLEAN_VALUE': True,
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS,
+    }
+)
+def getBooleanSetting():
+    # arrange
+    defaultFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','boolean-application.yml'])
+    localFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','boolean-application-local.yml'])
+
+    # act
+    falseValue = SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True)['boolean']['value']
+    trueValue = SettingHelper.getSettingTree(localFilePath, keepDepthInLongString=True, fallbackSettingFilePath=defaultFilePath, fallbackSettingTree=SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True))['boolean']['value']
+    environmentInjectionFalseValue = SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True)['boolean']['environment-injection']['value']
+    environmentInjectionTrueValue = SettingHelper.getSettingTree(localFilePath, keepDepthInLongString=True, fallbackSettingFilePath=defaultFilePath, fallbackSettingTree=SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True))['boolean']['environment-injection']['value']
+    shouldBeFalse = SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True)['boolean']['environment-injection']['this-is-true']
+    isTrue = SettingHelper.getSettingTree(localFilePath, keepDepthInLongString=True, fallbackSettingFilePath=defaultFilePath, fallbackSettingTree=SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True))['boolean']['environment-injection']['is-true']
+    # print('=========================')
+    # print('=========================')
+    # print('=========================')
+    # print('=========================')
+    # print('=========================')
+    # print('=========================')
+    # print('=========================')
+    shouldBeTrue = SettingHelper.getSettingTree(localFilePath, keepDepthInLongString=True, fallbackSettingFilePath=defaultFilePath, fallbackSettingTree=SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True))['boolean']['environment-injection']['this-is-true']
+
+    #assert
+    assert trueValue, f'trueValue should be True with type bool, but is {trueValue} with type {type(trueValue)}'
+    assert bool == type(trueValue), f'trueValue should be True with type bool, but is {trueValue} with type {type(trueValue)}'
+    assert not falseValue, f'falseValue should be False with type bool, but is {falseValue} with type {type(falseValue)}'
+    assert bool == type(falseValue), f'falseValue should be False with type bool, but is {falseValue} with type {type(falseValue)}'
+
+    assert environmentInjectionTrueValue, f'environmentInjectionTrueValue should be True with type bool, but is {environmentInjectionTrueValue} with type {type(environmentInjectionTrueValue)}'
+    assert bool == type(environmentInjectionTrueValue), f'environmentInjectionTrueValue should be True with type bool, but is {environmentInjectionTrueValue} with type {type(environmentInjectionTrueValue)}'
+    assert not environmentInjectionFalseValue, f'environmentInjectionFalseValue should be False with type bool, but is {environmentInjectionFalseValue} with type {type(environmentInjectionFalseValue)}'
+    assert bool == type(environmentInjectionFalseValue), f'environmentInjectionFalseValue should be False with type bool, but is {environmentInjectionFalseValue} with type {type(environmentInjectionFalseValue)}'
+
+    assert not shouldBeFalse, f'shouldBeFalse with type bool, but is {shouldBeFalse} with type {type(shouldBeFalse)}'
+    assert bool == type(shouldBeFalse), f'shouldBeFalse with type bool, but is {shouldBeFalse} with type {type(shouldBeFalse)}'
+    assert isTrue, f'isTrue with type bool, but is {isTrue} with type {type(isTrue)}'
+    assert shouldBeTrue, f'shouldBeTrue with type bool, but is {shouldBeTrue} with type {type(shouldBeTrue)}'
+    assert bool == type(shouldBeTrue), f'shouldBeTrue with type bool, but is {shouldBeTrue} with type {type(shouldBeTrue)}'

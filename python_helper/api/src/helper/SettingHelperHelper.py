@@ -10,18 +10,21 @@ SETTING_VALUE = 'SETTING_VALUE'
 SETTING_NODE_KEY = 'SETTING_NODE_KEY'
 
 def getFilteredSetting(settingKey, settingValue, nodeKey, settingTree) :
-    # print(f'getFilteredSetting: settingValue: "{settingValue}"')
+    # print(f'getFilteredSetting: settingKey: {settingKey}, settingValue: "{settingValue}", type: {type(settingValue)}')
     if StringHelper.isNotBlank(settingValue) :
         settingEvaluationList = settingValue.split(c.COLON)
         if len(settingEvaluationList) > 1 :
-            defaultSettingValue = c.COLON.join(settingValue.split(c.COLON)[1:]).strip()
+            defaultSettingValue = c.COLON.join(settingEvaluationList[1:]).strip()
             # print(f'    defaultSettingValue: {defaultSettingValue}')
         else :
-            defaultSettingValue = c.NONE
+            # defaultSettingValue = c.NONE
+            defaultSettingValue = settingValue
         if isSettingInjection(defaultSettingValue) :
+            # print(f'        {settingKey} -> is setting injection: settingValue: {settingValue}, type: {type(settingValue)}')
             return getSettingInjectionValue(settingKey, defaultSettingValue, nodeKey, settingTree)
-        return StringHelper.filterString(defaultSettingValue)
-    # print(f'    settingValue: {settingValue}')
+        # print(f'        {settingKey} -> not setting injection: settingValue: {settingValue}, type: {type(settingValue)}')
+        return getValue(StringHelper.filterString(defaultSettingValue), ignoreCollections=True)
+    # print(f'        {settingKey} -> straight: settingValue: {settingValue}, type: {type(settingValue)}')
     return settingValue
 
 def lineAproved(settingLine) :
@@ -144,7 +147,9 @@ def settingTreeInnerLoop(
     lazyLoad,
     isSameDepth
 ) :
+    # print(f'settingTreeInnerLoop: settingLine: {settingLine}')
     # print(f'settingTreeInnerLoop: nodeKey: {nodeKey}')
+    # print(f'settingTreeInnerLoop: settingTree: {settingTree}')
     # print(f'    isSameDepth: {isSameDepth}')
     settingKey, settingValue = getAttributeKeyValue(settingLine)
     # print(f'    settingKey: {settingKey}, settingValue: {settingValue}')
@@ -200,6 +205,7 @@ def handleSettingInjection(
     lazyLoad,
     isSameDepth
 ) :
+    # print(f'handleSettingInjection: settingKey: {settingKey}, settingValue: {settingValue}')
     if isSettingInjection(settingValue) :
         if lazyLoad :
             settingInjectionList.append({
@@ -230,6 +236,7 @@ def handleSettingInjection(
     )
 
 def handleSettingInjectionList(settingInjectionList, settingTree, fallbackSettingTree=None) :
+    # print(f'handleSettingInjectionList: settingTree: {settingTree}')
     if ObjectHelper.isNotEmptyCollection(settingInjectionList) and ObjectHelper.isNotNone(settingTree) :
         try :
             done, stuck = handleSettingInjectionListLoop(
@@ -274,6 +281,8 @@ def handleSettingInjectionListLoop(
     handler,
     verifyer = None
 ) :
+    # print(f'handleSettingInjectionListLoop: handler: {handler}')
+    # print(f'handleSettingInjectionListLoop: settingTree: {settingTree}')
     while not done and not stuck :
         stuck = True
         isSettingInjectionCount = 0
@@ -292,6 +301,7 @@ def handleSettingInjectionListLoop(
             )
         if ObjectHelper.isNotNone(verifyer) :
             verifyer(done, stuck, isSettingInjectionCount, containsSettingInjectionCount, settingTree, settingInjectionList, fallbackSettingTree)
+    # print(f'handleSettingInjectionListLoop: returning settingTree: {settingTree}')
     return done, stuck
 
 def verifyDefaultSettingInjectionListHandler(
@@ -324,9 +334,9 @@ def verifyDefaultSettingInjectionListHandler(
             for settingInjection in settingInjectionList :
                 notParsedSettingInjectionDictionary[f'{settingInjection[SETTING_NODE_KEY]}{c.DOT}{settingInjection[SETTING_KEY]}'] = (settingInjection)
             if 0 == isSettingInjectionCount and 0 == containsSettingInjectionCount :
-                raise Exception(f'Circular reference detected in following setting injections: {StringHelper.prettyPython(notParsedSettingInjectionDictionary)}')
+                raise Exception(f'Circular reference detected in following setting injections: {StringHelper.prettyPython(notParsedSettingInjectionDictionary)}{c.NEW_LINE}FallbackSettingTree: {StringHelper.prettyPython(fallbackSettingTree)}{c.NEW_LINE}SettingTree: {StringHelper.prettyPython(settingTree)}')
             elif not 0 == len(settingInjectionList) :
-                raise Exception(f'Not possible to parse the following setting injections: {StringHelper.prettyPython(notParsedSettingInjectionDictionary)}')
+                raise Exception(f'Not possible to parse the following setting injections: {StringHelper.prettyPython(notParsedSettingInjectionDictionary)}{c.NEW_LINE}FallbackSettingTree: {StringHelper.prettyPython(fallbackSettingTree)}{c.NEW_LINE}SettingTree: {StringHelper.prettyPython(settingTree)}')
 
 def handleSettingInjectionListByCallingHandler(
     done,
@@ -339,6 +349,10 @@ def handleSettingInjectionListByCallingHandler(
     fallbackSettingTree,
     handler
 ) :
+    # print()
+    # print()
+    # print(f'handleSettingInjectionListByCallingHandler: handler: {handler}')
+    # print(f'handleSettingInjectionListByCallingHandler: settingTree: {settingTree}')
     try :
         if isSettingInjection(settingInjection[SETTING_VALUE]) :
             settingInjection[SETTING_VALUE] = handler(
@@ -380,6 +394,7 @@ def handleSettingInjectionListByCallingHandler(
             stuck = False
     except Exception as exception :
         LogHelper.log(handleSettingInjectionListByCallingHandler, f'Ignored exception while handling {StringHelper.prettyPython(settingInjection)} setting injection list', exception=exception)
+    # print(f'handleSettingInjectionListByCallingHandler: returning settingTree: {settingTree}')
     return done, stuck, isSettingInjectionCount, containsSettingInjectionCount
 
 ################################################################################
@@ -434,6 +449,8 @@ def handleLongStringOrSetting(
     else :
         nodeKey = updateSettingTreeAndReturnNodeKey(settingKey, settingValue, nodeKey, settingTree, isSameDepth)
     filteredSettingValue = getFilteredSetting(settingKey, settingValue, nodeKey, settingTree)
+    # print(f'handleLongStringOrSetting: settingKey: {settingKey}, settingValue: {settingValue}, type: {type(settingValue)} filteredSettingValue: {filteredSettingValue}, type: {type(settingValue)}')
+    # print(longStringCapturing, quoteType, longStringList)
     return settingKey, filteredSettingValue, nodeKey, longStringCapturing, quoteType, longStringList
 
 def getAttributeKeyValue(settingLine) :
@@ -450,7 +467,7 @@ def getAttibuteValue(settingLine) :
     return getValue(c.COLON.join(possibleValue.split(c.COLON)[1:]))
 
 def isSettingKey(possibleSettingKey) :
-    return possibleSettingKey and (
+    return ObjectHelper.isNotNone(possibleSettingKey) and isinstance(possibleSettingKey, str) and (
         not isSettingInjection(possibleSettingKey) and
         possibleSettingKey == possibleSettingKey.lower() and
         not c.COLON in possibleSettingKey
@@ -466,18 +483,19 @@ def getSettingValueOrNewNode(nodeKey, settingKey, settingValue, isSameDepth=Fals
         raise Exception(f'The key: "{nodeKey}{c.DOT}{settingKey}" has the following invalid value: "{settingValue}"')
     return settingValue if isActuallyASettingValue else None if isSettingInjection or isSameDepth else dict()
 
-def getValue(value) :
+def getValue(value, ignoreCollections=False) :
     filteredValue = StringHelper.filterString(value)
     if isSettingValue(filteredValue) :
-        if StringHelper.isNotBlank(filteredValue) :
-            if c.OPEN_LIST == filteredValue[0] :
-                return getList(filteredValue)
-            elif c.OPEN_TUPLE == filteredValue[0] :
-                return getTuple(filteredValue)
-            elif c.OPEN_DICTIONARY == filteredValue[0] :
-                return getDictionary(filteredValue)
-            elif c.OPEN_SET == filteredValue[0] :
-                return getSet(filteredValue)
+        if not ignoreCollections:
+            if StringHelper.isNotBlank(filteredValue) :
+                if c.OPEN_LIST == filteredValue[0] :
+                    return getList(filteredValue)
+                elif c.OPEN_TUPLE == filteredValue[0] :
+                    return getTuple(filteredValue)
+                elif c.OPEN_DICTIONARY == filteredValue[0] :
+                    return getDictionary(filteredValue)
+                elif c.OPEN_SET == filteredValue[0] :
+                    return getSet(filteredValue)
         parsedValue = None
         try :
             parsedValue = int(filteredValue)
@@ -599,15 +617,32 @@ def getSettingInjectionValueIgnoringFallbackSettingTree(settingKey, settingValue
 
 def getSettingInjectionValue(settingKey, settingValue, nodeKey, settingTree) :
     unwrapedSettingInjectionValue = getUnwrappedSettingInjection(settingValue)
+    # print(f'getSettingInjectionValue: settingKey: {settingKey}, unwrapedSettingInjectionValue: {unwrapedSettingInjectionValue}, settingTree: {settingTree}')
+    existingValue = None
+    try:
+        # print(f'nodeKey: {nodeKey}, settingKey: {settingKey}, settingTree: {settingTree}')
+        existingValue = safelyAccessTree(nodeKey,settingTree).get(settingKey)
+        # print(f'existingValue: {existingValue}')
+    except Exception as exception:
+        # print(f'nodeKey: {nodeKey}, settingKey: {settingKey}, settingTree: {settingTree}, safelyAccessTree(nodeKey,settingTree): {safelyAccessTree(nodeKey,settingTree)}')
+        LogHelper.log(getSettingInjectionValue, 'Error while evaluating existing value', exception)
+    if ObjectHelper.isNotEmpty(existingValue) and not isSettingInjection(existingValue) and not containsSettingInjection(existingValue) and not isSettingKey(existingValue):
+        return existingValue
     if isSettingKey(unwrapedSettingInjectionValue) :
         selfReferenceSettingValue = safelyAccessTree(unwrapedSettingInjectionValue, settingTree)
         if ObjectHelper.isNone(selfReferenceSettingValue) :
-            raise Exception(f'Not possible to associate "{nodeKey}{c.DOT}{settingKey}" key to "{unwrapedSettingInjectionValue}" value. "{unwrapedSettingInjectionValue}" value is probably not defined')
+            raise Exception(f'Not possible to associate "{nodeKey}{c.DOT}{settingKey}" key to "{unwrapedSettingInjectionValue}" value. "{unwrapedSettingInjectionValue}" value is either not defined or not delayed defined. Example: "{OPEN_SETTING_INJECTION}:{nodeKey}{c.DOT}{settingKey}{CLOSE_SETTING_INJECTION}"')
+            # return settingValue
         return selfReferenceSettingValue
     environmentKey = unwrapedSettingInjectionValue.split(c.COLON)[0]
     environmentValue = EnvironmentHelper.get(environmentKey)
+    # print()
+    # print()
+    # print(f'getSettingInjectionValue: {settingKey} --> {environmentKey}: getValue(environmentValue): {getValue(environmentValue)}, type: {type(getValue(environmentValue))}') ##remove
+    # print(f'getSettingInjectionValue: {settingKey} --> {environmentKey}: environmentValue: {environmentValue}, type: {type(environmentValue)}') ##remove
     if environmentValue :
-        return environmentValue
+        return getValue(environmentValue, ignoreCollections=True)
+        # return environmentValue
     else :
         return getFilteredSetting(settingKey, unwrapedSettingInjectionValue, nodeKey, settingTree)
 

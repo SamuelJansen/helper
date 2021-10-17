@@ -13,7 +13,7 @@ back:
     or:
         mabe:
             here-4: &{NOTHING_HERE:}
-            five-here: ${the.import.here-5}
+            five-here: ${:the.import.here-5}
     mabe:
         here-5: ${NOTHING_HERE:${${back.or.mabe.five-here}}
         and: yolo

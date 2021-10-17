@@ -10,12 +10,22 @@ TestHelper.run(__file__, inspectGlobals=False)
 # TestHelper.run(
 #     __file__,
 #     runOnly = [
-#         'SettingHelperTest.getSettingTree_otherApplication'
+#         'SettingHelperTest.updateActiveEnvironment_withSuccess',
+#         'SettingHelperTest.mustReadSettingFile',
+#         'SettingHelperTest.mustNotReadSettingFile',
+#         'SettingHelperTest.mustPrintSettingTree',
+#         'SettingHelperTest.mustHandleSettingValueInFallbackSettingTree',
+#         'SettingHelperTest.mustHandleSettingValueInFallbackSettingTree_whenFallbackSettingFilePathIsPassedInsted',
+#         'SettingHelperTest.getSettingTree_whenIsSettingKeyActuallyContainsSettingKey',
+#         'SettingHelperTest.getSettingTree_fallbackPriority',
+#         'SettingHelperTest.getSettingTree_otherApplication',
+#         'SettingHelperTest.getSettingTree_whenThereAreNoneValuesAllOverThePlace',
+#         'SettingHelperTest.getBooleanSetting'
 #     ],
-#     testStatus = False,
-#     logStatus = False,
-#     logResult = True,
-#     inspectGlobals = False
+    # testStatus = False,
+    # logStatus = False,
+    # logResult = True,
+    # inspectGlobals = False
 # )
 # TestHelper.run(
 #     __file__,

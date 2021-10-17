@@ -52,16 +52,15 @@ def getValueAsString(value) :
         value,
         c.NOTHING
     ])
-    return f'{value}{c.NOTHING}'
 
 def replaceEnvironmentVariables(environmentVariables) :
     global ACTIVE_ENVIRONMENT_VALUE
-    originalActiveEnvironment = None if ObjectHelper.isNone(ACTIVE_ENVIRONMENT_VALUE) else f'{c.NOTHING}{ACTIVE_ENVIRONMENT_VALUE}'
+    originalActiveEnvironment = None if ObjectHelper.isNone(ACTIVE_ENVIRONMENT_VALUE) else f'{ACTIVE_ENVIRONMENT_VALUE}'
     if ObjectHelper.isNotEmpty(originalActiveEnvironment) :
         ACTIVE_ENVIRONMENT_VALUE = None
     originalEnvironmentVariables = {}
     if ObjectHelper.isDictionary(environmentVariables) :
-        for key,value in environmentVariables.items() :
+        for key, value in environmentVariables.items() :
             originalEnvironmentVariables[key] = EnvironmentHelper.switch(key, value)
     getActiveEnvironment()
     LogHelper.loadSettings()
@@ -93,8 +92,15 @@ def getSettingTree(
             depthStep = depthStep,
             encoding = encoding
         )
+        # print(f'innerFallbackSettingTree: {innerFallbackSettingTree}')
+        # print(f'fallbackSettingInjectionList: {fallbackSettingInjectionList}')
     else :
         innerFallbackSettingTree = {}
+    # print('========= in ===========')
+    # print('========= in ===========')
+    # print('========= in ===========')
+    # print(f'innerFallbackSettingTree: {innerFallbackSettingTree}')
+    # print(f'fallbackSettingInjectionList: {fallbackSettingInjectionList}')
     allSettingLines = FileHelper.getFileLines(settingFilePath, encoding=encoding)
     longStringCapturing = False
     quoteType = None
@@ -135,6 +141,8 @@ def getSettingTree(
                         lazyLoad,
                         isSameDepth
                     )
+                    # print('========= out ==========')
+                    # print(f'settingKey: {settingKey}, settingValue: {settingValue}')
                 elif currentDepth > depth :
                     # print('currentDepth > depth')
                     currentNodeRefference = currentDepth // (currentDepth - depth)
@@ -150,6 +158,8 @@ def getSettingTree(
                             lazyLoad,
                             isSameDepth
                         )
+                        # print('========= out ==========')
+                        # print(f'settingKey: {settingKey}, settingValue: {settingValue}')
                         nodeRefference = currentNodeRefference
                         depth = currentDepth
                 elif currentDepth < depth :
@@ -181,14 +191,25 @@ def getSettingTree(
                         lazyLoad,
                         isSameDepth
                     )
+                    # print('========= out ==========')
+                    # print(f'settingKey: {settingKey}, settingValue: {settingValue}')
                     # if ObjectHelper.isNotNone(settingValue) and ObjectHelper.isNotEmpty(settingValue) :
                     depth = currentDepth
+    # print(f'innerFallbackSettingTree: {innerFallbackSettingTree}')
+    # print(f'fallbackSettingFilePath: {fallbackSettingFilePath}')
+    # print('========= out ==========')
+    # print('========= out ==========')
+    # print('========= out ==========')
     if lazyLoad :
+        # print('Lazy load')
+        # print(f'settingTree: {settingTree}')
+        # print(f'settingInjectionList: {settingInjectionList}')
         return settingTree, settingInjectionList
     elif (
         ObjectHelper.isNotEmptyCollection(innerFallbackSettingTree) and
         ObjectHelper.isNotNone(fallbackSettingFilePath)
     ):
+        # print('Not lazy load')
         for fallbackSettingInjection in fallbackSettingInjectionList.copy() :
             for settingInjection in settingInjectionList.copy() :
                 if (
@@ -196,6 +217,9 @@ def getSettingTree(
                     fallbackSettingInjection[SettingHelperHelper.SETTING_NODE_KEY] == settingInjection[SettingHelperHelper.SETTING_NODE_KEY]
                 ) :
                     fallbackSettingInjectionList.remove(fallbackSettingInjection)
+
+        # print(f'fallbackSettingInjectionList: {fallbackSettingInjectionList}')
+        # print(f'settingInjectionList: {settingInjectionList}')
         settingInjectionList += fallbackSettingInjectionList
         updateSettingTree(settingTree, innerFallbackSettingTree)
         SettingHelperHelper.handleSettingInjectionList(settingInjectionList, settingTree, fallbackSettingTree=innerFallbackSettingTree)
@@ -208,13 +232,15 @@ def updateSettingTree(toUpdateSettingTree, gatheringSettingTree) :
         if ObjectHelper.isNone(toUpdateSettingTree) or StringHelper.isBlank(toUpdateSettingTree) :
             toUpdateSettingTree = {}
         if ObjectHelper.isCollection(gatheringSettingTree) and ObjectHelper.isDictionary(gatheringSettingTree) :
-            for key,value in gatheringSettingTree.items() :
-                if ObjectHelper.isNotEmpty(value) and ObjectHelper.isNotNone(value) :
+            for key, value in gatheringSettingTree.items() :
+                if ObjectHelper.isNotEmpty(value) and ObjectHelper.isNotNone(value):
                     if key not in toUpdateSettingTree or ObjectHelper.isEmpty(toUpdateSettingTree[key]) :
+                        # print(f'        key: {key}, value: {value}')
                         toUpdateSettingTree[key] = value
                     else :
                         updateSettingTree(toUpdateSettingTree[key], gatheringSettingTree[key])
                 elif key not in toUpdateSettingTree :
+                    # print(f'        toUpdateSettingTree: key: {key}, value: {value}')
                     toUpdateSettingTree[key] = value
 
 

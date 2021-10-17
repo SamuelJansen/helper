@@ -3,3 +3,7 @@ the:
     to: ok
     import:
         here-5: ${MIRACLE:}
+yes:
+    this:
+        is:
+            possible: MIRACLES_ARE_POSSIBLE
