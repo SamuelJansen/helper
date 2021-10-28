@@ -22,10 +22,10 @@ TestHelper.run(__file__, inspectGlobals=False)
 #         'SettingHelperTest.getSettingTree_whenThereAreNoneValuesAllOverThePlace',
 #         'SettingHelperTest.getBooleanSetting'
 #     ],
-    # testStatus = False,
-    # logStatus = False,
-    # logResult = True,
-    # inspectGlobals = False
+#     # testStatus = False,
+#     # logStatus = False,
+#     # logResult = True,
+#     # inspectGlobals = False
 # )
 # TestHelper.run(
 #     __file__,
@@ -39,11 +39,14 @@ TestHelper.run(__file__, inspectGlobals=False)
 #     __file__,
 #     # times = 10,
 #     runOnly = [
-#         # 'LogHelperTest.mustLogPretyPythonWithColors',
-#         # 'LogHelperTest.mustLogPretyJsonWithColors',
 #         'LogHelperTest.mustLogWithColors',
 #         'LogHelperTest.mustLogWithoutColors',
-#         'LogHelperTest.mustLogWithoutColorsAsWell'
+#         'LogHelperTest.mustLogWithoutColorsAsWell',
+#         'LogHelperTest.mustLogEnvironmentSettings',
+#         'LogHelperTest.mustLogPretyPythonWithoutColors',
+#         'LogHelperTest.mustLogPretyPythonWithColors',
+#         'LogHelperTest.mustLogPretyJsonWithColors',
+#         'LogHelperTest.mustPrintMessageLog_withColors'
 #     ],
 #     testStatus = False,
 #     logStatus = False,

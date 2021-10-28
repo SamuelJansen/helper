@@ -4,6 +4,7 @@ from python_helper.api.src.service import SettingHelper, StringHelper, Environme
 
 LOG = 'LOG'
 INFO = 'INFO'
+STATUS = 'STATUS'
 SUCCESS = 'SUCCESS'
 SETTING = 'SETTING'
 DEBUG = 'DEBUG'
@@ -102,14 +103,17 @@ def loadSettings() :
 
 loadSettings()
 
-def log(origin, message, level=LOG, exception=None, muteStackTrace=False, newLine=False) :
-    LogHelperHelper.softLog(origin, message, LOG, muteStackTrace=muteStackTrace, newLine=newLine, exception=exception)
+def log(origin, message, exception=None, muteStackTrace=False, newLine=False, level=LOG) :
+    LogHelperHelper.softLog(origin, message, level, muteStackTrace=muteStackTrace, newLine=newLine, exception=exception)
 
-def info(origin, message, level=INFO, exception=None, muteStackTrace=False, newLine=False) :
-    LogHelperHelper.softLog(origin, message, INFO, muteStackTrace=muteStackTrace, newLine=newLine, exception=exception)
+def info(origin, message, newLine=False) :
+    LogHelperHelper.softLog(origin, message, INFO, muteStackTrace=True, newLine=newLine)
 
-def success(origin, message, muteStackTrace=False, newLine=False) :
-    LogHelperHelper.softLog(origin, message, SUCCESS, muteStackTrace=muteStackTrace, newLine=newLine)
+def status(origin, message, newLine=False) :
+    LogHelperHelper.softLog(origin, message, STATUS, muteStackTrace=True, newLine=newLine)
+
+def success(origin, message, newLine=False) :
+    LogHelperHelper.softLog(origin, message, SUCCESS, muteStackTrace=True, newLine=newLine)
 
 def setting(origin, message, muteStackTrace=False, newLine=False) :
     LogHelperHelper.softLog(origin, message, SETTING, muteStackTrace=muteStackTrace, newLine=newLine)
@@ -132,14 +136,17 @@ def error(origin, message, exception, muteStackTrace=False, newLine=False) :
 def test(origin, message, exception=None, muteStackTrace=False, newLine=False) :
     LogHelperHelper.softLog(origin, message, TEST, muteStackTrace=muteStackTrace, newLine=newLine, exception=exception)
 
-def printLog(message, condition=False, muteStackTrace=False, newLine=True, margin=True, exception=None) :
-    LogHelperHelper.printMessageLog(LOG, message, condition=condition, muteStackTrace=muteStackTrace, newLine=newLine, margin=margin, exception=exception)
+def printLog(message, level=LOG, condition=False, muteStackTrace=False, newLine=True, margin=True, exception=None) :
+    LogHelperHelper.printMessageLog(level, message, condition=condition, muteStackTrace=muteStackTrace, newLine=newLine, margin=margin, exception=exception)
 
-def printInfo(message, condition=False, muteStackTrace=False, newLine=True, margin=True, exception=None) :
-    LogHelperHelper.printMessageLog(INFO, message, condition=condition, muteStackTrace=muteStackTrace, newLine=newLine, margin=margin, exception=exception)
+def printInfo(message, condition=False, newLine=True, margin=True) :
+    LogHelperHelper.printMessageLog(INFO, message, condition=condition, muteStackTrace=True, newLine=newLine, margin=margin)
 
-def printSuccess(message, condition=False, muteStackTrace=False, newLine=True, margin=True) :
-    LogHelperHelper.printMessageLog(SUCCESS, message, condition=condition, muteStackTrace=muteStackTrace, newLine=newLine, margin=margin)
+def printStatus(message, condition=False, newLine=True, margin=True) :
+    LogHelperHelper.printMessageLog(STATUS, message, condition=condition, muteStackTrace=True, newLine=newLine, margin=margin)
+
+def printSuccess(message, condition=False, newLine=True, margin=True) :
+    LogHelperHelper.printMessageLog(SUCCESS, message, condition=condition, muteStackTrace=True, newLine=newLine, margin=margin)
 
 def printSetting(message, condition=False, muteStackTrace=False, newLine=True, margin=True) :
     LogHelperHelper.printMessageLog(SETTING, message, condition=condition, muteStackTrace=muteStackTrace, newLine=newLine, margin=margin)

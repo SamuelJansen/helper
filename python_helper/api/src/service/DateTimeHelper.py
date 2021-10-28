@@ -152,11 +152,23 @@ def getTodayDateTimeBegin() :
 def getTodayDateTimeEnd() :
     return parseToDateTime(f'{dateNow()} {DEFAULT_TIME_END}')
 
+###- deprecated
 def getWeekDay(ofDatetime=None, ofDate=None, ofTime=None) :
     if ObjectHelper.isNotNone(ofDatetime) :
         return forcedlyGetDateTime(ofDatetime).weekday()
     elif ObjectHelper.isNotNone(ofDate) and ObjectHelper.isNotNone(ofTime) :
         return of(forcedlyGetDate(ofDate), forcedlyGetTime(ofTime)).weekday()
+    elif ObjectHelper.isNotNone(ofDate) :
+        return of(forcedlyGetDate(ofDate), forcedlyGetTime(DEFAULT_TIME_END)).weekday()
+    return datetime.datetime.now().weekday()
+
+def getWeekDayOf(dateTime=None, date=None, time=None) :
+    if ObjectHelper.isNotNone(dateTime) :
+        return forcedlyGetDateTime(dateTime).weekday()
+    elif ObjectHelper.isNotNone(date) and ObjectHelper.isNotNone(time) :
+        return of(forcedlyGetDate(date), forcedlyGetTime(time)).weekday()
+    elif ObjectHelper.isNotNone(date) :
+        return of(forcedlyGetDate(date), forcedlyGetTime(DEFAULT_TIME_END)).weekday()
     return datetime.datetime.now().weekday()
 
 def addNoise(givenDatetime) :

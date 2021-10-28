@@ -627,6 +627,7 @@ def getSettingInjectionValue(settingKey, settingValue, nodeKey, settingTree) :
         # print(f'nodeKey: {nodeKey}, settingKey: {settingKey}, settingTree: {settingTree}, safelyAccessTree(nodeKey,settingTree): {safelyAccessTree(nodeKey,settingTree)}')
         LogHelper.log(getSettingInjectionValue, 'Error while evaluating existing value', exception)
     if ObjectHelper.isNotEmpty(existingValue) and not isSettingInjection(existingValue) and not containsSettingInjection(existingValue) and not isSettingKey(existingValue):
+        # if ObjectHelper.isNotEmpty(existingValue) and not isSettingInjection(existingValue) and not containsSettingInjection(existingValue) and not isSettingKey(existingValue) and not (isinstance(existingValue) and existingValue.startswith(c.COLON)):
         return existingValue
     if isSettingKey(unwrapedSettingInjectionValue) :
         selfReferenceSettingValue = safelyAccessTree(unwrapedSettingInjectionValue, settingTree)

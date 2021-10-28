@@ -1603,16 +1603,17 @@ def getBooleanSetting():
     trueValue = SettingHelper.getSettingTree(localFilePath, keepDepthInLongString=True, fallbackSettingFilePath=defaultFilePath, fallbackSettingTree=SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True))['boolean']['value']
     environmentInjectionFalseValue = SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True)['boolean']['environment-injection']['value']
     environmentInjectionTrueValue = SettingHelper.getSettingTree(localFilePath, keepDepthInLongString=True, fallbackSettingFilePath=defaultFilePath, fallbackSettingTree=SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True))['boolean']['environment-injection']['value']
-    shouldBeFalse = SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True)['boolean']['environment-injection']['this-is-true']
     isTrue = SettingHelper.getSettingTree(localFilePath, keepDepthInLongString=True, fallbackSettingFilePath=defaultFilePath, fallbackSettingTree=SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True))['boolean']['environment-injection']['is-true']
-    # print('=========================')
-    # print('=========================')
-    # print('=========================')
-    # print('=========================')
-    # print('=========================')
-    # print('=========================')
-    # print('=========================')
+    shouldBeFalse = SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True)['boolean']['environment-injection']['this-is-true']
     shouldBeTrue = SettingHelper.getSettingTree(localFilePath, keepDepthInLongString=True, fallbackSettingFilePath=defaultFilePath, fallbackSettingTree=SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True))['boolean']['environment-injection']['this-is-true']
+
+    thisIsAlsoTruePartial = SettingHelper.getSettingTree(localFilePath, keepDepthInLongString=True, fallbackSettingFilePath=defaultFilePath, fallbackSettingTree=SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True))
+    thisIsAlsoFalsePartial = SettingHelper.getSettingTree(localFilePath, keepDepthInLongString=True, fallbackSettingFilePath=defaultFilePath, fallbackSettingTree=SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True))
+    print(thisIsAlsoTruePartial)
+    print(thisIsAlsoFalsePartial)
+
+    thisIsAlsoTrue = thisIsAlsoTruePartial['boolean']['environment-injection']['this-is-also-true']
+    thisIsAlsoFalse = thisIsAlsoFalsePartial['boolean']['environment-injection']['this-is-also-false']
 
     #assert
     assert trueValue, f'trueValue should be True with type bool, but is {trueValue} with type {type(trueValue)}'
@@ -1625,8 +1626,14 @@ def getBooleanSetting():
     assert not environmentInjectionFalseValue, f'environmentInjectionFalseValue should be False with type bool, but is {environmentInjectionFalseValue} with type {type(environmentInjectionFalseValue)}'
     assert bool == type(environmentInjectionFalseValue), f'environmentInjectionFalseValue should be False with type bool, but is {environmentInjectionFalseValue} with type {type(environmentInjectionFalseValue)}'
 
+    assert isTrue, f'isTrue with type bool, but is {isTrue} with type {type(isTrue)}'
+    assert bool == type(isTrue), f'isTrue with type bool, but is {isTrue} with type {type(isTrue)}'
     assert not shouldBeFalse, f'shouldBeFalse with type bool, but is {shouldBeFalse} with type {type(shouldBeFalse)}'
     assert bool == type(shouldBeFalse), f'shouldBeFalse with type bool, but is {shouldBeFalse} with type {type(shouldBeFalse)}'
-    assert isTrue, f'isTrue with type bool, but is {isTrue} with type {type(isTrue)}'
     assert shouldBeTrue, f'shouldBeTrue with type bool, but is {shouldBeTrue} with type {type(shouldBeTrue)}'
     assert bool == type(shouldBeTrue), f'shouldBeTrue with type bool, but is {shouldBeTrue} with type {type(shouldBeTrue)}'
+
+    assert thisIsAlsoTrue, f'thisIsAlsoTrue with type bool, but is {thisIsAlsoTrue} with type {type(thisIsAlsoTrue)}'
+    assert bool == type(thisIsAlsoTrue), f'thisIsAlsoTrue with type bool, but is {thisIsAlsoTrue} with type {type(thisIsAlsoTrue)}'
+    assert not thisIsAlsoFalse, f'thisIsAlsoFalse with type bool, but is {thisIsAlsoFalse} with type {type(thisIsAlsoFalse)}'
+    assert bool == type(thisIsAlsoFalse), f'thisIsAlsoFalse with type bool, but is {thisIsAlsoFalse} with type {type(thisIsAlsoFalse)}'

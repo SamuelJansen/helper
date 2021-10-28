@@ -249,8 +249,8 @@ def getSetting(nodeKey,settingTree) :
     try :
         setting = SettingHelperHelper.accessTree(nodeKey,settingTree)
     except Exception as exception :
-        LogHelper.failure(getSetting,f'Not possible to get {nodeKey} node key. Returning "{setting}" by default', exception)
-    return StringHelper.filterString(setting) if isinstance(setting, str) else setting
+        LogHelper.failure(getSetting, f'Not possible to get {nodeKey} node key. Returning "{setting}" by default', exception)
+    return setting if not isinstance(setting, str) else StringHelper.filterString(setting)
 
 def querySetting(keywordQuery,tree) :
     if StringHelper.isBlank(keywordQuery) or ObjectHelper.isNotDictionary(tree) :

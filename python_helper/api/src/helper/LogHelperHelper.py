@@ -19,6 +19,11 @@ LEVEL_DICTIONARY = {
         SECOND_LAYER_COLOR : c.DARK_WHITE,
         LOG_TEXT : c.INFO
     },
+    LogHelper.STATUS : {
+        FIRST_LAYER_COLOR : c.BRIGHT_GREEN,
+        SECOND_LAYER_COLOR : c.BRIGHT_WHITE,
+        LOG_TEXT : c.STATUS
+    },
     LogHelper.SUCCESS : {
         FIRST_LAYER_COLOR : c.DARK_GREEN,
         SECOND_LAYER_COLOR: c.BRIGHT_GREEN,

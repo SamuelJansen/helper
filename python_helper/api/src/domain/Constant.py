@@ -2,6 +2,7 @@ from python_helper.api.src.service import LogHelper
 
 LOG =       '[LOG    ] '
 INFO =      '[INFO   ] '
+STATUS =    '[STATUS ] '
 SUCCESS =   '[SUCCESS] '
 SETTING =   '[SETTING] '
 DEBUG =     '[DEBUG  ] '

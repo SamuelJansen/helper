@@ -188,3 +188,9 @@ def isCollection(instance) :
 
 def isNotCollection(instance) :
     return not isCollection(instance)
+
+def isNeitherNoneNorBlank(thing) :
+    return isNotNone(thing) and StringHelper.isNotBlank(str(thing))
+
+def isNoneOrBlank(thing) :
+    return isNone(thing) or StringHelper.isBlank(str(thing))
