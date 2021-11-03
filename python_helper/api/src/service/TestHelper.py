@@ -62,6 +62,7 @@ def getModuleTest(inspectGlobals, logResult, globalsInstance) :
         tddModuleGlobalsInstance = globals.newGlobalsInstance(testModule.__file__
             , successStatus = globalsInstance.successStatus
             , errorStatus = globalsInstance.errorStatus
+            , failureStatus = globalsInstance.failureStatus
             , settingStatus = globalsInstance.settingStatus or inspectGlobals
             , statusStatus = globalsInstance.statusStatus
             , infoStatus = globalsInstance.infoStatus
@@ -70,6 +71,7 @@ def getModuleTest(inspectGlobals, logResult, globalsInstance) :
             , wrapperStatus = globalsInstance.wrapperStatus
             , testStatus = globalsInstance.testStatus
             , logStatus = globalsInstance.logStatus
+            # , logsWithColors = globalsInstance.logsWithColors and SettingHelper.activeEnvironmentIsLocal()
         )
         LogHelper.test(tddModule, f'{testName} started')
         testReturns = {}
@@ -175,13 +177,14 @@ def run(
     errorStatus = True,
     settingStatus = False,
     statusStatus = True,
+    infoStatus = True,
     debugStatus = True,
     warningStatus = True,
     failureStatus = True,
     wrapperStatus = False,
     testStatus = False,
     logStatus = False,
-    infoStatus = True,
+    # logsWithColors = True,
     inspectGlobals = False,
     logResult = True
 ) :
@@ -191,13 +194,14 @@ def run(
         , errorStatus = errorStatus
         , settingStatus = settingStatus or inspectGlobals
         , statusStatus = statusStatus
+        , infoStatus = infoStatus
         , debugStatus = debugStatus
         , warningStatus = warningStatus
         , failureStatus = failureStatus
         , wrapperStatus = wrapperStatus
         , testStatus = testStatus
         , logStatus = logStatus
-        , infoStatus = infoStatus
+        # , logsWithColors = logsWithColors and SettingHelper.activeEnvironmentIsLocal()
     )
     testModuleNames, testsToRun, runSpecificTests = getTestModuleNames(runOnly, ignore, globalsInstance)
     returns = {}
@@ -281,7 +285,8 @@ def getTestEnvironmentVariables(globalsInstance) :
         LogHelper.FAILURE : globalsInstance.failureStatus,
         LogHelper.WRAPPER : globalsInstance.wrapperStatus,
         LogHelper.ERROR : globalsInstance.errorStatus,
-        LogHelper.TEST : globalsInstance.testStatus
+        LogHelper.TEST : globalsInstance.testStatus,
+        # LogHelper.ENABLE_LOGS_WITH_COLORS: globalsInstance.logsWithColors
     }
 
 def getGlobalsTestKwargs(inspectGlobals, globalsInstance) :

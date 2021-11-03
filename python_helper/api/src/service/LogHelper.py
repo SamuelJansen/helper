@@ -22,76 +22,17 @@ from python_helper.api.src.helper import LogHelperHelper
 
 global LOG_HELPER_SETTINGS
 
+
 def logsWithColorsEnabled():
     return EnvironmentHelper.isTrue(ENABLE_LOGS_WITH_COLORS, default=False)
 
-# import asyncio
-# global OUTPUT_PRINT_LIST
-# PRINTING = 'PRINTING'
-# def loadLogger() :
-#     global OUTPUT_PRINT_LIST
-#     try :
-#         if ObjectHelper.isNone(OUTPUT_PRINT_LIST) :
-#             OUTPUT_PRINT_LIST = []
-#     except Exception as exception :
-#         OUTPUT_PRINT_LIST = []
-#
-# async def asyncAsyncPrintIt(itArgsAndKwargs) :
-#     global LOG_HELPER_SETTINGS
-#     while LOG_HELPER_SETTINGS[PRINTING] :
-#         print('----------------------------------------------------------------------------------------------------------------------------------------------------------')
-#         print('----------------------------------------------------------------------------------------------------------------------------------------------------------')
-#         print('----------------------------------------------------------------------------------------------------------------------------------------------------------')
-#         print('----------------------------------------------------------------------------------------------------------------------------------------------------------')
-#         print('----------------------------------------------------------------------------------------------------------------------------------------------------------')
-#         print('----------------------------------------------------------------------------------------------------------------------------------------------------------')
-#         print('----------------------------------------------------------------------------------------------------------------------------------------------------------')
-#         print('------------------------------------------------------------------------ awaiting ------------------------------------------------------------------------')
-#         print('----------------------------------------------------------------------------------------------------------------------------------------------------------')
-#         print('----------------------------------------------------------------------------------------------------------------------------------------------------------')
-#         print('----------------------------------------------------------------------------------------------------------------------------------------------------------')
-#         print('----------------------------------------------------------------------------------------------------------------------------------------------------------')
-#         print('----------------------------------------------------------------------------------------------------------------------------------------------------------')
-#         print('----------------------------------------------------------------------------------------------------------------------------------------------------------')
-#         print('----------------------------------------------------------------------------------------------------------------------------------------------------------')
-#     LOG_HELPER_SETTINGS[PRINTING] = True
-#     print(itArgsAndKwargs[0], **itArgsAndKwargs[1])
-#
-# async def asyncPrintIt(itArgsAndKwargs) :
-#     global LOG_HELPER_SETTINGS
-#     await asyncAsyncPrintIt(itArgsAndKwargs)
-#     LOG_HELPER_SETTINGS[PRINTING] = False
-#
-# async def printOutput() :
-#     global OUTPUT_PRINT_LIST
-#     while 0 < len(OUTPUT_PRINT_LIST) :
-#         asyncio.run(asyncPrintIt(OUTPUT_PRINT_LIST.pop(0)))
-#
-# def logIt(it, **kwargs) :
-#     global OUTPUT_PRINT_LIST
-#     shouldPrint = True if 0 == len(OUTPUT_PRINT_LIST) else False
-#     OUTPUT_PRINT_LIST.append([it, kwargs])
-#     if shouldPrint :
-#         printOutput()
-# import logging
-# LOGGER_INSTANCE = None
-
-# def loadLogger(logger) :
-#     return logger if ObjectHelper.isNotNone(logger) else logging.getLogger(__name__)
-
-def logIt(it, **kwargs) :
-    # logging.error(it, **kwargs)
-    # logging.log(msg=args[0], level=9)
-    # logger = loadLogger(LOGGER_INSTANCE)
-    # logger.setLevel(logging.DEBUG)
-    # logger.info(it)
+def logIt(it, **kwargs):
+    # if not (it in LogHelperHelper.COLOR_SET):
+    #     print(it, **kwargs)
     print(it, **kwargs)
 
-def loadSettings() :
+def loadSettings(file=None) :
     global LOG_HELPER_SETTINGS
-    # logger = loadLogger(LOGGER_INSTANCE)
-    # logger.setLevel(logging.DEBUG)
-    ###- logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG)
     colorama.deinit()
     settings = {}
     settings[SettingHelper.ACTIVE_ENVIRONMENT] = SettingHelper.getActiveEnvironment()
@@ -100,8 +41,7 @@ def loadSettings() :
     LOG_HELPER_SETTINGS = settings
     if logsWithColorsEnabled():
         colorama.init()
-        # logging.basicConfig(level=logging.DEBUG)
-        logIt(RESET_ALL_COLORS, end=c.BLANK)
+        # logIt(RESET_ALL_COLORS, end=c.BLANK)
 
 loadSettings()
 

@@ -66,6 +66,8 @@ LEVEL_DICTIONARY = {
     }
 }
 
+COLOR_SET = set([*[cv for dv in LEVEL_DICTIONARY.values() for ck, cv in dv.items() if ck in [FIRST_LAYER_COLOR, SECOND_LAYER_COLOR]], c.RESET_COLOR])
+
 def getStatus(level) :
     status = LogHelper.LOG_HELPER_SETTINGS.get(level)
     return status if isinstance(status, str) and StringHelper.isNotBlank(status) else c.TRUE

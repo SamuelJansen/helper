@@ -31,7 +31,7 @@ TEST_SETTINGS = {
 
 @Test(
     environmentVariables = {
-        # log.ENABLE_LOGS_WITH_COLORS: True,
+        log.ENABLE_LOGS_WITH_COLORS: True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **UNMUTED_LOG_HELPER_SETTINGS
     },
@@ -64,7 +64,7 @@ def mustRun_withSuccess() :
 
 @Test(
     environmentVariables = {
-        # log.ENABLE_LOGS_WITH_COLORS: True,
+        log.ENABLE_LOGS_WITH_COLORS: True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **UNMUTED_LOG_HELPER_SETTINGS
     },
@@ -93,7 +93,7 @@ def mustRun_withFailure() :
 
 @Test(
     environmentVariables={
-        # log.ENABLE_LOGS_WITH_COLORS: True,
+        log.ENABLE_LOGS_WITH_COLORS: True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **UNMUTED_LOG_HELPER_SETTINGS
     },
@@ -132,7 +132,7 @@ def mustRun_withSuccess_ExecutingActionFirst() :
 
 @Test(
     environmentVariables={
-        # log.ENABLE_LOGS_WITH_COLORS: True,
+        log.ENABLE_LOGS_WITH_COLORS: True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **UNMUTED_LOG_HELPER_SETTINGS
     },
@@ -171,7 +171,7 @@ def mustRun_withFailre_ExecutingActionFirst() :
 
 @Test(
     environmentVariables={
-        # log.ENABLE_LOGS_WITH_COLORS: True,
+        log.ENABLE_LOGS_WITH_COLORS: True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **UNMUTED_LOG_HELPER_SETTINGS
     },
@@ -211,7 +211,7 @@ def mustRun_withSuccess_ExecutingActionFirst_withFailure() :
 
 @Test(
     environmentVariables={
-        # log.ENABLE_LOGS_WITH_COLORS: True,
+        log.ENABLE_LOGS_WITH_COLORS: True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **UNMUTED_LOG_HELPER_SETTINGS
     },
@@ -251,7 +251,7 @@ def mustRun_withFailre_ExecutingActionFirst_withFailre() :
 
 @Test(
     environmentVariables={
-        # log.ENABLE_LOGS_WITH_COLORS: True,
+        log.ENABLE_LOGS_WITH_COLORS: True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **UNMUTED_LOG_HELPER_SETTINGS
     },
@@ -290,7 +290,7 @@ def mustRun_withSuccess_ExecutingActionLater() :
 
 @Test(
     environmentVariables={
-        # log.ENABLE_LOGS_WITH_COLORS: True,
+        log.ENABLE_LOGS_WITH_COLORS: True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **UNMUTED_LOG_HELPER_SETTINGS
     },
@@ -329,7 +329,7 @@ def mustRun_withFailre_ExecutingActionLater() :
 
 @Test(
     environmentVariables={
-        # log.ENABLE_LOGS_WITH_COLORS: True,
+        log.ENABLE_LOGS_WITH_COLORS: True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **UNMUTED_LOG_HELPER_SETTINGS
     },
@@ -369,7 +369,7 @@ def mustRun_withSuccess_ExecutingActionLater_withFailure() :
 
 @Test(
     environmentVariables={
-        # log.ENABLE_LOGS_WITH_COLORS: True,
+        log.ENABLE_LOGS_WITH_COLORS: True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **UNMUTED_LOG_HELPER_SETTINGS
     },
@@ -410,7 +410,7 @@ def mustRun_withFailre_ExecutingActionLater_withFailre() :
 
 @Test(
     environmentVariables={
-        # log.ENABLE_LOGS_WITH_COLORS: True,
+        log.ENABLE_LOGS_WITH_COLORS: True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **UNMUTED_LOG_HELPER_SETTINGS
     },
@@ -467,7 +467,7 @@ def handleEnvironmentChangesProperly_withSuccess() :
 
 @Test(
     environmentVariables={
-        # log.ENABLE_LOGS_WITH_COLORS: True,
+        log.ENABLE_LOGS_WITH_COLORS: True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **UNMUTED_LOG_HELPER_SETTINGS
     },
@@ -522,7 +522,7 @@ def handleEnvironmentChangesProperly_withSuccess_whenActionsHaveNoArguments() :
 
 @Test(
     environmentVariables={
-        # log.ENABLE_LOGS_WITH_COLORS: True,
+        log.ENABLE_LOGS_WITH_COLORS: True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **UNMUTED_LOG_HELPER_SETTINGS
     },
@@ -582,7 +582,7 @@ def handleEnvironmentChangesProperly_withErrorBefore() :
 
 @Test(
     environmentVariables={
-        # log.ENABLE_LOGS_WITH_COLORS: True,
+        log.ENABLE_LOGS_WITH_COLORS: True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **UNMUTED_LOG_HELPER_SETTINGS
     },
@@ -643,7 +643,7 @@ def handleEnvironmentChangesProperly_withErrorAfter() :
 
 @Test(
     environmentVariables={
-        # log.ENABLE_LOGS_WITH_COLORS: True,
+        log.ENABLE_LOGS_WITH_COLORS: True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **UNMUTED_LOG_HELPER_SETTINGS
     },
