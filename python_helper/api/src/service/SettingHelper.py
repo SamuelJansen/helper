@@ -259,8 +259,8 @@ def querySetting(keywordQuery,tree) :
     SettingHelperHelper.keepSearching(keywordQuery,tree,querySet)
     return querySet
 
-def printSettings(tree,name,depth=1,withColors=activeEnvironmentIsLocal()):
-    withColors = activeEnvironmentIsLocal()
+def printSettings(tree, name, depth=1, withColors=False):
+    withColors = LogHelper.logsWithColorsEnabled() ###- activeEnvironmentIsLocal()
     settingKeyColor = SettingHelperHelper.getSettingKeyPrompColor(withColors)
     colonColor = SettingHelperHelper.getSettingColonPrompColor(withColors)
     print(f'{c.NEW_LINE}{settingKeyColor}{c.OPEN_LIST}{name.upper()}{c.CLOSE_LIST}{colonColor}{c.SPACE}{c.COLON}')

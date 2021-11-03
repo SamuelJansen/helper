@@ -61,6 +61,7 @@ TEST_SETTINGS = {}
         log.FAILURE : True,
         log.ERROR : True,
         log.TEST : True,
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
     },
     **TEST_SETTINGS
@@ -130,6 +131,7 @@ def mustLogWithColors() :
         log.FAILURE : True,
         log.ERROR : True,
         log.TEST : True,
+        log.ENABLE_LOGS_WITH_COLORS : False,
         SettingHelper.ACTIVE_ENVIRONMENT : 'my environment'
     },
     **TEST_SETTINGS
@@ -198,6 +200,7 @@ def mustLogWithoutColors() :
         log.FAILURE : True,
         log.ERROR : True,
         log.TEST : False,
+        log.ENABLE_LOGS_WITH_COLORS : None,
         SettingHelper.ACTIVE_ENVIRONMENT : None
     },
     **TEST_SETTINGS
@@ -268,6 +271,7 @@ def mustLogWithoutColorsAsWell() :
         log.FAILURE : True,
         log.ERROR : True,
         log.TEST : False,
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         'SOME_PARTICULAR_SETTING' : '"some value"'
     },
@@ -296,6 +300,7 @@ def mustLogEnvironmentSettings() :
         log.FAILURE : True,
         log.ERROR : True,
         log.TEST : False,
+        log.ENABLE_LOGS_WITH_COLORS : False,
         SettingHelper.ACTIVE_ENVIRONMENT : None
     },
     **TEST_SETTINGS
@@ -326,6 +331,7 @@ def mustLogPretyPythonWithoutColors() :
         log.FAILURE : True,
         log.ERROR : True,
         log.TEST : False,
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
     },
     **TEST_SETTINGS
@@ -374,6 +380,7 @@ def mustLogPretyPythonWithColors() :
         log.FAILURE : True,
         log.ERROR : True,
         log.TEST : False,
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
     },
     **TEST_SETTINGS
@@ -422,6 +429,7 @@ def mustLogPretyJsonWithColors() :
         log.FAILURE : True,
         log.ERROR : True,
         log.TEST : True,
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
     },
     **TEST_SETTINGS

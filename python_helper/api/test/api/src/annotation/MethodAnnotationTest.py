@@ -31,6 +31,7 @@ TEST_SETTINGS = {
 
 @Test(
     environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS: True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
     },
@@ -64,6 +65,7 @@ def Function_withSuccess() :
 
 @Test(
     environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS: True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
     },

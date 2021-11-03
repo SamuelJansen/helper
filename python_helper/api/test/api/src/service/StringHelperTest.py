@@ -11,6 +11,7 @@ from python_helper import ObjectHelper, StringHelper, SettingHelper, Constant, l
 #     log.WRAPPER : True,
 #     log.ERROR : True,
 #     log.TEST : False,
+    # log.ENABLE_LOGS_WITH_COLORS : True,
 #     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
 # }
 

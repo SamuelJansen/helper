@@ -18,17 +18,17 @@ def get(environmentKey, default=None) :
 def update(environmentKey, environmentValue, default=None) :
     if ObjectHelper.isNotEmpty(environmentKey) :
         associatedValue = None
-        if not environmentValue is None :
+        if ObjectHelper.isNotNone(environmentValue):
             associatedValue = str(StringHelper.filterString(environmentValue))
             OS.environ[environmentKey] = associatedValue
-        elif not default is None :
+        elif ObjectHelper.isNotNone(default):
             associatedValue = str(StringHelper.filterString(default))
             OS.environ[environmentKey] = associatedValue
         else :
             try:
                 delete(environmentKey)
             except Exception as exception :
-                LogHelper.warning(update, f'Failed to delete "{environmentKey}" enviroment variable key', exception=exception)
+                LogHelper.warning(update, f'Failed to delete enviroment variable key "{environmentKey}" while updating it to "{environmentValue}"', exception=exception)
         return associatedValue
     else :
         LogHelper.debug(update, f'arguments: environmentKey: {environmentKey}, environmentValue: {environmentValue}, default: {default}')
@@ -48,13 +48,65 @@ def reset(environmentVariables, originalEnvironmentVariables) :
 def delete(environmentKey) :
     if ObjectHelper.isNotNone(environmentKey) :
         OS.environ.pop(environmentKey)
-        
+
 def getSet(avoidRecursiveCall=False) :
     try :
         return {key : OS.environ[key] for key in OS.environ}
     except Exception as exception :
         LogHelper.error(getSet, 'Not possible to load os.environ as a json. Returning os.environ as string by default', exception)
         return str(OS.environ)[8:-1]
+
+def isNone(environmentKey, default=True, evaluateItInsted=None):
+    if ObjectHelper.isNotNone(environmentKey) :
+        return c.NONE == (
+            evaluateItInsted if ObjectHelper.isNotNone(evaluateItInsted) else get(environmentKey, default=c.NONE)
+        )
+    return default
+
+def isNotNone(environmentKey, default=True, evaluateItInsted=None):
+    if ObjectHelper.isNotNone(environmentKey) :
+        return not c.NONE == (
+            evaluateItInsted if ObjectHelper.isNotNone(evaluateItInsted) else get(environmentKey, default=c.NONE)
+        )
+    return default
+
+def isBoolean(environmentKey, default=False, evaluateItInsted=None):
+    if ObjectHelper.isNotNone(environmentKey) :
+        if ObjectHelper.isNotNone(evaluateItInsted):
+            return evaluateItInsted in [c.TRUE, c.FALSE] if isNotNone(environmentKey, evaluateItInsted=evaluateItInsted) else default
+        return get(environmentKey, default=default) in [c.TRUE, c.FALSE]
+    return default
+
+def isTrue(environmentKey, default=False, evaluateItInsted=None):
+    if ObjectHelper.isNotNone(environmentKey) :
+        if ObjectHelper.isNotNone(evaluateItInsted):
+            return c.TRUE == evaluateItInsted if isBoolean(environmentKey, default=default, evaluateItInsted=evaluateItInsted) else default
+        innerEvaluatItInsted = get(environmentKey, default=None)
+        if ObjectHelper.isNotNone(innerEvaluatItInsted):
+            return isTrue(environmentKey, default=default, evaluateItInsted=innerEvaluatItInsted)
+        if isBoolean(environmentKey, evaluateItInsted=innerEvaluatItInsted):
+            return c.TRUE == c.TRUE if isinstance(default, bool) and default else c.FALSE
+    return default
+
+def isFalse(environmentKey, default=True, evaluateItInsted=None):
+    # if ObjectHelper.isNotNone(environmentKey) :
+    #     innerEvaluatItInsted = get(environmentKey, default=None)
+    #     if ObjectHelper.isNotNone(evaluateItInsted):
+    #         return c.FALSE == evaluateItInsted if isBoolean(environmentKey, evaluateItInsted=innerEvaluatItInsted) else default
+    #     if isBoolean(environmentKey):
+    #         return c.FALSE == c.FALSE if isinstance(default, bool) and not default else c.TRUE
+    # return default
+
+
+    if ObjectHelper.isNotNone(environmentKey) :
+        if ObjectHelper.isNotNone(evaluateItInsted):
+            return c.FALSE == evaluateItInsted if isBoolean(environmentKey, default=default, evaluateItInsted=evaluateItInsted) else default
+        innerEvaluatItInsted = get(environmentKey, default=None)
+        if ObjectHelper.isNotNone(innerEvaluatItInsted):
+            return isTrue(environmentKey, default=default, evaluateItInsted=innerEvaluatItInsted)
+        if isBoolean(environmentKey, evaluateItInsted=innerEvaluatItInsted):
+            return c.FALSE == c.FALSE if isinstance(default, bool) and not default else c.TRUE
+    return default
 
 def listDirectoryContent(path) :
     return OS.listdir(path)

@@ -11,6 +11,7 @@ from python_helper import SettingHelper, log, Test
 #     log.WRAPPER : True,
 #     log.ERROR : True,
     # log.TEST : False,
+    # log.ENABLE_LOGS_WITH_COLORS : True,
 #     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
 # }
 
@@ -30,6 +31,7 @@ TEST_SETTINGS = {}
 
 @Test(
     environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
     },
@@ -103,6 +105,7 @@ def sample_withSuccess() :
 
 @Test(
     environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
     },

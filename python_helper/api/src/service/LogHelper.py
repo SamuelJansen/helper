@@ -16,9 +16,14 @@ TEST = 'TEST'
 
 RESET_ALL_COLORS = colorama.Style.RESET_ALL
 
+ENABLE_LOGS_WITH_COLORS = 'ENABLE_LOGS_WITH_COLORS'
+
 from python_helper.api.src.helper import LogHelperHelper
 
 global LOG_HELPER_SETTINGS
+
+def logsWithColorsEnabled():
+    return EnvironmentHelper.isTrue(ENABLE_LOGS_WITH_COLORS, default=False)
 
 # import asyncio
 # global OUTPUT_PRINT_LIST
@@ -91,15 +96,12 @@ def loadSettings() :
     settings = {}
     settings[SettingHelper.ACTIVE_ENVIRONMENT] = SettingHelper.getActiveEnvironment()
     for level in LogHelperHelper.LEVEL_DICTIONARY :
-        status = EnvironmentHelper.get(level)
-        settings[level] = status if not status is None else c.TRUE
+        settings[level] = c.TRUE if EnvironmentHelper.isTrue(level, default=True) else c.FALSE
     LOG_HELPER_SETTINGS = settings
-    # if PRINTING not in LOG_HELPER_SETTINGS :
-    #     LOG_HELPER_SETTINGS[PRINTING] = False
-    if SettingHelper.activeEnvironmentIsLocal() :
+    if logsWithColorsEnabled():
         colorama.init()
         # logging.basicConfig(level=logging.DEBUG)
-        logIt(RESET_ALL_COLORS, end=c.NOTHING)
+        logIt(RESET_ALL_COLORS, end=c.BLANK)
 
 loadSettings()
 
@@ -190,7 +192,7 @@ def prettyPython(
             nullValue = nullValue,
             trueValue = trueValue,
             falseValue = falseValue,
-            withColors = SettingHelper.activeEnvironmentIsLocal(),
+            withColors = logsWithColorsEnabled(),
             joinAtReturn = False
         )
         LogHelperHelper.softLog(origin, StringHelper.join([message, c.COLON_SPACE, *prettyPythonValue]), logLevel)
@@ -217,7 +219,7 @@ def prettyJson(
             nullValue = nullValue,
             trueValue = trueValue,
             falseValue = falseValue,
-            withColors = SettingHelper.activeEnvironmentIsLocal(),
+            withColors = logsWithColorsEnabled(),
             joinAtReturn = False
         )
         LogHelperHelper.softLog(origin, StringHelper.join([message, c.COLON_SPACE, *prettyJsonValue]), logLevel)
@@ -227,7 +229,7 @@ def getExceptionMessage(exception) :
     if ObjectHelper.isEmpty(exception) :
         return c.UNKNOWN
     exceptionAsString = str(exception)
-    if c.NOTHING == exceptionAsString :
+    if c.BLANK == exceptionAsString :
         return ReflectionHelper.getName(exception.__class__)
     else :
         return exceptionAsString

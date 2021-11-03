@@ -28,6 +28,7 @@ TEST_SETTINGS = {}
 
 @Test(
     environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
     },
@@ -81,6 +82,7 @@ def isNotMethodInstance_withSuccess() :
 
 @Test(
     environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
     },
@@ -125,6 +127,7 @@ def instanciateItWithNoArgsConstructor_withSuccess() :
 
 @Test(
     environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
     },
@@ -202,6 +205,7 @@ def overrideSignatures_withSuccess() :
 
 @Test(
     environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
     },
@@ -276,6 +280,7 @@ def getArgsOrder_withSuccess() :
 
 @Test(
     environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
     },

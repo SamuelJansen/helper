@@ -1,5 +1,11 @@
 from python_helper import TestHelper
 TestHelper.run(__file__, inspectGlobals=False)
+# TestHelper.run(__file__,
+#     testStatus = True,
+#     logStatus = True,
+#     logResult = True,
+#     inspectGlobals=False
+# )
 # TestHelper.run(
 #     __file__,
 #     runOnly = [

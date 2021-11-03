@@ -63,12 +63,13 @@ def getModuleTest(inspectGlobals, logResult, globalsInstance) :
             , successStatus = globalsInstance.successStatus
             , errorStatus = globalsInstance.errorStatus
             , settingStatus = globalsInstance.settingStatus or inspectGlobals
+            , statusStatus = globalsInstance.statusStatus
+            , infoStatus = globalsInstance.infoStatus
             , debugStatus = globalsInstance.debugStatus
             , warningStatus = globalsInstance.warningStatus
             , wrapperStatus = globalsInstance.wrapperStatus
             , testStatus = globalsInstance.testStatus
             , logStatus = globalsInstance.logStatus
-            , infoStatus = globalsInstance.infoStatus,
         )
         LogHelper.test(tddModule, f'{testName} started')
         testReturns = {}
@@ -173,6 +174,7 @@ def run(
     successStatus = True,
     errorStatus = True,
     settingStatus = False,
+    statusStatus = True,
     debugStatus = True,
     warningStatus = True,
     failureStatus = True,
@@ -188,6 +190,7 @@ def run(
         , successStatus = successStatus
         , errorStatus = errorStatus
         , settingStatus = settingStatus or inspectGlobals
+        , statusStatus = statusStatus
         , debugStatus = debugStatus
         , warningStatus = warningStatus
         , failureStatus = failureStatus
@@ -270,6 +273,7 @@ def getTestEnvironmentVariables(globalsInstance) :
     return {
         LogHelper.LOG : globalsInstance.logStatus,
         LogHelper.INFO : globalsInstance.infoStatus,
+        LogHelper.STATUS : globalsInstance.statusStatus,
         LogHelper.SUCCESS : globalsInstance.successStatus,
         LogHelper.SETTING : globalsInstance.settingStatus,
         LogHelper.DEBUG : globalsInstance.debugStatus,

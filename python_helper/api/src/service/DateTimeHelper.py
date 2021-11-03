@@ -77,33 +77,33 @@ def forcedlyGetTime(givenTime, pattern=DEFAULT_TIME_PATTERN) :
 def forcedlyGetInterval(givenTime, pattern=DEFAULT_DATETIME_PATTERN) :
     return givenTime if ObjectHelper.isNone(givenTime) or not isinstance(givenTime, str) else forcedlyParse(givenTime, pattern=pattern, timedelta=True)
 
-def plusSeconds(givenDateTime, seconds=None, deltaInSeconds=None) :
+def plusSeconds(givenDateTimeOrTime, seconds=None, deltaInSeconds=None) :
     if ObjectHelper.isNotNone(seconds) :
         deltaInMinutes = datetime.timedelta(seconds=seconds)
-    if isinstance(givenDateTime, datetime.time) :
-        givenDateTime = forcedlyParse(f'{str(dateNow())} {givenDateTime}')
-    return forcedlyGetDateTime(str(givenDateTime)) + deltaInMinutes
+    if isinstance(givenDateTimeOrTime, datetime.time) :
+        givenDateTimeOrTime = forcedlyParse(f'{str(dateNow())} {givenDateTimeOrTime}')
+    return forcedlyGetDateTime(str(givenDateTimeOrTime)) + deltaInMinutes
 
-def minusSeconds(givenDateTime, seconds=None, deltaInSeconds=None) :
+def minusSeconds(givenDateTimeOrTime, seconds=None, deltaInSeconds=None) :
     if ObjectHelper.isNotNone(seconds) :
         deltaInMinutes = datetime.timedelta(seconds=seconds)
-    if isinstance(givenDateTime, datetime.time) :
-        givenDateTime = forcedlyParse(f'{str(dateNow())} {givenDateTime}')
-    return forcedlyGetDateTime(str(givenDateTime)) - deltaInMinutes
+    if isinstance(givenDateTimeOrTime, datetime.time) :
+        givenDateTimeOrTime = forcedlyParse(f'{str(dateNow())} {givenDateTimeOrTime}')
+    return forcedlyGetDateTime(str(givenDateTimeOrTime)) - deltaInMinutes
 
-def plusMinutes(givenDateTime, minutes=None, deltaInMinutes=None) :
+def plusMinutes(givenDateTimeOrTime, minutes=None, deltaInMinutes=None) :
     if ObjectHelper.isNotNone(minutes) :
         deltaInMinutes = datetime.timedelta(seconds=minutes*60)
-    if isinstance(givenDateTime, datetime.time) :
-        givenDateTime = forcedlyParse(f'{str(dateNow())} {givenDateTime}')
-    return forcedlyGetDateTime(str(givenDateTime)) + deltaInMinutes
+    if isinstance(givenDateTimeOrTime, datetime.time) :
+        givenDateTimeOrTime = forcedlyParse(f'{str(dateNow())} {givenDateTimeOrTime}')
+    return forcedlyGetDateTime(str(givenDateTimeOrTime)) + deltaInMinutes
 
-def minusMinutes(givenDateTime, minutes=None, deltaInMinutes=None) :
+def minusMinutes(givenDateTimeOrTime, minutes=None, deltaInMinutes=None) :
     if ObjectHelper.isNotNone(minutes) :
         deltaInMinutes = datetime.timedelta(minutes=minutes)
-    if isinstance(givenDateTime, datetime.time) :
-        givenDateTime = forcedlyParse(f'{str(dateNow())} {givenDateTime}')
-    return forcedlyGetDateTime(str(givenDateTime)) - deltaInMinutes
+    if isinstance(givenDateTimeOrTime, datetime.time) :
+        givenDateTimeOrTime = forcedlyParse(f'{str(dateNow())} {givenDateTimeOrTime}')
+    return forcedlyGetDateTime(str(givenDateTimeOrTime)) - deltaInMinutes
 
 def plusDays(givenDay, days=None, deltaInDays=None) :
     if ObjectHelper.isNotNone(days) :
@@ -119,21 +119,22 @@ def getDefaultTimeBegin() :
     return forcedlyGetTime(DEFAULT_TIME_BEGIN)
 
 def getDatetimeMonthBegin() :
-    return parseToPattern(c.SPACE.join([c.DASH.join(str(datetime.datetime.now()).split()[0].split(c.DASH)[:-1] + ['01']), DEFAULT_TIME_BEGIN]))
-
-def dateNow() :
-    return datetime.date.today()
-
-def timeNow() :
-    return datetime.datetime.now().time()
+    return parseToPattern(c.SPACE.join([c.DASH.join(str(dateTimeNow()).split()[0].split(c.DASH)[:-1] + ['01']), DEFAULT_TIME_BEGIN]))
 
 def dateTimeNow() :
-    return datetime.datetime.now()
+    # return datetime.datetime.now()
+    return datetime.datetime.utcnow()
 
-def of(date=None, time=None, dateTime=None) :
-    if ObjectHelper.isNotNone(dateTime) :
-        date = dateTime.split()[0]
-        time = dateTime.split()[1]
+def of(date=None, time=None, dateTime=None):
+    if ObjectHelper.isNotNone(dateTime):
+        if isinstance(dateTime, str):
+            date = dateOf(parsedDateTime).split()[0]
+            time = timeOf(parsedDateTime).split()[1]
+        if isinstance(dateTime, datetime.datetime):
+            return dateTime
+        else:
+            date = dateOf(parsedDateTime)
+            time = timeOf(parsedDateTime)
     return datetime.datetime.combine(forcedlyGetDate(date), forcedlyGetTime(time))
 
 def dateOf(dateTime=None) :
@@ -141,6 +142,22 @@ def dateOf(dateTime=None) :
 
 def timeOf(dateTime=None) :
     return dateTime.time()
+
+def dateNow() :
+    # datetime.date.today()
+    return dateOf(dateTime=dateTimeNow())
+
+def timeNow() :
+    return dateTimeNow().time()
+
+def timestampNow():
+    return datetime.timestamp(dateTimeNow())
+
+def ofTimestamp(timestamp):
+    return datetime.datetime.fromtimestamp(timestamp)
+
+def toTimestamp(date=None, time=None, dateTime=None):
+    return datetime.datetime.timestamp(of(date=date, time=time, dateTime=dateTime))
 
 def getTodayDateAndTodayTime() :
     dateTime = dateTimeNow()
@@ -160,7 +177,7 @@ def getWeekDay(ofDatetime=None, ofDate=None, ofTime=None) :
         return of(forcedlyGetDate(ofDate), forcedlyGetTime(ofTime)).weekday()
     elif ObjectHelper.isNotNone(ofDate) :
         return of(forcedlyGetDate(ofDate), forcedlyGetTime(DEFAULT_TIME_END)).weekday()
-    return datetime.datetime.now().weekday()
+    return dateTimeNow().weekday()
 
 def getWeekDayOf(dateTime=None, date=None, time=None) :
     if ObjectHelper.isNotNone(dateTime) :
@@ -169,7 +186,7 @@ def getWeekDayOf(dateTime=None, date=None, time=None) :
         return of(forcedlyGetDate(date), forcedlyGetTime(time)).weekday()
     elif ObjectHelper.isNotNone(date) :
         return of(forcedlyGetDate(date), forcedlyGetTime(DEFAULT_TIME_END)).weekday()
-    return datetime.datetime.now().weekday()
+    return dateTimeNow().weekday()
 
 def addNoise(givenDatetime) :
     return givenDatetime + datetime.timedelta(milliseconds=RandomHelper.integer(0,999))

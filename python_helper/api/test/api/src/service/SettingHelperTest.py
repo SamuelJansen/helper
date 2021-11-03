@@ -45,6 +45,7 @@ def updateActiveEnvironment_withSuccess() :
 
 @Test(
     environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         'MY_COMPLEX_ENV' : ' -- my complex value -- ',
         'LATE_VALUE' : '-- late environment value --',
@@ -179,6 +180,7 @@ def mustNotReadSettingFile() :
 
 @Test(
     environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
     }
@@ -274,6 +276,7 @@ def querySetting_withSuccess() :
 
 @Test(
     environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
     }
@@ -660,6 +663,7 @@ def mustHandleSettingValueInFallbackSettingTree() :
 
 @Test(
     environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
     }
@@ -1045,6 +1049,7 @@ def mustHandleSettingValueInFallbackSettingTree_whenFallbackSettingFilePathIsPas
 
 @Test(
     environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
     }
@@ -1121,6 +1126,7 @@ def getSettingTree_whenIsSettingKeyActuallyContainsSettingKey() :
 
 @Test(
     environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS
     }
@@ -1201,6 +1207,7 @@ def getSettingTree_fallbackPriority() :
 
 @Test(
     environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         'MY_COMPLEX_ENV' : ' -- my complex value -- ',
         'LATE_VALUE' : '-- late environment value --',
@@ -1498,6 +1505,7 @@ def getSettingTree_otherApplication() :
 
 @Test(
     environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         'MIRACLE' : 'yes.this.is.possible',
         **LOG_HELPER_SETTINGS,
@@ -1589,6 +1597,7 @@ def getSettingTree_whenThereAreNoneValuesAllOverThePlace() :
 @Test(
     environmentVariables={
         'ENVIRONMENT_BOOLEAN_VALUE': True,
+        log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
         **LOG_HELPER_SETTINGS,
     }
@@ -1609,8 +1618,8 @@ def getBooleanSetting():
 
     thisIsAlsoTruePartial = SettingHelper.getSettingTree(localFilePath, keepDepthInLongString=True, fallbackSettingFilePath=defaultFilePath, fallbackSettingTree=SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True))
     thisIsAlsoFalsePartial = SettingHelper.getSettingTree(localFilePath, keepDepthInLongString=True, fallbackSettingFilePath=defaultFilePath, fallbackSettingTree=SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True))
-    print(thisIsAlsoTruePartial)
-    print(thisIsAlsoFalsePartial)
+    # print(thisIsAlsoTruePartial)
+    # print(thisIsAlsoFalsePartial)
 
     thisIsAlsoTrue = thisIsAlsoTruePartial['boolean']['environment-injection']['this-is-also-true']
     thisIsAlsoFalse = thisIsAlsoFalsePartial['boolean']['environment-injection']['this-is-also-false']
