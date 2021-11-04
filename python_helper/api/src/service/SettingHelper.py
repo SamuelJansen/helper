@@ -53,7 +53,7 @@ def getValueAsString(value) :
         c.NOTHING
     ])
 
-def replaceEnvironmentVariables(environmentVariables) :
+def extractEnvironmentVariables(environmentVariables) :
     global ACTIVE_ENVIRONMENT_VALUE
     originalActiveEnvironment = None if ObjectHelper.isNone(ACTIVE_ENVIRONMENT_VALUE) else f'{ACTIVE_ENVIRONMENT_VALUE}'
     if ObjectHelper.isNotEmpty(originalActiveEnvironment) :
@@ -260,7 +260,7 @@ def querySetting(keywordQuery,tree) :
     return querySet
 
 def printSettings(tree, name, depth=1, withColors=False):
-    withColors = LogHelper.logsWithColorsEnabled() ###- activeEnvironmentIsLocal()
+    withColors = LogHelper.colorsEnabled() ###- activeEnvironmentIsLocal()
     settingKeyColor = SettingHelperHelper.getSettingKeyPrompColor(withColors)
     colonColor = SettingHelperHelper.getSettingColonPrompColor(withColors)
     print(f'{c.NEW_LINE}{settingKeyColor}{c.OPEN_LIST}{name.upper()}{c.CLOSE_LIST}{colonColor}{c.SPACE}{c.COLON}')

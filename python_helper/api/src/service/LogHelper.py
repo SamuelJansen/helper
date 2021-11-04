@@ -23,8 +23,8 @@ from python_helper.api.src.helper import LogHelperHelper
 global LOG_HELPER_SETTINGS
 
 
-def logsWithColorsEnabled():
-    return EnvironmentHelper.isTrue(ENABLE_LOGS_WITH_COLORS, default=False)
+def colorsEnabled():
+    return EnvironmentHelper.isTrue(ENABLE_LOGS_WITH_COLORS, default=False) or SettingHelper.activeEnvironmentIsLocal()
 
 def logIt(it, **kwargs):
     # if not (it in LogHelperHelper.COLOR_SET):
@@ -39,7 +39,7 @@ def loadSettings(file=None) :
     for level in LogHelperHelper.LEVEL_DICTIONARY :
         settings[level] = c.TRUE if EnvironmentHelper.isTrue(level, default=True) else c.FALSE
     LOG_HELPER_SETTINGS = settings
-    if logsWithColorsEnabled():
+    if colorsEnabled():
         colorama.init()
         # logIt(RESET_ALL_COLORS, end=c.BLANK)
 
@@ -132,7 +132,7 @@ def prettyPython(
             nullValue = nullValue,
             trueValue = trueValue,
             falseValue = falseValue,
-            withColors = logsWithColorsEnabled(),
+            withColors = colorsEnabled(),
             joinAtReturn = False
         )
         LogHelperHelper.softLog(origin, StringHelper.join([message, c.COLON_SPACE, *prettyPythonValue]), logLevel)
@@ -159,7 +159,7 @@ def prettyJson(
             nullValue = nullValue,
             trueValue = trueValue,
             falseValue = falseValue,
-            withColors = logsWithColorsEnabled(),
+            withColors = colorsEnabled(),
             joinAtReturn = False
         )
         LogHelperHelper.softLog(origin, StringHelper.join([message, c.COLON_SPACE, *prettyJsonValue]), logLevel)

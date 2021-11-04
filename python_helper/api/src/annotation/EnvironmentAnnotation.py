@@ -5,7 +5,7 @@ def EnvironmentVariable(*outerArgs, environmentVariables=None, **outerKwargs) :
         def innerResourceInstanceMethod(*innerArgs,**innerKwargs) :
             methodReturn = None
             wraperException = None
-            originalEnvironmentVariables, originalActiveEnvironment = SettingHelper.replaceEnvironmentVariables(environmentVariables)
+            originalEnvironmentVariables, originalActiveEnvironment = SettingHelper.extractEnvironmentVariables(environmentVariables)
             try :
                 methodReturn = resourceInstanceMethod(*innerArgs,**innerKwargs)
             except Exception as exception :

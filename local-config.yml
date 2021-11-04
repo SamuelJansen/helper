@@ -1,7 +1,7 @@
 print-status: False
 active-environment :
     key : ACTIVE_ENVIRONMENT
-    value : local
+    value : default
 enable-logs-with-colors :
     key : ENABLE_LOGS_WITH_COLORS
-    value : True
+    value : False

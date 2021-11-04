@@ -41,7 +41,7 @@ def Test(
                 methodReturnException = None
                 methodReturn = TEST_VALUE_NOT_SET
                 handleBefore(resourceInstanceMethod, callBefore, argsOfCallBefore, kwargsOfCallBefore, returns, inspectGlobals)
-                originalEnvironmentVariables, originalActiveEnvironment = SettingHelper.replaceEnvironmentVariables(environmentVariables)
+                originalEnvironmentVariables, originalActiveEnvironment = SettingHelper.extractEnvironmentVariables(environmentVariables)
                 inspectGlobalsIfNeeded(inspectGlobals, resourceInstanceMethod, 'is about to run')
                 try :
                     methodReturn = resourceInstanceMethod(*innerArgs,**innerKwargs)

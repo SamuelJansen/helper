@@ -73,7 +73,7 @@ def getStatus(level) :
     return status if isinstance(status, str) and StringHelper.isNotBlank(status) else c.TRUE
 
 def getColors(level) :
-    if LogHelper.logsWithColorsEnabled():
+    if LogHelper.colorsEnabled():
         firstLayerColor = LEVEL_DICTIONARY.get(level).get(FIRST_LAYER_COLOR) if LEVEL_DICTIONARY.get(level) and LEVEL_DICTIONARY.get(level).get(FIRST_LAYER_COLOR) else c.BLANK
         secondLayerColor = LEVEL_DICTIONARY.get(level).get(SECOND_LAYER_COLOR) if LEVEL_DICTIONARY.get(level) and LEVEL_DICTIONARY.get(level).get(SECOND_LAYER_COLOR) else c.BLANK
         tirdLayerColor = c.MUTTED_COLOR if c.MUTTED_COLOR else c.BLANK
