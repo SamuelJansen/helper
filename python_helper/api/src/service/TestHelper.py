@@ -71,7 +71,7 @@ def getModuleTest(inspectGlobals, logResult, globalsInstance) :
             , wrapperStatus = globalsInstance.wrapperStatus
             , testStatus = globalsInstance.testStatus
             , logStatus = globalsInstance.logStatus
-            , logsWithColors = globalsInstance.logsWithColors or SettingHelper.activeEnvironmentIsLocal()
+            , logsWithColors = globalsInstance.logsWithColors or LogHelper.colorsEnabled()
         )
         LogHelper.test(tddModule, f'{testName} started')
         testReturns = {}
@@ -184,7 +184,7 @@ def run(
     wrapperStatus = False,
     testStatus = False,
     logStatus = False,
-    logsWithColors = True,
+    logsWithColors = False,
     inspectGlobals = False,
     logResult = True
 ) :
@@ -201,7 +201,7 @@ def run(
         , wrapperStatus = wrapperStatus
         , testStatus = testStatus
         , logStatus = logStatus
-        , logsWithColors = logsWithColors or SettingHelper.activeEnvironmentIsLocal()
+        , logsWithColors = logsWithColors or LogHelper.colorsEnabled()
     )
     testModuleNames, testsToRun, runSpecificTests = getTestModuleNames(runOnly, ignore, globalsInstance)
     returns = {}
