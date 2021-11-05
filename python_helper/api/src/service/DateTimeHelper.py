@@ -151,12 +151,12 @@ def timeNow() :
     return dateTimeNow().time()
 
 def timestampNow():
-    return datetime.timestamp(dateTimeNow())
+    return datetime.datetime.timestamp(dateTimeNow())
 
 def ofTimestamp(timestamp):
     return datetime.datetime.fromtimestamp(timestamp)
 
-def toTimestamp(date=None, time=None, dateTime=None):
+def timestampOf(date=None, time=None, dateTime=None):
     return datetime.datetime.timestamp(of(date=date, time=time, dateTime=dateTime))
 
 def getTodayDateAndTodayTime() :
@@ -171,6 +171,7 @@ def getTodayDateTimeEnd() :
 
 ###- deprecated
 def getWeekDay(ofDatetime=None, ofDate=None, ofTime=None) :
+    log.warning(getWeekDay, 'This is deprecated')
     if ObjectHelper.isNotNone(ofDatetime) :
         return forcedlyGetDateTime(ofDatetime).weekday()
     elif ObjectHelper.isNotNone(ofDate) and ObjectHelper.isNotNone(ofTime) :
