@@ -19,10 +19,12 @@ TEST_KWARGS = {
     'logResult' : False
 }
 
-def getRaisedException(callableThing, *args, **kwargs):
+def getRaisedException(callableThing, *args, logGetRaisedExceptionIfAny=False, **kwargs):
     try:
         callableThing(*args, **kwargs)
     except Exception as exception:
+        if logGetRaisedExceptionIfAny:
+            LogHelper.error(getRaisedException, 'Exception', exception)
         return exception
 
 def getUnitTest(inspectGlobals, globalsInstance) :

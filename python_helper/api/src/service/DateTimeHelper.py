@@ -85,8 +85,8 @@ def timeDelta(days=0, hours=0, minutes=0, seconds=0, milliseconds=0, microsecond
     return datetime.timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds, milliseconds=milliseconds, microseconds=microseconds, **kwargs)
 
 def dateTimeNow() :
-    # return datetime.datetime.now()
-    return datetime.datetime.utcnow()
+    # return datetime.datetime.utcnow()
+    return datetime.datetime.now()
 
 def now() :
     return dateTimeNow()
@@ -108,6 +108,7 @@ def timestampNow():
     return datetime.datetime.timestamp(dateTimeNow())
 
 def ofTimestamp(timestamp):
+    # return datetime.datetime.utcfromtimestamp(timestamp)
     return datetime.datetime.fromtimestamp(timestamp)
 
 def of(dateTime=None, date=None, time=None, pattern=DEFAULT_DATETIME_PATTERN):
