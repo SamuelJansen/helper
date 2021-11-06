@@ -88,6 +88,9 @@ def dateTimeNow() :
     # return datetime.datetime.now()
     return datetime.datetime.utcnow()
 
+def now() :
+    return dateTimeNow()
+
 def dateOf(dateTime=None, pattern=DEFAULT_DATE_PATTERN) :
     return dateTime.date()
 

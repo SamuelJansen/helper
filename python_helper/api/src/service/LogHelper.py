@@ -14,34 +14,54 @@ FAILURE = 'FAILURE'
 ERROR = 'ERROR'
 TEST = 'TEST'
 
-RESET_ALL_COLORS = colorama.Style.RESET_ALL
-
-ENABLE_LOGS_WITH_COLORS = 'ENABLE_LOGS_WITH_COLORS'
-
 from python_helper.api.src.helper import LogHelperHelper
+
+RESET_ALL_COLORS = colorama.Style.RESET_ALL
+COLOR_SET = set([*[cv for dv in LogHelperHelper.LEVEL_DICTIONARY.values() for ck, cv in dv.items() if ck in [LogHelperHelper.FIRST_LAYER_COLOR, LogHelperHelper.SECOND_LAYER_COLOR]], c.RESET_COLOR])
+
+LOGS_FILE_NAME = 'LOGS_FILE_NAME'
+ENABLE_LOGS_WITH_COLORS = 'ENABLE_LOGS_WITH_COLORS'
+LOGS_WITH_COLORS = 'ENABLE_LOGS_WITH_COLORS'
 
 global LOG_HELPER_SETTINGS
 
 
-def colorsEnabled():
-    return EnvironmentHelper.isTrue(ENABLE_LOGS_WITH_COLORS, default=False) or SettingHelper.activeEnvironmentIsLocal()
+def colorsEnabled(enable=False):
+    return enable or EnvironmentHelper.isTrue(ENABLE_LOGS_WITH_COLORS, default=False) or SettingHelper.activeEnvironmentIsLocal()
 
 def logIt(it, **kwargs):
     # if not (it in LogHelperHelper.COLOR_SET):
     #     print(it, **kwargs)
     print(it, **kwargs)
 
-def loadSettings(file=None) :
+def loadSettings(logsFileName=None, withColors=False) :
     global LOG_HELPER_SETTINGS
     colorama.deinit()
-    settings = {}
-    settings[SettingHelper.ACTIVE_ENVIRONMENT] = SettingHelper.getActiveEnvironment()
-    for level in LogHelperHelper.LEVEL_DICTIONARY :
-        settings[level] = c.TRUE if EnvironmentHelper.isTrue(level, default=True) else c.FALSE
-    LOG_HELPER_SETTINGS = settings
-    if colorsEnabled():
+    activeEnvironment = SettingHelper.getActiveEnvironment()
+    colorsAreEnabled = withColors or colorsEnabled(enable=activeEnvironment==SettingHelper.LOCAL_ENVIRONMENT)
+    LOG_HELPER_SETTINGS = {
+        **{
+            SettingHelper.ACTIVE_ENVIRONMENT: activeEnvironment,
+            LOGS_FILE_NAME: logsFileName,
+            LOGS_WITH_COLORS: colorsAreEnabled
+        },
+        **{
+            level: (c.TRUE if EnvironmentHelper.isTrue(level, default=True) else c.FALSE) for level in LogHelperHelper.LEVEL_DICTIONARY
+        }
+    }
+    if colorsAreEnabled:
         colorama.init()
-        # logIt(RESET_ALL_COLORS, end=c.BLANK)
+
+    # global LOG_HELPER_SETTINGS
+    # colorama.deinit()
+    # settings = {}
+    # settings[SettingHelper.ACTIVE_ENVIRONMENT] = SettingHelper.getActiveEnvironment()
+    # for level in LogHelperHelper.LEVEL_DICTIONARY :
+    #     settings[level] = c.TRUE if EnvironmentHelper.isTrue(level, default=True) else c.FALSE
+    # LOG_HELPER_SETTINGS = settings
+    # if colorsEnabled():
+    #     colorama.init()
+    #     # logIt(RESET_ALL_COLORS, end=c.BLANK)
 
 loadSettings()
 
