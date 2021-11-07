@@ -47,7 +47,7 @@ def loadSettings(logsFileName=None, withColors=False) :
             LOGS_WITH_COLORS: colorsAreEnabled
         },
         **{
-            level: (c.TRUE if EnvironmentHelper.isTrue(level, default=True) else c.FALSE) for level in LogHelperHelper.LEVEL_DICTIONARY
+            level: (c.TRUE if not ObjectHelper.equals(LOG, level) or EnvironmentHelper.isTrue(level, default=True) else c.FALSE) for level in LogHelperHelper.LEVEL_DICTIONARY
         }
     }
     if colorsAreEnabled:
