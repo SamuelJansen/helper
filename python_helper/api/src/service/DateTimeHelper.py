@@ -9,27 +9,27 @@ DEFAULT_TIME_PATTERN = '%H:%M:%S'
 DATETIME_FULL_PATTERN = '%Y-%m-%d %H:%M:%S.%f'
 TIME_FULL_PATTERN = '%H:%M:%S.%f'
 
-PATTERN_LIST = [
+PATTERNS = (
     DEFAULT_DATETIME_PATTERN,
     DEFAULT_DATE_PATTERN,
     DEFAULT_TIME_PATTERN,
     DATETIME_FULL_PATTERN,
     TIME_FULL_PATTERN
-]
+)
 
-DATETIME_PATTERN_LIST = [
+DATETIME_PATTERNS = (
     DEFAULT_DATETIME_PATTERN,
     DATETIME_FULL_PATTERN
-]
+)
 
-DATE_PATTERN_LIST = [
+DATE_PATTERNS = (
     DEFAULT_DATE_PATTERN
-]
+)
 
-TIME_PATTERN_LIST = [
+TIME_PATTERNS = (
     DEFAULT_TIME_PATTERN,
     TIME_FULL_PATTERN
-]
+)
 
 DEFAULT_TIME_BEGIN = '00:00:00'
 DEFAULT_TIME_END = '23:59:59'
@@ -47,18 +47,18 @@ def parseToPattern(given, pattern=DEFAULT_DATETIME_PATTERN, timedelta=False) :
     given = given.strip()
     if StringHelper.isNotBlank(given) :
         parsed = datetime.datetime.strptime(given, pattern)
-        if timedelta and pattern in TIME_PATTERN_LIST :
+        if timedelta and pattern in TIME_PATTERNS :
             return timeDelta(hours=parsed.hour, minutes=parsed.minute, seconds=parsed.second, milliseconds=parsed.millisecond, microseconds=parsed.microsecond)
-        if pattern in DATETIME_PATTERN_LIST :
+        if pattern in DATETIME_PATTERNS :
             return parsed
-        elif pattern in DATE_PATTERN_LIST :
+        elif pattern in DATE_PATTERNS :
             return parsed.date()
-        elif pattern in TIME_PATTERN_LIST :
+        elif pattern in TIME_PATTERNS :
             return parsed.time()
 
 def forcedlyParse(given, pattern=DEFAULT_DATETIME_PATTERN, timedelta=False) :
     parsed = None
-    for pattern in [pattern] + PATTERN_LIST :
+    for pattern in [pattern, *PATTERNS] :
         try :
             parsed = parseToPattern(given, pattern=pattern, timedelta=timedelta)
             break

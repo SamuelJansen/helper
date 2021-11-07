@@ -55,7 +55,7 @@ def timeDelta() :
 #     assert datetime.datetime.utcnow() == DateTimeHelper.ofTimestamp(datetime.datetime.timestamp(DateTimeHelper.dateTimeNow()))
 #
 #     parsed = None
-#     for pattern in DateTimeHelper.PATTERN_LIST :
+#     for pattern in DateTimeHelper.PATTERNS :
 #         try :
 #             parsed = datetime.datetime.strptime(str(givenDateTime), pattern)
 #             break
@@ -64,7 +64,7 @@ def timeDelta() :
 #     assert parsed == DateTimeHelper.of(dateTime=givenDateTime)
 #
 #     parsed = None
-#     for pattern in DateTimeHelper.PATTERN_LIST :
+#     for pattern in DateTimeHelper.PATTERNS :
 #         try :
 #             parsed = datetime.datetime.strptime(str(givenDate), pattern)
 #             break
@@ -73,7 +73,7 @@ def timeDelta() :
 #     assert parsed == DateTimeHelper.of(date=givenDate)
 #
 #     parsed = None
-#     for pattern in DateTimeHelper.PATTERN_LIST :
+#     for pattern in DateTimeHelper.PATTERNS :
 #         try :
 #             parsed = datetime.datetime.strptime(f'{datetime.datetime.utcnow().date()} {str(givenTime)}', pattern)
 #             break
@@ -103,7 +103,7 @@ def dateTime_now() :
     assert datetime.datetime.now() == DateTimeHelper.ofTimestamp(datetime.datetime.timestamp(DateTimeHelper.dateTimeNow()))
 
     parsed = None
-    for pattern in DateTimeHelper.PATTERN_LIST :
+    for pattern in DateTimeHelper.PATTERNS :
         try :
             parsed = datetime.datetime.strptime(str(givenDateTime), pattern)
             break
@@ -112,7 +112,7 @@ def dateTime_now() :
     assert parsed == DateTimeHelper.of(dateTime=givenDateTime)
 
     parsed = None
-    for pattern in DateTimeHelper.PATTERN_LIST :
+    for pattern in DateTimeHelper.PATTERNS :
         try :
             parsed = datetime.datetime.strptime(str(givenDate), pattern)
             break
@@ -121,7 +121,7 @@ def dateTime_now() :
     assert parsed == DateTimeHelper.of(date=givenDate)
 
     parsed = None
-    for pattern in DateTimeHelper.PATTERN_LIST :
+    for pattern in DateTimeHelper.PATTERNS :
         try :
             parsed = datetime.datetime.strptime(f'{datetime.datetime.now().date()} {str(givenTime)}', pattern)
             break

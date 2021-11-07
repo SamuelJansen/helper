@@ -8,21 +8,21 @@ UNKNOWN_OBJECT_CLASS_NAME = c.UNKNOWN.lower()
 
 METADATA_NAME = 'metadata'
 
-NATIVE_CLASS_LIST = [
+NATIVE_CLASSES = (
     bool,
     int,
     str,
     float,
     bytes,
     type(ObjectHelperHelper.generatorInstance())
-]
+)
 
-COLLECTION_CLASS_LIST = [
+COLLECTION_CLASSES = (
     list,
     dict,
     tuple,
     set
-]
+)
 
 def equals(
     expected,
@@ -172,7 +172,7 @@ def isNotNone(instance) :
     return not isNone(instance)
 
 def isNativeClass(instanceClass) :
-    return isNotNone(instanceClass) and instanceClass in NATIVE_CLASS_LIST
+    return isNotNone(instanceClass) and instanceClass in NATIVE_CLASSES
 
 def isNotNativeClass(instanceClass) :
     return not isNativeClass(instanceClass)
@@ -184,7 +184,7 @@ def isNotNativeClassIsntance(instance) :
     return not isNativeClassInstance(instance)
 
 def isCollection(instance) :
-    return isNotNone(instance) and True in {isinstance(instance, c) for c in COLLECTION_CLASS_LIST}
+    return isNotNone(instance) and True in {isinstance(instance, c) for c in COLLECTION_CLASSES}
 
 def isNotCollection(instance) :
     return not isCollection(instance)

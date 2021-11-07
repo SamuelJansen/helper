@@ -7,10 +7,10 @@ MAXIMUN_ARGUMENTS = 20
 UNKNOWN_TYPE_NAME = f'{c.UNKNOWN.lower()} type'
 UNDEFINED = 'undefined'
 
-METHOD_TYPE_NAME_LIST = [
+METHOD_TYPE_NAMES = (
     c.TYPE_METHOD,
     c.TYPE_BUILTIN_FUNCTION_OR_METHOD
-]
+)
 
 def hasAttributeOrMethod(instance, name) :
     return False if ObjectHelper.isNone(instance) or ObjectHelper.isNone(name) else hasattr(instance, name)
@@ -61,7 +61,7 @@ def getMethodNameList(instanceClass) :
     ]
 
 def isMethodClass(methodClass) :
-    return False if ObjectHelper.isNone(methodClass) else methodClass.__name__ in METHOD_TYPE_NAME_LIST
+    return False if ObjectHelper.isNone(methodClass) else methodClass.__name__ in METHOD_TYPE_NAMES
 
 def isNotMethodClass(methodClass) :
     return False if ObjectHelper.isNone(methodClass) else not isMethodClass(methodClass)

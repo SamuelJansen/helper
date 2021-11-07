@@ -21,7 +21,22 @@ COLOR_SET = set([*[cv for dv in LogHelperHelper.LEVEL_DICTIONARY.values() for ck
 
 LOGS_FILE_NAME = 'LOGS_FILE_NAME'
 ENABLE_LOGS_WITH_COLORS = 'ENABLE_LOGS_WITH_COLORS'
-LOGS_WITH_COLORS = 'ENABLE_LOGS_WITH_COLORS'
+LOGS_WITH_COLORS = 'LOGS_WITH_COLORS'
+
+
+LOG_LEVEL_ENABLED_BY_DEFAULT_LIST = (
+    SETTING
+    , SUCCESS
+    , ERROR
+    , FAILURE
+    , STATUS
+    , INFO
+    , WARNING
+    # , DEBUG
+    # , WRAPPER
+    # , LOG
+    # , TEST
+)
 
 
 global LOG_HELPER_SETTINGS
@@ -35,7 +50,7 @@ def logIt(it, **kwargs):
     #     print(it, **kwargs)
     print(it, **kwargs)
 
-def loadSettings(logsFileName=None, withColors=False) :
+def loadSettings(logsFileName=None, withColors=False, enabledByDefault=LOG_LEVEL_ENABLED_BY_DEFAULT_LIST) :
     global LOG_HELPER_SETTINGS
     colorama.deinit()
     activeEnvironment = SettingHelper.getActiveEnvironment()
@@ -47,7 +62,7 @@ def loadSettings(logsFileName=None, withColors=False) :
             LOGS_WITH_COLORS: colorsAreEnabled
         },
         **{
-            level: (c.TRUE if not ObjectHelper.equals(LOG, level) or EnvironmentHelper.isTrue(level, default=True) else c.FALSE) for level in LogHelperHelper.LEVEL_DICTIONARY
+            level: (c.TRUE if EnvironmentHelper.isTrue(level, default=False) or level in enabledByDefault else c.FALSE) for level in LogHelperHelper.LEVEL_DICTIONARY
         }
     }
     if colorsAreEnabled:
