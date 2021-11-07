@@ -7,7 +7,7 @@ def Function(function,*args,**kwargs) :
             functionReturn = function(*args,**kwargs)
         except Exception as exception :
             functionName = ReflectionHelper.getName(function, typeName=c.TYPE_FUNCTION)
-            LogHelper.wraper(Function,f'''Failed to execute "{functionName}(args={args}, kwargs={kwargs})" {c.TYPE_FUNCTION} call''', exception, muteStackTrace=True)
+            LogHelper.wrapper(Function,f'''Failed to execute "{functionName}(args={args}, kwargs={kwargs})" {c.TYPE_FUNCTION} call''', exception, muteStackTrace=True)
             raise exception
         return functionReturn
     ReflectionHelper.overrideSignatures(wrapedFunction, function)
@@ -20,7 +20,7 @@ def Method(method,*args,**kwargs) :
         except Exception as exception :
             className = ReflectionHelper.getClassName(args[0].__class__, typeClass=c.TYPE_CLASS)
             methodName = ReflectionHelper.getClassName(method, typeClass=c.TYPE_METHOD)
-            LogHelper.wraper(Method,f'''Failed to execute "{className}{c.DOT}{methodName}(args={args}, kwargs={kwargs})" {c.TYPE_METHOD} call''', exception, muteStackTrace=True)
+            LogHelper.wrapper(Method,f'''Failed to execute "{className}{c.DOT}{methodName}(args={args}, kwargs={kwargs})" {c.TYPE_METHOD} call''', exception, muteStackTrace=True)
             raise exception
         return methodReturn
     ReflectionHelper.overrideSignatures(wrapedMethod, method)

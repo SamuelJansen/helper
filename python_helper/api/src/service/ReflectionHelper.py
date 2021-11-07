@@ -229,7 +229,7 @@ def getParentClass(instance):
     try :
         instanceParent = unsafelyGetInstanceParent(instance)
     except Exception as exception:
-        LogHelper.wraper(getInstanceParent, 'Failed to get instance parent', exception)
+        LogHelper.wrapper(getInstanceParent, 'Failed to get instance parent', exception)
     return instanceParent
 
 def unsafelyGetInstanceParent(instance):
