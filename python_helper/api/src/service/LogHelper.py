@@ -25,13 +25,13 @@ LOGS_WITH_COLORS = 'LOGS_WITH_COLORS'
 
 
 LOG_LEVEL_ENABLED_BY_DEFAULT_LIST = (
-    SETTING
+    # SETTING
     , SUCCESS
     , ERROR
-    , FAILURE
-    , STATUS
-    , INFO
-    , WARNING
+    # , FAILURE
+    # , STATUS
+    # , INFO
+    # , WARNING
     # , DEBUG
     # , WRAPPER
     # , LOG
