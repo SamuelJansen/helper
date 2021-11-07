@@ -5,7 +5,7 @@ class MyClass :
         self.me = 1
 def myFunction(a):
     return str(a) + 'b'
-OPTIONAL_EXCEPTION_LOG_TYPES = [log.log, log.debug, log.warning, log.test]
+OPTIONAL_EXCEPTION_LOG_TYPES = [log.log, log.debug, log.warning, log.test, log.wrapper]
 DICTIONARY_INSTANCE = {
     'my_none_value' : None,
     'my_none_value-as_string' : 'None',
@@ -247,13 +247,13 @@ def mustLogWithoutColorsAsWell() :
     controlableException(log.error, muteStackTrace=True)
     controlableException(log.test, muteStackTrace=True)
 
-    log.log(log.log, someLogMessage, None)
-    log.debug(log.debug, someLogMessage, None)
-    log.warning(log.warning, someLogMessage, None)
+    log.log(log.log, noExceptionThrown, None)
+    log.debug(log.debug, noExceptionThrown, None)
+    log.warning(log.warning, noExceptionThrown, None)
     log.wrapper(log.wrapper, noExceptionThrown, None)
     log.failure(log.failure, noExceptionThrown, None)
     log.error(log.error, noExceptionThrown, None)
-    log.test(log.test, someLogMessage, None)
+    log.test(log.test, noExceptionThrown, None)
 
     # Assert
     assert True == SettingHelper.activeEnvironmentIsDefault()

@@ -102,8 +102,8 @@ def debug(origin, message, exception=None, muteStackTrace=False, newLine=False) 
 def warning(origin, message, exception=None, muteStackTrace=False, newLine=False) :
     LogHelperHelper.softLog(origin, message, WARNING, muteStackTrace=muteStackTrace, newLine=newLine, exception=exception)
 
-def wrapper(origin, message, exception, muteStackTrace=False, newLine=False) :
-    LogHelperHelper.hardLog(origin, message, exception, WRAPPER, muteStackTrace=muteStackTrace, newLine=newLine)
+def wrapper(origin, message, exception=None, muteStackTrace=False, newLine=False) :
+    LogHelperHelper.softLog(origin, message, WRAPPER, muteStackTrace=muteStackTrace, newLine=newLine, exception=exception)
 
 def failure(origin, message, exception, muteStackTrace=False, newLine=False) :
     LogHelperHelper.hardLog(origin, message, exception, FAILURE, muteStackTrace=muteStackTrace, newLine=newLine)
