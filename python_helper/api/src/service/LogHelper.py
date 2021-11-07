@@ -23,6 +23,12 @@ LOGS_FILE_NAME = 'LOGS_FILE_NAME'
 ENABLE_LOGS_WITH_COLORS = 'ENABLE_LOGS_WITH_COLORS'
 LOGS_WITH_COLORS = 'ENABLE_LOGS_WITH_COLORS'
 
+LEVEL_NOT_ACTIVE_BY_DEFAULT_LIST = [
+    LOG,
+    DEBUG,
+    WRAPPER
+]
+
 global LOG_HELPER_SETTINGS
 
 
@@ -46,7 +52,7 @@ def loadSettings(logsFileName=None, withColors=False) :
             LOGS_WITH_COLORS: colorsAreEnabled
         },
         **{
-            level: (c.TRUE if EnvironmentHelper.isTrue(level, default=True) else c.FALSE) for level in LogHelperHelper.LEVEL_DICTIONARY
+            level: (c.TRUE if level not in LEVEL_NOT_ACTIVE_BY_DEFAULT_LIST and EnvironmentHelper.isTrue(level, default=True) else c.FALSE) for level in LogHelperHelper.LEVEL_DICTIONARY
         }
     }
     if colorsAreEnabled:
