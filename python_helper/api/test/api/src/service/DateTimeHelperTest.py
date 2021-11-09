@@ -130,3 +130,17 @@ def dateTime_now() :
     assert parsed == DateTimeHelper.of(time=givenTime), (parsed, DateTimeHelper.of(time=givenTime))
 
     assert datetime.datetime.timestamp(givenDateTime) == DateTimeHelper.timestampOf(dateTime=givenDateTime), (datetime.datetime.timestamp(givenDateTime), DateTimeHelper.timestampOf(dateTime=givenDateTime))
+
+@Test()
+def getWeekDay() :
+    # arrange
+    dateTimeNow = datetime.datetime.now()
+    timeNow = datetime.datetime.now().time()
+    dateNow = datetime.datetime.now().date()
+
+    # act
+    # assert
+    assert datetime.datetime.now().weekday() == DateTimeHelper.getWeekDay()
+    assert datetime.datetime.now().weekday() == DateTimeHelper.getWeekDay(dateTime=dateTimeNow)
+    assert datetime.datetime.now().weekday() == DateTimeHelper.getWeekDay(date=dateNow, time=timeNow)
+    assert datetime.datetime.now().weekday() == DateTimeHelper.getWeekDay(date=dateNow)
