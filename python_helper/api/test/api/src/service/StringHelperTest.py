@@ -334,3 +334,94 @@ def prettifyPerformance() :
     assert ObjectHelper.isNotNone(toAssertPython) and StringHelper.isNotBlank(toAssertPython)
     assert ObjectHelper.isNotNone(toAssertJson) and StringHelper.isNotBlank(toAssertJson)
     log.test(prettifyPerformance, f'performance time on a {len(str(dictionaryToPrettify))} dictionary size: {performanceTime} seconds', None)
+
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
+def typpingTypes() :
+    # arrange
+    STRING = 'ACB abCdEfgh ab cd ef'
+    STRING_TITLE = 'A C B Ab Cd Efgh Ab Cd Ef'
+
+    # act
+    getOnlyLettersToAssert = StringHelper.getOnlyLetters(STRING)
+    toTitleToAssert = StringHelper.toTitle(STRING)
+
+    # assert
+    assert 'A' == 'a'.title()
+    assert STRING.title() == StringHelper.getOnlyLetters(STRING).title(), (STRING.title(), StringHelper.getOnlyLetters(STRING).title())
+    assert ObjectHelper.equals(STRING, getOnlyLettersToAssert), (STRING, getOnlyLettersToAssert)
+    assert STRING_TITLE == toTitleToAssert, (STRING_TITLE, toTitleToAssert)
+    assert ObjectHelper.equals(STRING_TITLE, toTitleToAssert), (STRING_TITLE, getOnlyLettersToAssert)
+
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
+def toPascalCase() :
+    # arrange
+    STRING = 'ACB abCdEfgh ab cd ef'
+
+    # act
+    toAssert = StringHelper.toPascalCase(STRING)
+
+    # assert
+    assert ObjectHelper.equals('ACBAbCdEfghAbCdEf', toAssert), ('ACBAbCdEfghAbCdEf', toAssert)
+
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
+def toCamelCase() :
+    # arrange
+    STRING = 'ACB abCdEfgh ab cd ef'
+
+    # act
+    toAssert = StringHelper.toCamelCase(STRING)
+
+    # assert
+    assert ObjectHelper.equals('aCBAbCdEfghAbCdEf', toAssert), ('aCBAbCdEfghAbCdEf', toAssert)
+
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
+def toSnakeCase() :
+    # arrange
+    STRING = 'ACB abCdEfgh ab cd ef'
+
+    # act
+    toAssert = StringHelper.toSnakeCase(STRING)
+
+    # assert
+    assert ObjectHelper.equals('a_c_b_ab_cd_efgh_ab_cd_ef', toAssert), ('a_c_b_ab_cd_efgh_ab_cd_ef', toAssert)
+
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
+def toKebabCase() :
+    # arrange
+    STRING = 'ACB abCdEfgh ab cd ef'
+
+    # act
+    toAssert = StringHelper.toKebabCase(STRING)
+
+    # assert
+    assert ObjectHelper.equals('a-c-b-ab-cd-efgh-ab-cd-ef', toAssert), ('a-b-c-ab-cd-efgh-ab-cd-ef', toAssert)
+
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
+def toTitle() :
+    # arrange
+    EXPECTED = 'A C B Ab Cd Efgh Ab Cd Ef'
+
+    # act
+    # assert
+    assert EXPECTED == StringHelper.toTitle('aCBAbCdEfghAbCdEf')
+    assert EXPECTED == StringHelper.toTitle('ACBAbCdEfghAbCdEf')
+    assert EXPECTED == StringHelper.toTitle('a_c_b_ab_cd_efgh_ab_cd_ef')
+    assert EXPECTED == StringHelper.toTitle('a-c-b-ab-cd-efgh-ab-cd-ef')
