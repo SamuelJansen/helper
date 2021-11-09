@@ -17,14 +17,14 @@ def filterJson(json, extraCharacterList=None) :
     if isinstance(extraCharacterList, list) :
         charactereList += extraCharacterList
     filteredJson = json
-    for charactere in charactereList :
-        filteredJson = removeCharactere(charactere,filteredJson)
+    for character in charactereList :
+        filteredJson = removeCharactere(character,filteredJson)
     return filteredJson.replace(c.SYSTEM_TAB,c.TAB)
 
-def removeCharactere(charactere,string) :
-    if isNotBlank(charactere) and isNotBlank(string) :
-        filteredString = c.BLANK.join(string.strip().split(charactere))
-        return filteredString.replace(charactere,c.BLANK)
+def removeCharactere(character,string) :
+    if isNotBlank(character) and isNotBlank(string) :
+        filteredString = c.BLANK.join(string.strip().split(character))
+        return filteredString.replace(character,c.BLANK)
     return string
 
 def join(stringList, character=c.BLANK):

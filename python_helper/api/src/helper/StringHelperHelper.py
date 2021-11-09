@@ -8,8 +8,8 @@ def getColorValue(thing, color) :
         c.DARK_BLUE
     )
 
-def newLine(strReturn, charactere, prettyFunction, withColors):
-    if charactere == strReturn[-1][-len(charactere):] :
+def newLine(strReturn, character, prettyFunction, withColors):
+    if character == strReturn[-1][-len(character):] :
         return [c.NEW_LINE]
     else :
         return [*getItAsColoredString(c.COMA, prettyFunction, withColors, color=c.COMA_PROMPT_COLOR), *c.NEW_LINE]
