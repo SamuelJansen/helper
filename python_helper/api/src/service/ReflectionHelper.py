@@ -33,8 +33,8 @@ def setAttributeOrMethod(instance, name, attributeOrMethodInstance, muteLogs=Fal
             if not muteLogs :
                 LogHelper.warning(setAttributeOrMethod, f'Not possible to set "{name}:{attributeOrMethodInstance}" to "{getClassName(instance, typeClass=c.TYPE_CLASS, muteLogs=muteLogs) if ObjectHelper.isNotNone(instance) else instance}" instance', exception=exception)
 
-def getAttributeOrMethodNameList(instanceClass) :
-    objectNullArgsInstance = instanciateItWithNoArgsConstructor(instanceClass)
+def getAttributeOrMethodNameList(instanceClass, muteLogs=False) :
+    objectNullArgsInstance = instanciateItWithNoArgsConstructor(instanceClass, muteLogs=muteLogs)
     return [
         attributeOrMethodName
         for attributeOrMethodName in dir(objectNullArgsInstance)
@@ -44,16 +44,16 @@ def getAttributeOrMethodNameList(instanceClass) :
 def isAttributeName(attributeName, objectNullArgsInstance) :
     return isNotPrivate(attributeName) and isNotMethod(objectNullArgsInstance, attributeName)
 
-def getAttributeNameList(instanceClass) :
-    objectNullArgsInstance = instanciateItWithNoArgsConstructor(instanceClass)
+def getAttributeNameList(instanceClass, muteLogs=False) :
+    objectNullArgsInstance = instanciateItWithNoArgsConstructor(instanceClass, muteLogs=muteLogs)
     return [
         attributeName
         for attributeName in dir(objectNullArgsInstance)
         if isAttributeName(attributeName, objectNullArgsInstance)
     ]
 
-def getMethodNameList(instanceClass) :
-    objectNullArgsInstance = instanciateItWithNoArgsConstructor(instanceClass)
+def getMethodNameList(instanceClass, muteLogs=False) :
+    objectNullArgsInstance = instanciateItWithNoArgsConstructor(instanceClass, muteLogs=muteLogs)
     return [
         methodName
         for methodName in dir(objectNullArgsInstance)
@@ -82,7 +82,7 @@ def isNotMethod(objectInstance, name) :
         return False
     return isNotMethodInstance(getAttributeOrMethod(objectInstance, name))
 
-def instanciateItWithNoArgsConstructor(targetClass, amountOfNoneArgs=0, args=None, muteLogs=None) :
+def instanciateItWithNoArgsConstructor(targetClass, amountOfNoneArgs=0, args=None, muteLogs=False) :
     if ObjectHelper.isNone(args) :
         args = []
     for _ in range(amountOfNoneArgs) :
@@ -98,9 +98,9 @@ def instanciateItWithNoArgsConstructor(targetClass, amountOfNoneArgs=0, args=Non
         raise Exception(f'Not possible to instanciate {getClassName(targetClass, typeClass=c.TYPE_CLASS, muteLogs=muteLogs)} with None as args constructor')
     return objectInstance
 
-def getArgsOrder(targetClass) :
+def getArgsOrder(targetClass, muteLogs=False) :
     noneArgs = []
-    noneInstance = instanciateItWithNoArgsConstructor(targetClass, amountOfNoneArgs=0, args=noneArgs)
+    noneInstance = instanciateItWithNoArgsConstructor(targetClass, amountOfNoneArgs=0, args=noneArgs, muteLogs=muteLogs)
     strArgs = []
     for arg in range(len(noneArgs)) :
         strArgs.append(RandomHelper.string(minimum=10))
@@ -170,7 +170,7 @@ def getClass(thing, typeClass=None, muteLogs=False) :
     except Exception as exception :
         thingClass = type(None)
         if not muteLogs :
-            LogHelper.warning(None, f'Not possible to get class of {thing}. Returning {thingClass} insted', exception=exception)
+            LogHelper.warning(getClass, f'Not possible to get class of {thing}. Returning {thingClass} insted', exception=exception)
     return thingClass
 
 def getName(thing, typeName=None, muteLogs=False) :
@@ -183,7 +183,7 @@ def getName(thing, typeName=None, muteLogs=False) :
     except Exception as exception :
         name = getUndefindeName(typeName)
         if not muteLogs :
-            LogHelper.warning(None, f'Not possible to get name of {thing}. Returning {name} insted', exception=exception)
+            LogHelper.warning(getName, f'Not possible to get name of {thing}. Returning {name} insted', exception=exception)
     return name
 
 def getClassName(thing, typeClass=None, muteLogs=False) :
@@ -196,7 +196,7 @@ def getClassName(thing, typeClass=None, muteLogs=False) :
     except Exception as exception :
         name = getUndefindeName(typeClass)
         if not muteLogs :
-            LogHelper.warning(None, f'Not possible to get class name of {thing}. Returning {name} insted', exception=exception)
+            LogHelper.warning(getClassName, f'Not possible to get class name of {thing}. Returning {name} insted', exception=exception)
     return name
 
 def getMethodClassName(instanceClass):
@@ -212,7 +212,7 @@ def getModuleName(thing, typeModule=None, muteLogs=False) :
     except Exception as exception :
         name = getUndefindeName(typeModule)
         if not muteLogs :
-            LogHelper.warning(None, f'Not possible to get module name of {thing}. Returning {name} insted', exception=exception)
+            LogHelper.warning(getModuleName, f'Not possible to get module name of {thing}. Returning {name} insted', exception=exception)
     return name
 
 def getMethodModuleNameDotName(instance) :
