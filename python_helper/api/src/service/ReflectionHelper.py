@@ -38,18 +38,18 @@ def getAttributeOrMethodNameList(instanceClass, muteLogs=False) :
     return [
         attributeOrMethodName
         for attributeOrMethodName in dir(objectNullArgsInstance)
-        if isNotPrivate(attributeOrMethodName)
+        if isNotPrivate(attributeOrMethodName, muteLogs=muteLogs)
     ]
 
-def isAttributeName(attributeName, objectNullArgsInstance) :
-    return isNotPrivate(attributeName) and isNotMethod(objectNullArgsInstance, attributeName)
+def isAttributeName(attributeName, objectNullArgsInstance, muteLogs=False) :
+    return isNotPrivate(attributeName, muteLogs=muteLogs) and isNotMethod(objectNullArgsInstance, attributeName, muteLogs=muteLogs)
 
 def getAttributeNameList(instanceClass, muteLogs=False) :
     objectNullArgsInstance = instanciateItWithNoArgsConstructor(instanceClass, muteLogs=muteLogs)
     return [
         attributeName
         for attributeName in dir(objectNullArgsInstance)
-        if isAttributeName(attributeName, objectNullArgsInstance)
+        if isAttributeName(attributeName, objectNullArgsInstance, muteLogs=muteLogs)
     ]
 
 def getMethodNameList(instanceClass, muteLogs=False) :
@@ -57,30 +57,30 @@ def getMethodNameList(instanceClass, muteLogs=False) :
     return [
         methodName
         for methodName in dir(objectNullArgsInstance)
-        if isNotPrivate(methodName) and isMethod(objectNullArgsInstance, methodName)
+        if isNotPrivate(methodName, muteLogs=muteLogs) and isMethod(objectNullArgsInstance, methodName, muteLogs=muteLogs)
     ]
 
-def isMethodClass(methodClass) :
+def isMethodClass(methodClass, muteLogs=False) :
     return False if ObjectHelper.isNone(methodClass) else methodClass.__name__ in METHOD_TYPE_NAMES
 
-def isNotMethodClass(methodClass) :
-    return False if ObjectHelper.isNone(methodClass) else not isMethodClass(methodClass)
+def isNotMethodClass(methodClass, muteLogs=False) :
+    return False if ObjectHelper.isNone(methodClass) else not isMethodClass(methodClass, muteLogs=muteLogs)
 
-def isMethodInstance(methodInstance) :
-    return isMethodClass(type(methodInstance))
+def isMethodInstance(methodInstance, muteLogs=False) :
+    return isMethodClass(type(methodInstance), muteLogs=muteLogs)
 
-def isNotMethodInstance(methodInstance) :
-    return not isMethodInstance(methodInstance)
+def isNotMethodInstance(methodInstance, muteLogs=False) :
+    return not isMethodInstance(methodInstance, muteLogs=muteLogs)
 
-def isMethod(objectInstance, name) :
+def isMethod(objectInstance, name, muteLogs=False) :
     if ObjectHelper.isNone(objectInstance) or StringHelper.isBlank(name) :
         return False
-    return isMethodInstance(getAttributeOrMethod(objectInstance, name))
+    return isMethodInstance(getAttributeOrMethod(objectInstance, name, muteLogs=muteLogs), muteLogs=muteLogs)
 
-def isNotMethod(objectInstance, name) :
+def isNotMethod(objectInstance, name, muteLogs=False) :
     if ObjectHelper.isNone(objectInstance) or StringHelper.isBlank(name) :
         return False
-    return isNotMethodInstance(getAttributeOrMethod(objectInstance, name))
+    return isNotMethodInstance(getAttributeOrMethod(objectInstance, name, muteLogs=muteLogs), muteLogs=muteLogs)
 
 def instanciateItWithNoArgsConstructor(targetClass, amountOfNoneArgs=0, args=None, muteLogs=False) :
     if ObjectHelper.isNone(args) :
@@ -106,7 +106,7 @@ def getArgsOrder(targetClass, muteLogs=False) :
         strArgs.append(RandomHelper.string(minimum=10))
     try :
         instance = targetClass(*strArgs)
-        instanceDataDictionary = getAttributeDataDictionary(instance)
+        instanceDataDictionary = getAttributeDataDictionary(instance, muteLogs=muteLogs)
         argsOrderDictionary = {}
         for key,value in instanceDataDictionary.items() :
             if StringHelper.isNotBlank(value) :
@@ -118,31 +118,31 @@ def getArgsOrder(targetClass, muteLogs=False) :
         raise Exception(errorMessage)
     return argsOrder
 
-def isNotPrivate(attributeOrMethodName) :
+def isNotPrivate(attributeOrMethodName, muteLogs=False) :
     return StringHelper.isNotBlank(attributeOrMethodName) and (
         not attributeOrMethodName.startswith(f'{2 * c.UNDERSCORE}') and
         not attributeOrMethodName.startswith(c.UNDERSCORE) and
         not ObjectHelper.METADATA_NAME == attributeOrMethodName
     )
 
-def getAttributePointerList(instance) :
+def getAttributePointerList(instance, muteLogs=False) :
     return [
         getattr(instance, instanceAttributeOrMethodName)
         for instanceAttributeOrMethodName in dir(instance)
-        if isNotPrivate(instanceAttributeOrMethodName)
+        if isNotPrivate(instanceAttributeOrMethodName, muteLogs=muteLogs)
     ]
 
-def getAttributeDataList(instance) :
+def getAttributeDataList(instance, muteLogs=False) :
     return [
         (getattr(instance, instanceAttributeName), instanceAttributeName)
         for instanceAttributeName in dir(instance)
-        if isAttributeName(instanceAttributeName, instance)
+        if isAttributeName(instanceAttributeName, instance, muteLogs=muteLogs)
     ]
 
-def getAttributeDataDictionary(instance) :
+def getAttributeDataDictionary(instance, muteLogs=False) :
     instanceDataDictionary = {}
     for name in dir(instance) :
-        if isAttributeName(name, instance) :
+        if isAttributeName(name, instance, muteLogs=muteLogs) :
             instanceDataDictionary[name] = getattr(instance, name)
     return instanceDataDictionary
 
@@ -250,7 +250,7 @@ def getItNaked(it) :
     printDetails(it)
     printClass(it)
     try :
-        LogHelper.prettyPython(getAttributeDataDictionary, 'getAttributeDataDictionary', getAttributePointerList(it), logLevel=LogHelper.DEBUG)
+        LogHelper.prettyPython(getAttributePointerList, 'getAttributePointerList', getAttributePointerList(it), logLevel=LogHelper.DEBUG)
     except : pass
     try :
         LogHelper.prettyPython(getAttributeAndMethodNameList, 'getAttributeAndMethodNameList', getAttributeAndMethodNameList(it), logLevel=LogHelper.DEBUG)
