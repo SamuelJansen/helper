@@ -278,6 +278,60 @@ def getArgsOrder_withSuccess() :
     ] == myClassWithMoreAttributesThanArgsArgsOrder
     assert [] == myClassWithoutInitMethodArgsOrder
 
+
+@Test(
+    environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
+def getAttributeOrMethodByNamePath():
+    #arrange
+    class MyClass :
+        def __init__(self, value):
+            self.myAttribute = value
+    FINAL_VALUE = 3
+    DEFAULT_VALUE = 7
+    instance = MyClass(MyClass(MyClass(MyClass(3))))
+
+    #act
+    finalValueToAssert = ReflectionHelper.getAttributeOrMethodByNamePath(instance, 'myAttribute.myAttribute.myAttribute.myAttribute', muteLogs=False, default=None)
+
+    mustBeNone = ReflectionHelper.getAttributeOrMethodByNamePath(instance, 'myAttribute.myAttribute.myAttribute.myAttribute.myAttribute', muteLogs=False, default=None)
+    mustBeDefault = ReflectionHelper.getAttributeOrMethodByNamePath(instance, 'myAttribute.myAttribute.myAttribute.myAttribute.myAttribute', muteLogs=False, default=DEFAULT_VALUE)
+
+    mustBeNoneByEndingOnDot = ReflectionHelper.getAttributeOrMethodByNamePath(instance, 'myAttribute.', muteLogs=False, default=None)
+    mustBeDefaultByEndingOnDot = ReflectionHelper.getAttributeOrMethodByNamePath(instance, 'myAttribute.', muteLogs=False, default=DEFAULT_VALUE)
+
+    mustBeNoneByStartingOnDot = ReflectionHelper.getAttributeOrMethodByNamePath(instance, '.myAttribute', muteLogs=False, default=None)
+    mustBeDefaultByStartingOnDot = ReflectionHelper.getAttributeOrMethodByNamePath(instance, '.myAttribute', muteLogs=False, default=DEFAULT_VALUE)
+
+    hereWeGo = ReflectionHelper.getAttributeOrMethodByNamePath(instance, 'myAttribute..myAttribute', muteLogs=False, default=None)
+    hereWeGoDefault = ReflectionHelper.getAttributeOrMethodByNamePath(instance, 'myAttribute..myAttribute', muteLogs=False, default=DEFAULT_VALUE)
+
+    #assert
+    assert FINAL_VALUE == finalValueToAssert, f'{FINAL_VALUE} == {finalValueToAssert}'
+
+    assert ObjectHelper.isNone(mustBeNone)
+    assert DEFAULT_VALUE == mustBeDefault, f'{DEFAULT_VALUE} == {mustBeDefault}'
+
+    assert ObjectHelper.isNone(mustBeNoneByEndingOnDot)
+    assert DEFAULT_VALUE == mustBeDefaultByEndingOnDot
+
+    assert ObjectHelper.isNone(mustBeNoneByStartingOnDot)
+    assert DEFAULT_VALUE == mustBeDefaultByStartingOnDot
+
+    assert ObjectHelper.isNone(hereWeGo)
+    assert DEFAULT_VALUE == hereWeGoDefault
+
+    assert ObjectHelper.isNotNone(instance.myAttribute.myAttribute)
+    assert ObjectHelper.equals(instance.myAttribute.myAttribute, ReflectionHelper.getAttributeOrMethodByNamePath(instance, 'myAttribute.myAttribute', muteLogs=False, default=None))
+    assert ObjectHelper.isNotNone(instance.myAttribute)
+    assert not ObjectHelper.equals(instance.myAttribute, ReflectionHelper.getAttributeOrMethodByNamePath(instance, 'myAttribute.myAttribute', muteLogs=False, default=None))
+
+
 @Test(
     environmentVariables={
         log.ENABLE_LOGS_WITH_COLORS : True,

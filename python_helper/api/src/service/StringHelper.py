@@ -13,11 +13,11 @@ def isNotBlank(thing) :
     return isinstance(thing, str) and not c.BLANK == thing
 
 def filterJson(json, extraCharacterList=None) :
-    charactereList = [c.NEW_LINE,c.BAR_N]
+    characterList = [c.NEW_LINE,c.BAR_N]
     if isinstance(extraCharacterList, list) :
-        charactereList += extraCharacterList
+        characterList += extraCharacterList
     filteredJson = json
-    for character in charactereList :
+    for character in characterList :
         filteredJson = removeCharactere(character,filteredJson)
     return filteredJson.replace(c.SYSTEM_TAB,c.TAB)
 

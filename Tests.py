@@ -1,5 +1,12 @@
 from python_helper import TestHelper
 TestHelper.run(__file__, inspectGlobals=False)
+# TestHelper.run(
+#     __file__,
+#     runOnly = [
+#         # 'ReflectionHelperTest.instanciateItWithNoArgsConstructor_withSuccess',
+#         'ReflectionHelperTest.getAttributeOrMethodByNamePath'
+#     ]
+# )
 # TestHelper.run(__file__,
 #     testStatus = True,
 #     logStatus = True,
@@ -144,12 +151,6 @@ TestHelper.run(__file__, inspectGlobals=False)
 #     logStatus = False,
 #     logResult = False,
 #     inspectGlobals = True
-# )
-# TestHelper.run(
-#     __file__,
-#     runOnly = [
-#         'ReflectionHelperTest.instanciateItWithNoArgsConstructor_withSuccess'
-#     ]
 # )
 # TestHelper.run(
 #     __file__,

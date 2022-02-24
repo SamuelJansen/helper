@@ -40,6 +40,7 @@ AND = '&'
 PLUS = '+'
 EQUALS = '='
 PERCENT = '%'
+ASTERISK = '*'
 
 DOT = '.'
 DOT_SPACE = f'{DOT}{SPACE}'
