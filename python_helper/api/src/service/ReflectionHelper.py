@@ -8,9 +8,13 @@ MAXIMUN_ARGUMENTS = 20
 UNKNOWN_TYPE_NAME = f'{c.UNKNOWN.lower()} type'
 UNDEFINED = 'undefined'
 
+def thisIsAFunction():
+    ...
+
 METHOD_TYPE_NAMES = (
     c.TYPE_METHOD,
     c.TYPE_BUILTIN_FUNCTION_OR_METHOD
+    # , type(thisIsAFunction).__name__ ###- it cannot be a function
 )
 
 
@@ -118,6 +122,10 @@ def isNotMethod(objectInstance, name, muteLogs=False):
     return isNotMethodInstance(getAttributeOrMethod(objectInstance, name, muteLogs=muteLogs), muteLogs=muteLogs)
 
 
+def isNotFunction(methodInstance):
+    return not isinstance(methodInstance, isinstance(type(thisIsAFunction)))
+
+
 def instanciateItWithNoArgsConstructor(targetClass, amountOfNoneArgs=0, args=None, muteLogs=False):
     if ObjectHelper.isNone(args):
         args = []
@@ -181,6 +189,7 @@ def getAttributeDataList(instance, muteLogs=False):
 
 
 def getAttributeDataDictionary(instance, muteLogs=False):
+    '''It can be a function, but not a method...'''
     instanceDataDictionary = {}
     for name in dir(instance):
         if isAttributeName(name, instance, muteLogs=muteLogs):
