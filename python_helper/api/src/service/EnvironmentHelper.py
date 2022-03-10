@@ -89,15 +89,6 @@ def isTrue(environmentKey, default=False, evaluateItInsted=None):
     return default
 
 def isFalse(environmentKey, default=True, evaluateItInsted=None):
-    # if ObjectHelper.isNotNone(environmentKey) :
-    #     innerEvaluatItInsted = get(environmentKey, default=None)
-    #     if ObjectHelper.isNotNone(evaluateItInsted):
-    #         return c.FALSE == evaluateItInsted if isBoolean(environmentKey, evaluateItInsted=innerEvaluatItInsted) else default
-    #     if isBoolean(environmentKey):
-    #         return c.FALSE == c.FALSE if isinstance(default, bool) and not default else c.TRUE
-    # return default
-
-
     if ObjectHelper.isNotNone(environmentKey) :
         if ObjectHelper.isNotNone(evaluateItInsted):
             return c.FALSE == evaluateItInsted if isBoolean(environmentKey, default=default, evaluateItInsted=evaluateItInsted) else default

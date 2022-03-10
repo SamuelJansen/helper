@@ -48,6 +48,7 @@ def colorsEnabled(enable=False):
 def logIt(it, **kwargs):
     # if not (it in LogHelperHelper.COLOR_SET):
     #     print(it, **kwargs)
+    # print(f'{DateTimeHelper.now()} - {it}', **kwargs)
     print(it, **kwargs)
 
 def loadSettings(logsFileName=None, withColors=False, enabledByDefault=LOG_LEVEL_ENABLED_BY_DEFAULT_LIST) :

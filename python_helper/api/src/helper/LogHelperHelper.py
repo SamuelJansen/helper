@@ -1,5 +1,5 @@
 from python_helper.api.src.domain import Constant as c
-from python_helper.api.src.service import LogHelper, ObjectHelper, ReflectionHelper, StringHelper
+from python_helper.api.src.service import LogHelper, ObjectHelper, ReflectionHelper, StringHelper, DateTimeHelper
 
 NO_TRACEBACK_PRESENT = f'NoneType: None{c.NEW_LINE}'
 NO_TRACEBACK_PRESENT_MESSAGE = 'Exception: '
@@ -7,6 +7,8 @@ NO_TRACEBACK_PRESENT_MESSAGE = 'Exception: '
 FIRST_LAYER_COLOR = 'FIRST_LAYER_COLOR'
 SECOND_LAYER_COLOR = 'SECOND_LAYER_COLOR'
 LOG_TEXT = 'LOG_TEXT'
+
+DATE_TIME_COLLOR_LAYER = c.BRIGHT_BLACK
 
 LEVEL_DICTIONARY = {
     LogHelper.LOG : {
@@ -77,33 +79,35 @@ def getColors(level) :
         secondLayerColor = LEVEL_DICTIONARY.get(level).get(SECOND_LAYER_COLOR) if LEVEL_DICTIONARY.get(level) and LEVEL_DICTIONARY.get(level).get(SECOND_LAYER_COLOR) else c.BLANK
         tirdLayerColor = c.MUTTED_COLOR if c.MUTTED_COLOR else c.BLANK
         resetColor = c.RESET_COLOR if c.RESET_COLOR else c.BLANK
+        dateTimeColor = DATE_TIME_COLLOR_LAYER
     else :
         firstLayerColor = c.BLANK
         secondLayerColor = c.BLANK
         tirdLayerColor = c.BLANK
         resetColor = c.BLANK
-    return (firstLayerColor, secondLayerColor, tirdLayerColor, resetColor) if StringHelper.isNotBlank(firstLayerColor) else (c.BLANK, c.BLANK, c.BLANK, c.BLANK)
+        dateTimeColor = c.BLANK
+    return (firstLayerColor, secondLayerColor, tirdLayerColor, resetColor, dateTimeColor) if StringHelper.isNotBlank(firstLayerColor) else (c.BLANK, c.BLANK, c.BLANK, c.BLANK, c.BLANK)
 
 def softLog(origin, message, level, exception=None, muteStackTrace=False, newLine=False) :
     if ObjectHelper.isNotNone(exception) :
         hardLog(origin, message, exception, level, muteStackTrace=muteStackTrace)
     elif c.TRUE == getStatus(level) :
-        firstLayerColor, secondLayerColor, tirdLayerColor, resetColor = getColors(level)
-        LogHelper.logIt(StringHelper.join([firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], *getOriginPortion(origin, tirdLayerColor, resetColor), secondLayerColor, message, resetColor, getNewLine(newLine, exception=exception, muteStackTrace=muteStackTrace)]))
+        firstLayerColor, secondLayerColor, tirdLayerColor, resetColor, dateTimeColor = getColors(level)
+        LogHelper.logIt(StringHelper.join([dateTimeColor, str(DateTimeHelper.now()), c.SPACE, firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], *getOriginPortion(origin, tirdLayerColor, resetColor), secondLayerColor, message, resetColor, getNewLine(newLine, exception=exception, muteStackTrace=muteStackTrace)]))
     elif not c.FALSE == getStatus(level) :
         levelStatusError(method, level)
 
 def hardLog(origin, message, exception, level, muteStackTrace=False, newLine=False) :
     if c.TRUE == getStatus(level) :
-        firstLayerColor, secondLayerColor, tirdLayerColor, resetColor = getColors(level)
-        LogHelper.logIt(StringHelper.join([firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], *getOriginPortion(origin, tirdLayerColor, resetColor), secondLayerColor, message, *getErrorPortion(exception, muteStackTrace, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor), resetColor, getNewLine(newLine, exception=exception, muteStackTrace=muteStackTrace)]))
+        firstLayerColor, secondLayerColor, tirdLayerColor, resetColor, dateTimeColor = getColors(level)
+        LogHelper.logIt(StringHelper.join([dateTimeColor, str(DateTimeHelper.now()), c.SPACE, firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], *getOriginPortion(origin, tirdLayerColor, resetColor), secondLayerColor, message, *getErrorPortion(exception, muteStackTrace, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor), resetColor, getNewLine(newLine, exception=exception, muteStackTrace=muteStackTrace)]))
     elif not c.FALSE == getStatus(level) :
         levelStatusError(method, level)
 
 def printMessageLog(level, message, condition=False, muteStackTrace=False, newLine=True, margin=True, exception=None) :
     if condition :
-        firstLayerColor, secondLayerColor, tirdLayerColor, resetColor = getColors(level)
-        LogHelper.logIt(StringHelper.join([c.TAB if margin else c.BLANK, firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], secondLayerColor, message, *getErrorPortion(exception, muteStackTrace, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor), resetColor, getNewLine(newLine, exception=exception, muteStackTrace=muteStackTrace)]))
+        firstLayerColor, secondLayerColor, tirdLayerColor, resetColor, dateTimeColor = getColors(level)
+        LogHelper.logIt(StringHelper.join([c.TAB if margin else c.BLANK, dateTimeColor, str(DateTimeHelper.now()), c.SPACE, firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], secondLayerColor, message, *getErrorPortion(exception, muteStackTrace, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor), resetColor, getNewLine(newLine, exception=exception, muteStackTrace=muteStackTrace)]))
 
 def getOriginPortion(origin, tirdLayerColor, resetColor) :
     if not origin or origin == c.BLANK :

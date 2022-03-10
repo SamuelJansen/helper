@@ -132,14 +132,16 @@ def instanciateItWithNoArgsConstructor(targetClass, amountOfNoneArgs=0, args=Non
     for _ in range(amountOfNoneArgs):
         args.append(None)
     objectInstance = None
+    possibleExceptions = set()
     for _ in range(MAXIMUN_ARGUMENTS):
         try :
             objectInstance = targetClass(*args)
             break
-        except :
+        except Exception as exception:
+            possibleExceptions.add(str(exception))
             args.append(None)
     if not isinstance(objectInstance, targetClass):
-        raise Exception(f'Not possible to instanciate {getClassName(targetClass, typeClass=c.TYPE_CLASS, muteLogs=muteLogs)} with None as args constructor')
+        raise Exception(f'Not possible to instanciate {getClassName(targetClass, typeClass=c.TYPE_CLASS, muteLogs=muteLogs)} with None as args constructor{c.BLANK if ObjectHelper.isEmpty(possibleExceptions) else f". Possible causes: {possibleExceptions}"}')
     return objectInstance
 
 
