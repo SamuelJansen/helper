@@ -93,21 +93,24 @@ def softLog(origin, message, level, exception=None, muteStackTrace=False, newLin
         hardLog(origin, message, exception, level, muteStackTrace=muteStackTrace)
     elif c.TRUE == getStatus(level) :
         firstLayerColor, secondLayerColor, tirdLayerColor, resetColor, dateTimeColor = getColors(level)
-        LogHelper.logIt(StringHelper.join([dateTimeColor, str(DateTimeHelper.now()), c.SPACE, firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], *getOriginPortion(origin, tirdLayerColor, resetColor), secondLayerColor, message, resetColor, getNewLine(newLine, exception=exception, muteStackTrace=muteStackTrace)]))
+        LogHelper.logIt(StringHelper.join([*getLogHeader(dateTimeColor, firstLayerColor, level), *getOriginPortion(origin, tirdLayerColor, resetColor), secondLayerColor, message, resetColor, getNewLine(newLine, exception=exception, muteStackTrace=muteStackTrace)]))
     elif not c.FALSE == getStatus(level) :
         levelStatusError(method, level)
 
 def hardLog(origin, message, exception, level, muteStackTrace=False, newLine=False) :
     if c.TRUE == getStatus(level) :
         firstLayerColor, secondLayerColor, tirdLayerColor, resetColor, dateTimeColor = getColors(level)
-        LogHelper.logIt(StringHelper.join([dateTimeColor, str(DateTimeHelper.now()), c.SPACE, firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], *getOriginPortion(origin, tirdLayerColor, resetColor), secondLayerColor, message, *getErrorPortion(exception, muteStackTrace, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor), resetColor, getNewLine(newLine, exception=exception, muteStackTrace=muteStackTrace)]))
+        LogHelper.logIt(StringHelper.join([*getLogHeader(dateTimeColor, firstLayerColor, level), *getOriginPortion(origin, tirdLayerColor, resetColor), secondLayerColor, message, *getErrorPortion(exception, muteStackTrace, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor), resetColor, getNewLine(newLine, exception=exception, muteStackTrace=muteStackTrace)]))
     elif not c.FALSE == getStatus(level) :
         levelStatusError(method, level)
 
 def printMessageLog(level, message, condition=False, muteStackTrace=False, newLine=True, margin=True, exception=None) :
     if condition :
         firstLayerColor, secondLayerColor, tirdLayerColor, resetColor, dateTimeColor = getColors(level)
-        LogHelper.logIt(StringHelper.join([c.TAB if margin else c.BLANK, dateTimeColor, str(DateTimeHelper.now()), c.SPACE, firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT], secondLayerColor, message, *getErrorPortion(exception, muteStackTrace, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor), resetColor, getNewLine(newLine, exception=exception, muteStackTrace=muteStackTrace)]))
+        LogHelper.logIt(StringHelper.join([c.TAB if margin else c.BLANK, *getLogHeader(dateTimeColor, firstLayerColor, level), secondLayerColor, message, *getErrorPortion(exception, muteStackTrace, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor), resetColor, getNewLine(newLine, exception=exception, muteStackTrace=muteStackTrace)]))
+
+def getLogHeader(dateTimeColor, firstLayerColor, level):
+    return [dateTimeColor, f'{str(DateTimeHelper.now()):0>26}', c.SPACE, firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT]]
 
 def getOriginPortion(origin, tirdLayerColor, resetColor) :
     if not origin or origin == c.BLANK :
