@@ -8,6 +8,10 @@ FIRST_LAYER_COLOR = 'FIRST_LAYER_COLOR'
 SECOND_LAYER_COLOR = 'SECOND_LAYER_COLOR'
 LOG_TEXT = 'LOG_TEXT'
 
+###- make sure to change it manually too on getOriginPortion function
+###- as python does not allow variable introducing there
+MAX_ORIGIN_LOG_SIZE = 32
+
 DATE_TIME_COLLOR_LAYER = c.BRIGHT_BLACK
 
 LEVEL_DICTIONARY = {
@@ -112,15 +116,47 @@ def printMessageLog(level, message, condition=False, muteStackTrace=False, newLi
 def getLogHeader(dateTimeColor, firstLayerColor, level):
     return [dateTimeColor, f'{str(DateTimeHelper.now()):0>26}', c.SPACE, firstLayerColor, LEVEL_DICTIONARY[level][LOG_TEXT]]
 
-def getOriginPortion(origin, tirdLayerColor, resetColor) :
-    if not origin or origin == c.BLANK :
-        return [c.BLANK]
-    else :
+def getOriginPortion(origin, tirdLayerColor, resetColor):
+    parsedOrigin = c.BLANK
+    if origin and not origin == c.BLANK :
         moduleName = ReflectionHelper.getModuleName(origin)
         className = ReflectionHelper.getClassName(origin)
         moduleProtion = getLogThingName(moduleName)
         classPortion = getLogThingName(className)
-        return [tirdLayerColor, *moduleProtion, *classPortion, ReflectionHelper.getName(origin), c.COLON_SPACE, resetColor]
+        originalParserdOrigin = StringHelper.join([*moduleProtion, *classPortion, ReflectionHelper.getName(origin)])
+        parsedOrigin = originalParserdOrigin
+        if MAX_ORIGIN_LOG_SIZE < len(parsedOrigin):
+            splittedParsedOrigin = StringHelper.split(parsedOrigin, character=c.DOT)
+            parsedOrigin = StringHelper.join(
+                [
+                    reduceParsedOriginPortion(splittedParsedOrigin[0]),
+                    *splittedParsedOrigin[1:]
+                ],
+                character = c.DOT
+            ).strip()
+            if MAX_ORIGIN_LOG_SIZE < len(parsedOrigin):
+                splittedParsedOrigin = StringHelper.split(parsedOrigin, character=c.DOT)
+                parsedOrigin = StringHelper.join(
+                    [
+                        *splittedParsedOrigin[:-1],
+                        reduceParsedOriginPortion(splittedParsedOrigin[-1])
+                    ],
+                    character = c.DOT
+                ).strip()
+    return [tirdLayerColor, f'{parsedOrigin[getParsedOriginStartIndex(parsedOrigin):]:32}', c.COLON_SPACE, resetColor]
+
+def reduceParsedOriginPortion(portion):
+    reducedPortion = StringHelper.join(
+        [
+            f'{word[:3]}{c.BLANK if 3 >= len(word) else word[-1]}' for word in StringHelper.split(
+                StringHelper.toTitle(portion)
+            )
+        ]
+    )
+    return f'{portion[0]}{reducedPortion[1:]}'
+
+def getParsedOriginStartIndex(parsedOrigin):
+    return 0 if len(parsedOrigin)<MAX_ORIGIN_LOG_SIZE else len(parsedOrigin)-MAX_ORIGIN_LOG_SIZE
 
 def getLogThingName(thing) :
     return [] if thing in c.NATIVE_TYPES or (c.OPEN_TUPLE in thing and c.CLOSE_TUPLE in thing) else [thing, c.DOT]

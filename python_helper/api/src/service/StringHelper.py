@@ -30,6 +30,9 @@ def removeCharactere(character,string) :
 def join(stringList, character=c.BLANK):
     return character.join(stringList)
 
+def split(string, character=c.SPACE):
+    return string.split(character)
+
 def prettyPython(
         outterValue,
         quote = c.SINGLE_QUOTE,
