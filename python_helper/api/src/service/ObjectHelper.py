@@ -31,37 +31,50 @@ def equals(
     toAssert,
     ignoreKeyList = None,
     ignoreCharactereList = None,
+    ignoreAttributeList = None,
+    ignoreAttributeValueList = None,
     visitedIdInstances = None,
     muteLogs = True
-) :
-    if isNone(expected) or isNone(toAssert) :
+):
+    if isNone(ignoreKeyList):
+        ignoreKeyList = []
+    if isNone(ignoreCharactereList):
+        ignoreCharactereList = []
+    if isNone(ignoreAttributeValueList):
+        ignoreAttributeValueList = []
+    if isNone(ignoreAttributeList):
+        ignoreAttributeList = []
+    # ignoreAttributeValueList = [*ignoreAttributeValueList, *[c for c in ignoreCharactereList if c not in ignoreAttributeValueList]]
+    if isNone(expected) or isNone(toAssert):
         return expected is None and toAssert is None
-    if isNativeClass(type(expected)) :
+    if isNativeClass(type(expected)):
         return expected == toAssert
-    if isNone(visitedIdInstances) :
+    if isNone(visitedIdInstances):
         visitedIdInstances = []
-    if isDictionary(expected) and isDictionary(toAssert) :
+    if isDictionary(expected) and isDictionary(toAssert):
         innerIgnoreCharactereList = [c.SPACE]
-        if isNotNone(ignoreCharactereList) :
+        if isNotNone(ignoreCharactereList):
             innerIgnoreCharactereList += ignoreCharactereList
         filteredResponse = StringHelper.filterJson(
-            str(sortIt(filterIgnoreKeyList(expected,ignoreKeyList))),
+            str(sortIt(filterIgnoreKeyList(expected, ignoreKeyList))),
             extraCharacterList=innerIgnoreCharactereList
         )
         filteredExpectedResponse = StringHelper.filterJson(
-            str(sortIt(filterIgnoreKeyList(toAssert,ignoreKeyList))),
+            str(sortIt(filterIgnoreKeyList(toAssert, ignoreKeyList))),
             extraCharacterList=innerIgnoreCharactereList
         )
         return filteredResponse == filteredExpectedResponse
-    elif isCollection(expected) and isCollection(toAssert) :
+    elif isCollection(expected) and isCollection(toAssert):
         areEquals = True
         try :
-            for a, b in zip(expected, toAssert) :
+            for a, b in zip(expected, toAssert):
                 areEquals = equals(
                     a,
                     b,
                     ignoreKeyList = ignoreKeyList,
                     ignoreCharactereList = ignoreCharactereList,
+                    ignoreAttributeList = ignoreAttributeList,
+                    ignoreAttributeValueList = ignoreAttributeValueList,
                     visitedIdInstances = visitedIdInstances,
                     muteLogs = muteLogs
                 )
@@ -78,7 +91,25 @@ def equals(
                 if not muteLogs :
                     LogHelper.prettyPython(equals, f'expected', expected, logLevel = LogHelper.DEBUG, condition=not muteLogs)
                     LogHelper.prettyPython(equals, f'toAssert', toAssert, logLevel = LogHelper.DEBUG, condition=not muteLogs)
-                areEquals = True and ObjectHelperHelper.leftEqual(expected, toAssert, visitedIdInstances, muteLogs=muteLogs) and ObjectHelperHelper.leftEqual(toAssert, expected, visitedIdInstances, muteLogs=muteLogs)
+                areEquals = ObjectHelperHelper.leftEqual(
+                    expected,
+                    toAssert,
+                    ignoreKeyList,
+                    ignoreCharactereList,
+                    ignoreAttributeList,
+                    ignoreAttributeValueList,
+                    visitedIdInstances,
+                    muteLogs = muteLogs
+                ) and ObjectHelperHelper.leftEqual(
+                    toAssert,
+                    expected,
+                    ignoreKeyList,
+                    ignoreCharactereList,
+                    ignoreAttributeList,
+                    ignoreAttributeValueList,
+                    visitedIdInstances,
+                    muteLogs = muteLogs
+                )
             except Exception as exception :
                 areEquals = False
                 LogHelper.log(equals, f'Different arguments in {expected} and {toAssert}. Returning "{areEquals}" by default', exception=exception)
@@ -88,13 +119,13 @@ def equals(
              return True
 
 
-def sortIt(thing) :
-    if isDictionary(thing) :
+def sortIt(thing):
+    if isDictionary(thing):
         sortedDictionary = {}
-        for key in getSortedCollection(thing) :
+        for key in getSortedCollection(thing):
             sortedDictionary[key] = sortIt(thing[key])
         return sortedDictionary
-    elif isCollection(thing) :
+    elif isCollection(thing):
         newCollection = []
         for innerValue in thing :
             newCollection.append(sortIt(innerValue))
@@ -103,7 +134,7 @@ def sortIt(thing) :
         return thing
 
 
-def getSortedCollection(thing) :
+def getSortedCollection(thing):
     return thing if (
         isNotCollection(thing) or isEmpty(thing)
     ) or (
@@ -117,11 +148,11 @@ def getSortedCollection(thing) :
 
 
 def filterIgnoreKeyList(objectAsDictionary,ignoreKeyList):
-    if isDictionary(objectAsDictionary) and isNotNone(ignoreKeyList) :
+    if isDictionary(objectAsDictionary) and isNotNone(ignoreKeyList):
         filteredObjectAsDict = {}
-        for key, value in objectAsDictionary.items() :
+        for key, value in objectAsDictionary.items():
             if key not in ignoreKeyList :
-                if isDictionary(value) :
+                if isDictionary(value):
                     filteredObjectAsDict[key] = filterIgnoreKeyList(value,ignoreKeyList)
                 else :
                     filteredObjectAsDict[key] = objectAsDictionary[key]
@@ -129,99 +160,99 @@ def filterIgnoreKeyList(objectAsDictionary,ignoreKeyList):
     return objectAsDictionary
 
 
-def isEmpty(thing) :
+def isEmpty(thing):
     return StringHelper.isBlank(thing) if isinstance(thing, str) else isNone(thing) or isEmptyCollection(thing)
 
 
-def isNotEmpty(thing) :
+def isNotEmpty(thing):
     return not isEmpty(thing)
 
 
-def isEmptyCollection(thing) :
+def isEmptyCollection(thing):
     return isCollection(thing) and 0 == len(thing)
 
 
-def isNotEmptyCollection(thing) :
+def isNotEmptyCollection(thing):
     return isCollection(thing) and 0 < len(thing)
 
 
-def isList(thing) :
+def isList(thing):
     return isinstance(thing, list)
 
 
-def isNotList(thing) :
+def isNotList(thing):
     return not isList(thing)
 
 
-def isSet(thing) :
+def isSet(thing):
     return isinstance(thing, set)
 
 
-def isNotSet(thing) :
+def isNotSet(thing):
     return not isSet(thing)
 
 
-def isTuple(thing) :
+def isTuple(thing):
     return isinstance(thing, tuple)
 
 
-def isNotTuple(thing) :
+def isNotTuple(thing):
     return not isTuple(thing)
 
 
-def isDictionary(thing) :
+def isDictionary(thing):
     return isinstance(thing, dict)
 
 
-def isNotDictionary(thing) :
+def isNotDictionary(thing):
     return not isDictionary(thing)
 
 
-def isDictionaryClass(thingClass) :
+def isDictionaryClass(thingClass):
     return dict == thingClass
 
 
-def isNotDictionaryClass(thingClass) :
+def isNotDictionaryClass(thingClass):
     return not isDictionaryClass(thingClass)
 
 
-def isNone(instance) :
+def isNone(instance):
     return instance is None
 
 
-def isNotNone(instance) :
+def isNotNone(instance):
     return not isNone(instance)
 
 
-def isNativeClass(instanceClass) :
+def isNativeClass(instanceClass):
     return isNotNone(instanceClass) and instanceClass in NATIVE_CLASSES
 
 
-def isNotNativeClass(instanceClass) :
+def isNotNativeClass(instanceClass):
     return not isNativeClass(instanceClass)
 
 
-def isNativeClassInstance(instance) :
+def isNativeClassInstance(instance):
     return isNotNone(instance) and isNativeClass(instance.__class__)
 
 
-def isNotNativeClassIsntance(instance) :
+def isNotNativeClassIsntance(instance):
     return not isNativeClassInstance(instance)
 
 
-def isCollection(instance) :
+def isCollection(instance):
     return isNotNone(instance) and True in {isinstance(instance, c) for c in COLLECTION_CLASSES}
 
 
-def isNotCollection(instance) :
+def isNotCollection(instance):
     return not isCollection(instance)
 
 
-def isNeitherNoneNorBlank(thing) :
-    return isNotNone(thing) and StringHelper.isNotBlank(str(thing))
+def isNeitherNoneNorBlank(thing):
+    return not isNoneOrBlank(thing)
 
 
-def isNoneOrBlank(thing) :
+def isNoneOrBlank(thing):
     return isNone(thing) or StringHelper.isBlank(str(thing))
 
 

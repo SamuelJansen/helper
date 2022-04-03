@@ -10,8 +10,8 @@ from python_helper import ObjectHelper, StringHelper, SettingHelper, Constant, l
 #     log.FAILURE : True,
 #     log.WRAPPER : True,
 #     log.ERROR : True,
-    # log.TEST : False,
-    # log.ENABLE_LOGS_WITH_COLORS : True,
+#     log.TEST : False,
+#     log.ENABLE_LOGS_WITH_COLORS : True,
 #     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
 # }
 
@@ -749,7 +749,10 @@ def equal_whenListOfDictionaries() :
     assert False == ObjectHelper.equals(LIST_OF_DICTIONARIES, [{}, {}, {}])
     assert False == ObjectHelper.equals(LIST_OF_DICTIONARIES, DIFFERENT_LIST_OF_DICTIONARIES)
 
-@Test()
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
 def equal_whenObjects() :
     # arrange
     a = RandomHelper.string()
@@ -781,9 +784,9 @@ def equal_whenObjects() :
     )
 
     # assert
-    assert False == (expected == toAssert), f'False == ({expected} == {toAssert}): {False == (expected == toAssert)}'
-    assert ObjectHelper.equals(expected, toAssert)
-    assert ObjectHelper.equals(toAssert, expected)
+    assert False == (expected == toAssert) and isinstance(expected == toAssert, bool), f'False == ({expected} == {toAssert}): {False == (expected == toAssert)}'
+    assert ObjectHelper.equals(expected, toAssert), f'ObjectHelper.equals({expected}, {toAssert}): {ObjectHelper.equals(expected, toAssert)}'
+    assert ObjectHelper.equals(toAssert, expected), f'ObjectHelper.equals({toAssert}, {expected}): {ObjectHelper.equals(toAssert, expected)}'
     assert ObjectHelper.isNotNone(expected[0].myThirdList[0].my), expected[0].myThirdList[0].my
     assert expected[0].myThirdList[0].my == toAssert[0].myThirdList[0].my
     assert ObjectHelper.equals(expected[0].myThirdList[0].my, toAssert[0].myThirdList[0].my)
@@ -797,6 +800,50 @@ def equal_whenObjects() :
     assert False == ObjectHelper.equals(another, toAssert, muteLogs=not inspectEquals)
     assert False == ObjectHelper.equals(toAssert, another, muteLogs=not inspectEquals)
     assert False == ObjectHelper.equals(expected, [MyDto(None, None, None), MyDto(None, None, None), MyDto(None, None, None)])
+    assert ObjectHelper.equals(
+        [
+            MyDto(a, MyOtherDto(a), MyThirdDto(MyDto(a, MyOtherDto(a), [1, '1', 1.0]), thirdOne)),
+            MyDto(b, MyOtherDto(b), MyThirdDto(MyDto(b, MyOtherDto(b), [2, '2', 2.0]), thirdTwo)),
+            MyDto(c, MyOtherDto(c), MyThirdDto(MyDto(c, MyOtherDto(c), [3, '3', 3.0]), myThirdThree))
+        ],
+        [
+            MyDto(a, MyOtherDto(a), MyThirdDto(MyDto(a, MyOtherDto(a), [1, '1', 1.0]), thirdOne)),
+            MyDto(b, MyOtherDto(b), MyThirdDto(MyDto(b, MyOtherDto(b), [2, '2', 2.0]), thirdTwo)),
+            MyDto(c, MyOtherDto(c), MyThirdDto(MyDto(c, MyOtherDto(c), [3, '3', 3.0]), myThirdThree))
+        ]
+    )
+    assert isinstance(ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b)), bool)
+    assert not ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b))
+    assert isinstance(ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreKeyList=['myAttribute']), bool)
+    assert not ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreKeyList=['myAttribute'])
+
+    assert isinstance(ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreAttributeList=['myAttribute']), bool)
+    assert ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreAttributeList=['myAttribute'])
+
+    assert isinstance(ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreCharactereList=[a, b]), bool)
+    assert not ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreCharactereList=[a, b])
+
+    assert isinstance(ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreCharactereList=[a]), bool)
+    assert not ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreCharactereList=[a])
+
+    assert isinstance(ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreCharactereList=[b]), bool)
+    assert not ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreCharactereList=[b])
+
+    assert isinstance(ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreAttributeValueList=[a, b]), bool)
+    assert ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreAttributeValueList=[a, b])
+
+    assert isinstance(ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreAttributeValueList=[a]), bool)
+    assert not ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreAttributeValueList=[a])
+    
+    assert isinstance(ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreAttributeValueList=[b]), bool)
+    assert not ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreAttributeValueList=[b])
+
+    assert isinstance(ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreCharactereList=[a], ignoreAttributeValueList=[b]), bool)
+    assert not ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreCharactereList=[a], ignoreAttributeValueList=[b])
+
+    assert isinstance(ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreCharactereList=[b], ignoreAttributeValueList=[a]), bool)
+    assert not ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreCharactereList=[b], ignoreAttributeValueList=[a])
+
 
 @Test()
 def equal_whenDictionary() :
@@ -809,30 +856,4 @@ def equal_whenDictionary() :
     secondDictSorted = ObjectHelper.sortIt(secondDict)
 
     #assert
-    assert firstDictSorted == secondDictSorted
-    # print(f'{firstDictSorted} == {secondDictSorted}: {firstDictSorted == secondDictSorted}')
-
-    # a = RandomHelper.string()
-    # b = RandomHelper.string()
-    # c = RandomHelper.string()
-    # otherA = MyOtherDto(RandomHelper.string())
-    # otherB = MyOtherDto(RandomHelper.string())
-    # otherC = MyOtherDto(RandomHelper.string())
-    # myFirst = MyDto(RandomHelper.string(), otherA, None)
-    # mySecond = MyDto(RandomHelper.string(), otherB, None)
-    # myThird = MyDto(RandomHelper.string(), otherC, None)
-    # thirdOne = RandomHelper.integer()
-    # thirdTwo = RandomHelper.integer()
-    # thirdThree = RandomHelper.integer()
-    # myThirdOne = MyThirdDto(myFirst, thirdOne)
-    # myThirdTwo = MyThirdDto(mySecond, thirdTwo)
-    # myThirdThree = MyThirdDto(myThird, thirdThree)
-    # expected = [MyDto(a, otherA, myThirdOne), MyDto(b, otherB, myThirdTwo), MyDto(c, otherC, myThirdThree)]
-    #
-    # # act
-    # toAssert = [MyDto(a, otherA, myThirdOne), MyDto(b, otherB, myThirdTwo), MyDto(c, otherC, myThirdThree)]
-    #
-    # # assert
-    # assert False == (expected == toAssert)
-    # assert ObjectHelper.equals(expected, toAssert)
-    # assert False == ObjectHelper.equals(expected, [MyDto(None, None, None), MyDto(None, None, None), MyDto(None, None, None)])
+    assert firstDictSorted == secondDictSorted, f'{firstDictSorted} == {secondDictSorted}: {firstDictSorted == secondDictSorted}'
