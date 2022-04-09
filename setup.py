@@ -3,10 +3,11 @@ import os
 
 OS_SEPARATOR = os.path.sep
 
-version = '0.3.48'
+version = '0.3.49'
 name = 'python_helper'
-packageName = name.replace("_", "-")
-url = f'https://github.com/SamuelJansen/{packageName}/'
+packageName = name
+repositoryName = name.replace("_", "-")
+url = f'https://github.com/SamuelJansen/{repositoryName}/'
 
 
 setup(
