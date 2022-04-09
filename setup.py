@@ -3,9 +3,9 @@ import os
 
 OS_SEPARATOR = os.path.sep
 
-version = '0.3.47'
+version = '0.3.48'
 name = 'python_helper'
-packageName = name..replace("_", "-")
+packageName = name.replace("_", "-")
 url = f'https://github.com/SamuelJansen/{packageName}/'
 
 
