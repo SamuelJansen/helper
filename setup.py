@@ -5,19 +5,20 @@ OS_SEPARATOR = os.path.sep
 
 version = '0.3.47'
 name = 'python_helper'
-url = f'https://github.com/SamuelJansen/{name.replace("_", "-")}/'
+packageName = name..replace("_", "-")
+url = f'https://github.com/SamuelJansen/{packageName}/'
 
 
 setup(
     name = name,
     packages = [
-        name,
-        f'{name}{OS_SEPARATOR}api',
-        f'{name}{OS_SEPARATOR}api{OS_SEPARATOR}src',
-        f'{name}{OS_SEPARATOR}api{OS_SEPARATOR}src{OS_SEPARATOR}service',
-        f'{name}{OS_SEPARATOR}api{OS_SEPARATOR}src{OS_SEPARATOR}domain',
-        f'{name}{OS_SEPARATOR}api{OS_SEPARATOR}src{OS_SEPARATOR}helper',
-        f'{name}{OS_SEPARATOR}api{OS_SEPARATOR}src{OS_SEPARATOR}annotation'
+        packageName,
+        f'{packageName}{OS_SEPARATOR}api',
+        f'{packageName}{OS_SEPARATOR}api{OS_SEPARATOR}src',
+        f'{packageName}{OS_SEPARATOR}api{OS_SEPARATOR}src{OS_SEPARATOR}service',
+        f'{packageName}{OS_SEPARATOR}api{OS_SEPARATOR}src{OS_SEPARATOR}domain',
+        f'{packageName}{OS_SEPARATOR}api{OS_SEPARATOR}src{OS_SEPARATOR}helper',
+        f'{packageName}{OS_SEPARATOR}api{OS_SEPARATOR}src{OS_SEPARATOR}annotation'
     ],
     version = version,
     license = 'MIT',
