@@ -128,6 +128,7 @@ ENCODING = 'utf-8'
 UTF_8 = 'utf-8'
 OVERRIDE = 'w+'
 READ = 'r'
+WRITE = 'w'
 
 CSI = '\x1B['
 BRIGHT_DIGIT = 1
