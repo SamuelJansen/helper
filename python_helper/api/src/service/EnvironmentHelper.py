@@ -124,6 +124,17 @@ def overrideSoutStatus(stdout, stderr) :
     SYS.stdout = stdout
     SYS.stderr = stderr
 
+def printAndFlush(text, **kwargs):
+    print(text, **kwargs)
+    flushIO()
+
+def flushIO():
+    for io in getCurrentSoutStatus():
+        try:
+            io.flush()
+        except Exception as e:
+            print(f'------------- EnvironmentHelper.flushIO exception: {e} -------------')
+
 def isLinux() :
     return SYS.platform == LINUX_OS_NAME
 

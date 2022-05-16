@@ -1,4 +1,4 @@
-from python_helper.api.src.service import LogHelper
+from python_helper.api.src.domain import FileOperation
 
 LOG =       '[LOG    ] '
 INFO =      '[INFO   ] '
@@ -24,7 +24,7 @@ TRIPLE_SINGLE_QUOTE = f"{3*SINGLE_QUOTE}"
 TRIPLE_DOUBLE_QUOTE = f'{3*DOUBLE_QUOTE}'
 
 PIPE = '|'
-BACK_SLASH_SINGLE_QUOTE = "'\'"
+BACK_SLASH_SINGLE_QUOTE = "\'"
 BACK_SLASH_DOUBLE_QUOTE = '\"'
 SLASH = '/'
 FOWARD_SLASH = '/'
@@ -124,11 +124,11 @@ NULL_VALUE = 'null'
 TRUE_VALUE = 'true'
 FALSE_VALUE = 'false'
 
-ENCODING = 'utf-8'
-UTF_8 = 'utf-8'
-OVERRIDE = 'w+'
-READ = 'r'
-WRITE = 'w'
+ENCODING = FileOperation.UTF_8             ###- deprecated
+UTF_8 = FileOperation.UTF_8                ###- deprecated
+OVERRIDE = FileOperation.OVERRIDE_TEXT     ###- deprecated
+READ = FileOperation.READ_TEXT             ###- deprecated
+WRITE = FileOperation.WRITE_TEXT           ###- deprecated
 
 CSI = '\x1B['
 BRIGHT_DIGIT = 1
@@ -406,3 +406,4 @@ UPPER_CASE = {
 }
 CHARACTERES = tuple(set([*A,*E,*I,*O,*U,*C,*LOWER_CASE,*UPPER_CASE,SPACE]))
 UPPER_CASE_CHARACTERES = tuple(set([char for char in CHARACTERES if char == char.upper()]))
+ALL_SYMBOLS = tuple(set([*CHARACTERES, *SYMBOLS, *PUNCTUATION]))

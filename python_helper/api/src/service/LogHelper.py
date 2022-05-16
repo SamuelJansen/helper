@@ -45,11 +45,11 @@ global LOG_HELPER_SETTINGS
 def colorsEnabled(enable=False):
     return enable or EnvironmentHelper.isTrue(ENABLE_LOGS_WITH_COLORS, default=False) or SettingHelper.activeEnvironmentIsLocal()
 
-def logIt(it, **kwargs):
-    # if not (it in LogHelperHelper.COLOR_SET):
-    #     print(it, **kwargs)
-    # print(f'{DateTimeHelper.now()} - {it}', **kwargs)
-    print(it, **kwargs)
+def logIt(text, **kwargs):
+    # if not (text in LogHelperHelper.COLOR_SET):
+    #     print(text, **kwargs)
+    # print(f'{DateTimeHelper.now()} - {text}', **kwargs)
+    EnvironmentHelper.printAndFlush(text, **kwargs)
 
 def loadSettings(logsFileName=None, withColors=False, enabledByDefault=LOG_LEVEL_ENABLED_BY_DEFAULT_LIST) :
     global LOG_HELPER_SETTINGS

@@ -1,4 +1,5 @@
 from numbers import Number
+
 from python_helper.api.src.domain import Constant as c
 from python_helper.api.src.service import StringHelper, LogHelper
 from python_helper.api.src.helper import ObjectHelperHelper
@@ -233,7 +234,10 @@ def isNotNativeClass(instanceClass):
 
 
 def isNativeClassInstance(instance):
-    return isNotNone(instance) and isNativeClass(instance.__class__)
+    return isNotNone(instance) and (
+        isNativeClass(instance.__class__) or
+        True in {isinstance(instance, c) for c in NATIVE_CLASSES}
+    )
 
 
 def isNotNativeClassIsntance(instance):
