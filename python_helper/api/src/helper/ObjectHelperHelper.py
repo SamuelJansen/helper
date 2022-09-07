@@ -5,7 +5,7 @@ def generatorInstance():
         yield False
         break
 
-def leftEqual(left, right, ignoreKeyList, ignoreCharactereList, ignoreAttributeList, ignoreAttributeValueList, visitedIdInstances, muteLogs=True):
+def leftEqual(left, right, ignoreCollectionOrder, ignoreKeyList, ignoreCharactereList, ignoreAttributeList, ignoreAttributeValueList, visitedIdInstances, muteLogs=True):
     if ObjectHelper.isNone(left) or ObjectHelper.isNone(right):
         return left is None and right is None
     isEqual = True
@@ -13,10 +13,14 @@ def leftEqual(left, right, ignoreKeyList, ignoreCharactereList, ignoreAttributeL
     rightIsCollection = ObjectHelper.isCollection(right)
     if leftIsCollection and rightIsCollection:
         if len(left) == len(right):
-            for itemLeft, itemRight in zip(left, right):
+            for itemLeft, itemRight in zip(
+                left if not ignoreCollectionOrder else ObjectHelper.sortIt(left, deepMode=True),
+                right if not ignoreCollectionOrder else ObjectHelper.sortIt(right, deepMode=True)
+            ):
                 if itemRight not in ignoreAttributeValueList and not ObjectHelper.equals(
                     itemLeft,
                     itemRight,
+                    ignoreCollectionOrder = ignoreCollectionOrder,
                     ignoreKeyList = ignoreKeyList,
                     ignoreCharactereList = ignoreCharactereList,
                     ignoreAttributeList = ignoreAttributeList,
@@ -43,6 +47,7 @@ def leftEqual(left, right, ignoreKeyList, ignoreCharactereList, ignoreAttributeL
             if name not in ignoreAttributeList and value not in ignoreAttributeValueList and not ObjectHelper.equals(
                 value,
                 ReflectionHelper.getAttributeOrMethod(right, name),
+                ignoreCollectionOrder = ignoreCollectionOrder,
                 ignoreKeyList = ignoreKeyList,
                 ignoreCharactereList = ignoreCharactereList,
                 ignoreAttributeList = ignoreAttributeList,

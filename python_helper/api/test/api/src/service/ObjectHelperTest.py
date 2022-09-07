@@ -1,31 +1,32 @@
 import json
-from python_helper import ObjectHelper, StringHelper, SettingHelper, Constant, log, Test, ReflectionHelper, RandomHelper
-
-# LOG_HELPER_SETTINGS = {
-#     log.LOG : True,
-#     log.SUCCESS : True,
-#     log.SETTING : True,
-#     log.DEBUG : True,
-#     log.WARNING : True,
-#     log.FAILURE : True,
-#     log.WRAPPER : True,
-#     log.ERROR : True,
-#     log.TEST : False,
-#     log.ENABLE_LOGS_WITH_COLORS : True,
-#     SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
-# }
+from python_helper.api.src.service import ObjectHelper
+from python_helper import StringHelper, SettingHelper, Constant, log, Test, ReflectionHelper, RandomHelper
 
 LOG_HELPER_SETTINGS = {
-    log.LOG : False,
-    log.SUCCESS : False,
-    log.SETTING : False,
-    log.DEBUG : False,
-    log.WARNING : False,
-    log.FAILURE : False,
-    log.WRAPPER : False,
-    log.ERROR : False,
-    log.TEST : False
+    log.LOG : True,
+    log.SUCCESS : True,
+    log.SETTING : True,
+    log.DEBUG : True,
+    log.WARNING : True,
+    log.FAILURE : True,
+    log.WRAPPER : True,
+    log.ERROR : True,
+    log.TEST : False,
+    log.ENABLE_LOGS_WITH_COLORS : True,
+    SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT
 }
+
+# LOG_HELPER_SETTINGS = {
+#     log.LOG : False,
+#     log.SUCCESS : False,
+#     log.SETTING : False,
+#     log.DEBUG : False,
+#     log.WARNING : False,
+#     log.FAILURE : False,
+#     log.WRAPPER : False,
+#     log.ERROR : False,
+#     log.TEST : False
+# }
 
 class MyDto:
     def __init__(self, myAttribute, myOther, myThirdList) :
@@ -583,61 +584,67 @@ def mustIgnoreKeyCorrectly() :
     # assert
     assert ObjectHelper.equals(expected, toAssert)
 
-@Test()
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
 def equal_whenListOfDictionaries() :
     # arrange
     null = 'null'
+    FIRST_DICT = {
+        "myAttribute": "NW2",
+        "myOther": {
+            "myAttribute": "34PDZB"
+        },
+        "myThirdList": [
+            {
+                "my": {
+                    "myAttribute": "X1HC",
+                    "myOther": {
+                        "myAttribute": "34PDZB"
+                    },
+                    "myThirdList": null
+                },
+                "myAttribute": 9
+            }
+        ]
+    }
+    SECOND_DICT = {
+        "myAttribute": "",
+        "myOther": null,
+        "myThirdList": [
+            {
+                "my": {
+                    "myAttribute": "U",
+                    "myOther": null,
+                    "myThirdList": null
+                },
+                "myAttribute": 3
+            }
+        ]
+    }
+    THIRD_DICT = {
+        "myAttribute": "HNQ7QKW2",
+        "myOther": {
+            "myAttribute": "V9OXKD8"
+        },
+        "myThirdList": [
+            {
+                "my": {
+                    "myAttribute": "PVYA",
+                    "myOther": {
+                        "myAttribute": "V9OXKD8"
+                    },
+                    "myThirdList": null
+                },
+                "myAttribute": 10
+            }
+        ]
+    }
     LIST_OF_DICTIONARIES = [
-        {
-            "myAttribute": "NW2",
-            "myOther": {
-                "myAttribute": "34PDZB"
-            },
-            "myThirdList": [
-                {
-                    "my": {
-                        "myAttribute": "X1HC",
-                        "myOther": {
-                            "myAttribute": "34PDZB"
-                        },
-                        "myThirdList": null
-                    },
-                    "myAttribute": 9
-                }
-            ]
-        },
-        {
-            "myAttribute": "",
-            "myOther": null,
-            "myThirdList": [
-                {
-                    "my": {
-                        "myAttribute": "U",
-                        "myOther": null,
-                        "myThirdList": null
-                    },
-                    "myAttribute": 3
-                }
-            ]
-        },
-        {
-            "myAttribute": "HNQ7QKW2",
-            "myOther": {
-                "myAttribute": "V9OXKD8"
-            },
-            "myThirdList": [
-                {
-                    "my": {
-                        "myAttribute": "PVYA",
-                        "myOther": {
-                            "myAttribute": "V9OXKD8"
-                        },
-                        "myThirdList": null
-                    },
-                    "myAttribute": 10
-                }
-            ]
-        }
+        {**FIRST_DICT},
+        {**SECOND_DICT},
+        {**THIRD_DICT}
     ]
     DIFFERENT_LIST_OF_DICTIONARIES = [
         {
@@ -658,96 +665,22 @@ def equal_whenListOfDictionaries() :
                 }
             ]
         },
-        {
-            "myAttribute": "",
-            "myOther": null,
-            "myThirdList": [
-                {
-                    "my": {
-                        "myAttribute": "U",
-                        "myOther": null,
-                        "myThirdList": null
-                    },
-                    "myAttribute": 3
-                }
-            ]
-        },
-        {
-            "myAttribute": "HNQ7QKW2",
-            "myOther": {
-                "myAttribute": "V9OXKD8"
-            },
-            "myThirdList": [
-                {
-                    "my": {
-                        "myAttribute": "PVYA",
-                        "myOther": {
-                            "myAttribute": "V9OXKD8"
-                        },
-                        "myThirdList": null
-                    },
-                    "myAttribute": 10
-                }
-            ]
-        }
+        {**SECOND_DICT},
+        {**THIRD_DICT}
     ]
 
     # act
     # assert
     assert ObjectHelper.equals(LIST_OF_DICTIONARIES, [
-        {
-            "myAttribute": "NW2",
-            "myOther": {
-                "myAttribute": "34PDZB"
-            },
-            "myThirdList": [
-                {
-                    "my": {
-                        "myAttribute": "X1HC",
-                        "myOther": {
-                            "myAttribute": "34PDZB"
-                        },
-                        "myThirdList": null
-                    },
-                    "myAttribute": 9
-                }
-            ]
-        },
-        {
-            "myAttribute": "",
-            "myOther": null,
-            "myThirdList": [
-                {
-                    "my": {
-                        "myAttribute": "U",
-                        "myOther": null,
-                        "myThirdList": null
-                    },
-                    "myAttribute": 3
-                }
-            ]
-        },
-        {
-            "myAttribute": "HNQ7QKW2",
-            "myOther": {
-                "myAttribute": "V9OXKD8"
-            },
-            "myThirdList": [
-                {
-                    "my": {
-                        "myAttribute": "PVYA",
-                        "myOther": {
-                            "myAttribute": "V9OXKD8"
-                        },
-                        "myThirdList": null
-                    },
-                    "myAttribute": 10
-                }
-            ]
-        }
+        {**FIRST_DICT},
+        {**SECOND_DICT},
+        {**THIRD_DICT}
     ])
     assert False == ObjectHelper.equals(LIST_OF_DICTIONARIES, [{}, {}, {}])
+    assert False == ObjectHelper.equals(LIST_OF_DICTIONARIES, [SECOND_DICT, THIRD_DICT, FIRST_DICT])
+    assert True == ObjectHelper.equals(LIST_OF_DICTIONARIES, [SECOND_DICT, THIRD_DICT, FIRST_DICT], ignoreCollectionOrder=True)
     assert False == ObjectHelper.equals(LIST_OF_DICTIONARIES, DIFFERENT_LIST_OF_DICTIONARIES)
+
 
 @Test(
     environmentVariables={**{}, **LOG_HELPER_SETTINGS},
@@ -756,7 +689,7 @@ def equal_whenListOfDictionaries() :
 def equal_whenObjects() :
     # arrange
     a = RandomHelper.string()
-    b = RandomHelper.string()
+    b = RandomHelper.integer()
     c = RandomHelper.string()
     otherA = MyOtherDto(RandomHelper.string())
     otherB = MyOtherDto(RandomHelper.string())
@@ -834,7 +767,7 @@ def equal_whenObjects() :
 
     assert isinstance(ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreAttributeValueList=[a]), bool)
     assert not ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreAttributeValueList=[a])
-    
+
     assert isinstance(ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreAttributeValueList=[b]), bool)
     assert not ObjectHelper.equals(MyOtherDto(a), MyOtherDto(b), ignoreAttributeValueList=[b])
 
@@ -857,3 +790,83 @@ def equal_whenDictionary() :
 
     #assert
     assert firstDictSorted == secondDictSorted, f'{firstDictSorted} == {secondDictSorted}: {firstDictSorted == secondDictSorted}'
+    assert ObjectHelper.equals(firstDictSorted, secondDictSorted), f'{firstDictSorted} == {secondDictSorted}: {firstDictSorted == secondDictSorted}'
+
+
+@Test()
+def equal_whenSets() :
+    #arrange
+    firstSet = {'b', 'c', 'a', 'd'}
+    secondSet = {'a', 'd', 'b', 'c'}
+    thirdSet = {'1', '2', '3', '4'}
+    myFirstList = [
+        firstSet,
+        secondSet,
+        thirdSet
+    ]
+    mySecondList = [
+        thirdSet,
+        firstSet,
+        secondSet
+    ]
+
+
+    #act
+    firstSetSorted = ObjectHelper.sortIt(firstSet)
+    secondSetSorted = ObjectHelper.sortIt(secondSet)
+
+    #assert
+    assert ObjectHelper.equals(firstSetSorted, secondSetSorted), f'{firstSetSorted} == {secondSetSorted}: {firstSetSorted == secondSetSorted}'
+    assert ObjectHelper.equals(firstSet, secondSet), f'{firstSetSorted} == {secondSetSorted}'
+    assert not ObjectHelper.equals(myFirstList, mySecondList), f'{myFirstList} == {mySecondList}'
+    assert ObjectHelper.equals(myFirstList, mySecondList, ignoreCollectionOrder=True), f'{myFirstList} == {mySecondList}'
+
+
+# @Test()
+# def equal_whenRecursive() :
+#     #arrange
+#     firstSet = {'b', 'c', 'a', 'd'}
+#     secondSet = {'a', 'd', 'b', 'c'}
+#     thirdSet = {'1', '2', '3', '4'}
+#     myFirstList = [
+#         firstSet,
+#         secondSet,
+#         thirdSet
+#     ]
+#     mySecondList = [
+#         thirdSet,
+#         firstSet,
+#         secondSet
+#     ]
+#     firstInstance = {
+#         1 : {str(mySecondList), str(myFirstList), str(myFirstList)},
+#         2 : [myFirstList, mySecondList, myFirstList],
+#         3 : {str(myFirstList), str(myFirstList), str(mySecondList)},
+#         4 : [myFirstList, mySecondList, myFirstList]
+#     }
+#     secondInstance = {
+#         1 : {str(myFirstList), str(mySecondList), str(myFirstList)},
+#         2 : [myFirstList, mySecondList, myFirstList],
+#         3 : {str(myFirstList), str(mySecondList), str(myFirstList)},
+#         4 : [myFirstList, mySecondList, myFirstList]
+#     }
+#     firstInstance['a'] = firstInstance
+#     firstInstance['b'] = {
+#         'f': [
+#             [secondInstance, secondInstance, secondInstance],
+#             [secondInstance, secondInstance, secondInstance],
+#             [secondInstance, secondInstance, secondInstance]
+#         ]
+#     }
+#     secondInstance['a'] = secondInstance
+#     secondInstance['b'] = {
+#         'f': [
+#             [firstInstance, firstInstance, firstInstance],
+#             [firstInstance, firstInstance, firstInstance],
+#             [firstInstance, firstInstance, firstInstance]
+#         ]
+#     }
+#
+#     #act
+#     #assert
+#     assert ObjectHelper.equals(firstInstance, secondInstance)

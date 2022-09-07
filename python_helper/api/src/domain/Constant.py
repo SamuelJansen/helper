@@ -254,6 +254,10 @@ COLLECTION_TYPE = {
 
 SYMBOLS = {
     "@",
+    '©',
+    '®',
+    '™',
+    '℠',
     "#",
     "$",
     "%",
@@ -404,6 +408,6 @@ UPPER_CASE = {
     "Y",
     "Z"
 }
-CHARACTERES = tuple(set([*A,*E,*I,*O,*U,*C,*LOWER_CASE,*UPPER_CASE,SPACE]))
+CHARACTERES = tuple(set([*A, *E, *I, *O, *U, *C, *LOWER_CASE, *UPPER_CASE, SPACE]))
 UPPER_CASE_CHARACTERES = tuple(set([char for char in CHARACTERES if char == char.upper()]))
-ALL_SYMBOLS = tuple(set([*CHARACTERES, *SYMBOLS, *PUNCTUATION]))
+ALL_SYMBOLS = tuple(set([*CHARACTERES, *SYMBOLS, *PUNCTUATION, *NUMBERS]))

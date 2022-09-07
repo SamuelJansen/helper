@@ -125,8 +125,8 @@ def overrideSoutStatus(stdout, stderr) :
     SYS.stderr = stderr
 
 def printAndFlush(text, **kwargs):
+    kwargs['flush'] = True
     print(text, **kwargs)
-    flushIO()
 
 def flushIO():
     for io in getCurrentSoutStatus():

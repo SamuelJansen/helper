@@ -1501,7 +1501,7 @@ def getSettingTree_otherApplication() :
     assert expected['deepest']['long']['string']['ever']['long']['string'] == toAssert['deepest']['long']['string']['ever']['long']['string']
     assert expected['not']['idented']['long']['string'] == toAssert['not']['idented']['long']['string']
     assert ObjectHelper.equals(expected['some']['dictionary'], toAssert['some']['dictionary'])
-    assert ObjectHelper.equals(expected, toAssert)
+    assert ObjectHelper.equals(expected, toAssert), f'{expected} --x-- {toAssert}'
 
 @Test(
     environmentVariables={

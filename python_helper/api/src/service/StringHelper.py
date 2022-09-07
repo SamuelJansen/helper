@@ -12,16 +12,16 @@ def isBlank(thing) :
 def isNotBlank(thing) :
     return isinstance(thing, str) and not c.BLANK == thing
 
-def filterJson(json, extraCharacterList=None) :
+def filterJson(jsonAsString, extraCharacterList=None) :
     characterList = [c.NEW_LINE,c.BAR_N]
     if isinstance(extraCharacterList, list) :
         characterList += extraCharacterList
-    filteredJson = json
+    filteredJson = jsonAsString
     for character in characterList :
-        filteredJson = removeCharactere(character,filteredJson)
+        filteredJson = removeCharactere(character, filteredJson)
     return filteredJson.replace(c.SYSTEM_TAB,c.TAB)
 
-def removeCharactere(character,string) :
+def removeCharactere(character, string) :
     if isNotBlank(character) and isNotBlank(string) :
         filteredString = c.BLANK.join(string.strip().split(character))
         return filteredString.replace(character,c.BLANK)
@@ -210,7 +210,7 @@ def fromPascalToTitle(value):
     return join([f'{c.SPACE}{char}' if isUp(char) else char for char in str(value)], character=c.BLANK)
 
 def toTitle(value):
-    return join(fromPascalToTitle(getOnlyLetters(value)).title().split(), character=c.SPACE)
+    return join(fromPascalToTitle(getOnlyLetters(value)).title().strip().split(), character=c.SPACE)
 
 def toPascalCase(value):
     return join(toTitle(value).split())
@@ -224,3 +224,7 @@ def toSnakeCase(value):
 
 def toKebabCase(value):
     return join(toTitle(value).lower().split(), character=c.DASH)
+
+def toParagraphCase(value):
+    newValueAsString = join(join(join(str(value).split(c.DASH), character=c.SPACE).split(c.UNDERSCORE), character=c.SPACE).split(), character=c.SPACE)
+    return c.BLANK if not 0 < len(newValueAsString) else f'{newValueAsString[0].upper()}{newValueAsString[1:]}'

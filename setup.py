@@ -3,7 +3,7 @@ import os
 
 OS_SEPARATOR = os.path.sep
 
-version = '0.3.51'
+version = '0.3.52'
 name = 'python_helper'
 packageName = name
 repositoryName = name.replace("_", "-")

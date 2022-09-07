@@ -8,6 +8,10 @@ MAXIMUN_ARGUMENTS = 20
 UNKNOWN_TYPE_NAME = f'{c.UNKNOWN.lower()} type'
 UNDEFINED = 'undefined'
 
+class ThisIsAClass:
+    def thisIsAMethod():
+        ...
+
 def thisIsAFunction():
     ...
 
@@ -123,7 +127,7 @@ def isNotMethod(objectInstance, name, muteLogs=False):
 
 
 def isNotFunction(methodInstance):
-    return not isinstance(methodInstance, isinstance(type(thisIsAFunction)))
+    return not isinstance(methodInstance, type(thisIsAFunction))
 
 
 def instanciateItWithNoArgsConstructor(targetClass, amountOfNoneArgs=0, args=None, muteLogs=False):

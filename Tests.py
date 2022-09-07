@@ -17,7 +17,7 @@ TestHelper.run(__file__, inspectGlobals=False)
 #     __file__,
 #     runOnly = [
 #         # 'ObjectHelperTest.equal_whenListOfDictionaries',
-#         'ObjectHelperTest.equal_whenDictionary'
+#         'ObjectHelperTest.equal_whenSets'
 #     ]
 # )
 # TestHelper.run(

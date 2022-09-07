@@ -30,6 +30,7 @@ COLLECTION_CLASSES = (
 def equals(
     expected,
     toAssert,
+    ignoreCollectionOrder = False,
     ignoreKeyList = None,
     ignoreCharactereList = None,
     ignoreAttributeList = None,
@@ -53,25 +54,36 @@ def equals(
     if isNone(visitedIdInstances):
         visitedIdInstances = []
     if isDictionary(expected) and isDictionary(toAssert):
-        innerIgnoreCharactereList = [c.SPACE]
-        if isNotNone(ignoreCharactereList):
-            innerIgnoreCharactereList += ignoreCharactereList
-        filteredResponse = StringHelper.filterJson(
-            str(sortIt(filterIgnoreKeyList(expected, ignoreKeyList))),
+        innerIgnoreCharactereList = [c.SPACE, *ignoreCharactereList]
+        filteredSortedExpectedResponseAsString = StringHelper.filterJson(
+            str(sortIt(
+                filterIgnoreKeyList(expected, ignoreKeyList),
+                deepMode=True
+            )),
             extraCharacterList=innerIgnoreCharactereList
         )
-        filteredExpectedResponse = StringHelper.filterJson(
-            str(sortIt(filterIgnoreKeyList(toAssert, ignoreKeyList))),
+        filteredSortedToAssertResponseAsString = StringHelper.filterJson(
+            str(sortIt(
+                filterIgnoreKeyList(toAssert, ignoreKeyList),
+                deepMode=True
+            )),
             extraCharacterList=innerIgnoreCharactereList
         )
-        return filteredResponse == filteredExpectedResponse
+        return filteredSortedExpectedResponseAsString == filteredSortedToAssertResponseAsString
     elif isCollection(expected) and isCollection(toAssert):
         areEquals = True
-        try :
-            for a, b in zip(expected, toAssert):
+        try:
+            if not len(expected) == len(toAssert):
+                first, second = (1, 2) if len(expected)>len(toAssert) else (2, 1)
+                raise Exception(f'Argument {first} is longer than argument {second}')
+            for a, b in zip(
+                list(expected if not ignoreCollectionOrder else sortIt(expected, deepMode=ignoreCollectionOrder)),
+                list(toAssert if not ignoreCollectionOrder else sortIt(toAssert, deepMode=ignoreCollectionOrder))
+            ):
                 areEquals = equals(
                     a,
                     b,
+                    ignoreCollectionOrder = ignoreCollectionOrder,
                     ignoreKeyList = ignoreKeyList,
                     ignoreCharactereList = ignoreCharactereList,
                     ignoreAttributeList = ignoreAttributeList,
@@ -85,16 +97,17 @@ def equals(
         except Exception as exception :
             areEquals = False
             LogHelper.log(equals, f'Different arguments in {expected} and {toAssert}. Returning "{areEquals}" by default', exception=exception)
-    else :
+    else:
         if isNotNone(toAssert) and id(toAssert) not in visitedIdInstances :
             areEquals = True
-            try :
+            try:
                 if not muteLogs :
                     LogHelper.prettyPython(equals, f'expected', expected, logLevel = LogHelper.DEBUG, condition=not muteLogs)
                     LogHelper.prettyPython(equals, f'toAssert', toAssert, logLevel = LogHelper.DEBUG, condition=not muteLogs)
                 areEquals = ObjectHelperHelper.leftEqual(
                     expected,
                     toAssert,
+                    ignoreCollectionOrder,
                     ignoreKeyList,
                     ignoreCharactereList,
                     ignoreAttributeList,
@@ -104,6 +117,7 @@ def equals(
                 ) and ObjectHelperHelper.leftEqual(
                     toAssert,
                     expected,
+                    ignoreCollectionOrder,
                     ignoreKeyList,
                     ignoreCharactereList,
                     ignoreAttributeList,
@@ -116,46 +130,93 @@ def equals(
                 LogHelper.log(equals, f'Different arguments in {expected} and {toAssert}. Returning "{areEquals}" by default', exception=exception)
             visitedIdInstances.append(id(toAssert))
             return areEquals
-        else :
-             return True
+        else:
+            return True
 
 
-def sortIt(thing):
+def sortIt(thing, deepMode=False):
     if isDictionary(thing):
-        sortedDictionary = {}
-        for key in getSortedCollection(thing):
-            sortedDictionary[key] = sortIt(thing[key])
-        return sortedDictionary
+        return {
+            key: sortIt(thing[key], deepMode=deepMode)
+            for key in sortIt([*thing.keys()])
+        }
     elif isCollection(thing):
-        newCollection = []
-        for innerValue in thing :
-            newCollection.append(sortIt(innerValue))
-        return getSortedCollection(newCollection)
-    else :
+        return getSortedCollection(
+            [
+                sortIt(innerThing, deepMode=deepMode)
+                for innerThing in thing
+            ],
+            deepMode=deepMode
+        )
+    else:
         return thing
 
 
-def getSortedCollection(thing):
-    return thing if (
+def getSortedCollection(thing, deepMode=True):
+    if (
         isNotCollection(thing) or isEmpty(thing)
-    ) or (
-        isNotDictionary(thing) and isNotSet(thing) and isDictionary(thing[0])
-    ) else sorted(
-        thing,
-        key=lambda x: (
-            x is not None, c.NOTHING if isinstance(x, Number) else type(x).__name__, x
+    ):
+        return thing
+    return handleComparisson(thing, deepMode=deepMode)
+
+
+def handleComparisson(thing, deepMode=False):
+    try:
+        return sorted(
+            thing,
+            key=defaultComparissonHandler(deepMode)
         )
+    except:
+        return sorted(
+            thing,
+            key=defaultComparissonHandler(deepMode, deepModeProcessor=str)
+        )
+
+
+def defaultComparissonHandler(deepMode, deepModeProcessor=None):
+    return lambda x: (
+        x is not None, c.NOTHING if isinstance(x, Number) else type(x).__name__, x if not deepMode else deepSort(x) if isNone(deepModeProcessor) else deepModeProcessor(deepSort(x))
     )
 
 
-def filterIgnoreKeyList(objectAsDictionary,ignoreKeyList):
-    if isDictionary(objectAsDictionary) and isNotNone(ignoreKeyList):
+def deepSort(x, deepMode=True):
+    if isNotSet(x):
+        return (
+            sortIt(x, deepMode=deepMode)
+            if isNotDictionary(x) else getSortedDictionary(x, deepMode=deepMode)
+        )
+    else:
+        for i in x:
+            sortIt(i, deepMode=deepMode)
+        return x
+
+
+def getSortedDictionary(dictionary, deepMode=False):
+    for k, v in [
+        (
+            key,
+            sortIt(dictionary.pop(key), deepMode=deepMode)
+        )
+        for key in sortIt([*dictionary.keys()], deepMode=deepMode)
+    ]:
+        dictionary[k] = v
+    return dictionary
+
+
+def filterIgnoreKeyList(objectAsDictionary, ignoreKeyList):
+    return filterIgnoreKeyListAvoidingRecursion(objectAsDictionary, ignoreKeyList, [])
+
+
+def filterIgnoreKeyListAvoidingRecursion(objectAsDictionary, ignoreKeyList, visitedInstances):
+    dictionaryId = id(objectAsDictionary)
+    if isDictionary(objectAsDictionary) and isNotNone(ignoreKeyList) and dictionaryId not in visitedInstances:
+        visitedInstances.append(dictionaryId)
         filteredObjectAsDict = {}
         for key, value in objectAsDictionary.items():
             if key not in ignoreKeyList :
                 if isDictionary(value):
-                    filteredObjectAsDict[key] = filterIgnoreKeyList(value,ignoreKeyList)
-                else :
+                    filteredObjectAsDict[key] = filterIgnoreKeyListAvoidingRecursion(value, ignoreKeyList, visitedInstances)
+                else:
                     filteredObjectAsDict[key] = objectAsDictionary[key]
         return filteredObjectAsDict
     return objectAsDictionary
