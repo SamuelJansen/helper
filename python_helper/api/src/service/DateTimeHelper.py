@@ -92,9 +92,13 @@ def now():
     return dateTimeNow()
 
 def dateOf(dateTime=None, pattern=DEFAULT_DATE_PATTERN):
+    if isinstance(dateTime, str):
+        dateTime = forcedlyGetDateTime(dateTime)
     return dateTime.date()
 
 def timeOf(dateTime=None, pattern=DEFAULT_TIME_PATTERN):
+    if isinstance(dateTime, str):
+        dateTime = forcedlyGetDateTime(dateTime)
     return dateTime.time()
 
 def dateNow():
@@ -114,6 +118,8 @@ def ofTimestamp(timestamp):
 def of(dateTime=None, date=None, time=None, pattern=DEFAULT_DATETIME_PATTERN):
     if isinstance(dateTime, datetime.datetime):
         return forcedlyParse(str(dateTime), pattern=pattern)
+    elif isinstance(dateTime, str):
+        return forcedlyParse(dateTime, pattern=pattern)
     datePattern = None
     timePattern = None
     if ObjectHelper.isNotNone(pattern):
@@ -125,12 +131,8 @@ def of(dateTime=None, date=None, time=None, pattern=DEFAULT_DATETIME_PATTERN):
         datePattern = DEFAULT_DATE_PATTERN
         timePattern = DEFAULT_TIME_PATTERN
     if ObjectHelper.isNotNone(dateTime):
-        if isinstance(dateTime, str):
-            date = dateOf(dateTime, pattern=datePattern).split()[0]
-            time = timeOf(dateTime, pattern=timePattern).split()[1]
-        else:
-            date = dateOf(dateTime, pattern=datePattern)
-            time = timeOf(dateTime, pattern=timePattern)
+        date = dateOf(dateTime, pattern=datePattern)
+        time = timeOf(dateTime, pattern=timePattern)
     return datetime.datetime.combine(
         forcedlyGetDate(date if ObjectHelper.isNotNone(date) else dateNow(), pattern=datePattern),
         forcedlyGetTime(time if ObjectHelper.isNotNone(time) else DEFAULT_TIME_BEGIN, pattern=timePattern)
@@ -167,15 +169,53 @@ def minusMinutes(givenDateTimeOrTime, minutes=None, deltaInMinutes=None):
         givenDateTimeOrTime = forcedlyParse(f'{str(dateNow())} {givenDateTimeOrTime}')
     return forcedlyGetDateTime(str(givenDateTimeOrTime)) - deltaInMinutes
 
-def plusDays(givenDay, days=None, deltaInDays=None):
+def plusDays(givenDateTime, days=None, deltaInDays=None):
     if ObjectHelper.isNotNone(days):
         deltaInDays = timeDelta(days=days)
-    return forcedlyGetDateTime(str(givenDay)) + deltaInDays
+    return forcedlyGetDateTime(str(givenDateTime)) + deltaInDays
 
-def minusDays(givenDay, days=None, deltaInDays=None):
+def minusDays(givenDateTime, days=None, deltaInDays=None):
     if ObjectHelper.isNotNone(minutes):
         deltaInDays = timeDelta(days=days)
-    return forcedlyGetDateTime(str(givenDay)) - deltaInDays
+    return forcedlyGetDateTime(str(givenDateTime)) - deltaInDays
+
+def plusMonths(givenDateTime, months=None):
+    if ObjectHelper.isNone(givenDateTime) or ObjectHelper.isNone(days):
+        return givenDateTime
+    dateTime = forcedlyGetDateTime(str(givenDateTime))
+    year = dateTime.year + (dateTime.month + months) // 12
+    month = (dateTime.month + months) % 12
+    month = month if month > 0 else 12
+    day = dateTime.day
+    return forcedlyGetDateTime(f'{year:04}-{month:02}-{day:02} {timeOf(dateTime=dateTime)}')
+
+def minusMonths(givenDateTime, months=None):
+    if ObjectHelper.isNone(givenDateTime) or ObjectHelper.isNone(days):
+        return givenDateTime
+    dateTime = forcedlyGetDateTime(str(givenDateTime))
+    year = dateTime.year - (dateTime.month + months) // 12
+    month = (dateTime.month - months) % 12
+    month = month if month > 0 else 12
+    day = dateTime.day
+    return forcedlyGetDateTime(f'{year:04}-{month:02}-{day:02} {timeOf(dateTime=dateTime)}')
+
+def plusYears(givenDateTime, years=None):
+    if ObjectHelper.isNone(givenDateTime) or ObjectHelper.isNone(days):
+        return givenDateTime
+    dateTime = forcedlyGetDateTime(str(givenDateTime))
+    year = dateTime.year + years
+    month = dateTime.month
+    day = dateTime.day
+    return forcedlyGetDateTime(f'{year:04}-{month:02}-{day:02} {timeOf(dateTime=dateTime)}')
+
+def minusYears(givenDateTime, years=None):
+    if ObjectHelper.isNone(givenDateTime) or ObjectHelper.isNone(days):
+        return givenDateTime
+    dateTime = forcedlyGetDateTime(str(givenDateTime))
+    year = dateTime.year - years
+    month = dateTime.month
+    day = dateTime.day
+    return forcedlyGetDateTime(f'{year:04}-{month:02}-{day:02} {timeOf(dateTime=dateTime)}')
 
 def getDefaultTimeBegin():
     return forcedlyGetTime(DEFAULT_TIME_BEGIN)
@@ -195,6 +235,9 @@ def getTodayDateTimeEnd():
 
 ###- deprecated
 def getWeekDay(dateTime=None, date=None, time=None):
+    return getWeekDayOf(dateTime=dateTime, date=date, time=time)
+
+def getWeekDayOf(dateTime=None, date=None, time=None):
     if ObjectHelper.isNotNone(dateTime):
         return forcedlyGetDateTime(dateTime).weekday()
     elif ObjectHelper.isNotNone(date) and ObjectHelper.isNotNone(time):
@@ -202,10 +245,6 @@ def getWeekDay(dateTime=None, date=None, time=None):
     elif ObjectHelper.isNotNone(date):
         return of(date=forcedlyGetDate(date), time=forcedlyGetTime(DEFAULT_TIME_END)).weekday()
     return dateTimeNow().weekday()
-
-def getWeekDayOf(dateTime=None, date=None, time=None):
-    '''Repetition of getWeekDay, just for semantic'''
-    return getWeekDay(dateTime=dateTime, date=date, time=time)
 
 def addNoise(givenDatetime):
     return givenDatetime + timeDelta(milliseconds=RandomHelper.integer(0,999))

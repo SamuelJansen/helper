@@ -11,6 +11,9 @@ WINDOWS_OS_NAME = 'win32'
 
 clear = lambda: OS.system('cls')
 
+def setMaxIntToStringDigits(number):
+    SYS.set_int_max_str_digits(4300)
+
 def get(environmentKey, default=None) :
     environmentValue = default if ObjectHelper.isNone(environmentKey) else OS.environ.get(environmentKey)
     return environmentValue if ObjectHelper.isNotNone(environmentValue) else default

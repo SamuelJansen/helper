@@ -270,18 +270,21 @@ SYMBOLS = {
     "-",
     "+"
 }
-PUNCTUATION = {
-    ",",
-    ".",
-    "?",
-    "}",
-    "]",
-    "[",
-    "{",
-    "!",
-    "(",
-    ")"
+PUNCTUATIONS = {
+    DOT,
+    COMA,
+    COLON,
+    SEMI_COLON,
+    QUESTION_MARK,
+    EXCLAMATION_MARK,
+    OPEN_TUPLE,
+    CLOSE_TUPLE,
+    OPEN_LIST,
+    CLOSE_LIST,
+    OPEN_DICTIONARY,
+    CLOSE_DICTIONARY
 }
+PUNCTUATION = set(list(PUNCTUATIONS)) ###- deprecated
 NUMBERS = {
     "0",
     "1",

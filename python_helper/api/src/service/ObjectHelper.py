@@ -26,6 +26,7 @@ COLLECTION_CLASSES = (
     set
 )
 
+type = type
 
 def equals(
     expected,

@@ -89,6 +89,16 @@ def getAttributeNameList(instanceClass, muteLogs=False):
     ]
 
 
+def getAttributeNameListFromInstance(instance):
+    if ObjectHelper.isNone(instance):
+        return []
+    return [
+        key
+        for key in [*instance.__dir__()]
+        if ReflectionHelper.isAttributeName(key, instance)
+    ]
+
+
 def getMethodNameList(instanceClass, muteLogs=False):
     objectNullArgsInstance = instanciateItWithNoArgsConstructor(instanceClass, muteLogs=muteLogs)
     return [
