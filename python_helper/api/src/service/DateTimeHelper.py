@@ -180,7 +180,7 @@ def minusDays(givenDateTime, days=None, deltaInDays=None):
     return forcedlyGetDateTime(str(givenDateTime)) - deltaInDays
 
 def plusMonths(givenDateTime, months=None):
-    if ObjectHelper.isNone(givenDateTime) or ObjectHelper.isNone(days):
+    if ObjectHelper.isNone(givenDateTime) or ObjectHelper.isNone(months):
         return givenDateTime
     dateTime = forcedlyGetDateTime(str(givenDateTime))
     year = dateTime.year + (dateTime.month + months) // 12
@@ -190,7 +190,7 @@ def plusMonths(givenDateTime, months=None):
     return forcedlyGetDateTime(f'{year:04}-{month:02}-{day:02} {timeOf(dateTime=dateTime)}')
 
 def minusMonths(givenDateTime, months=None):
-    if ObjectHelper.isNone(givenDateTime) or ObjectHelper.isNone(days):
+    if ObjectHelper.isNone(givenDateTime) or ObjectHelper.isNone(months):
         return givenDateTime
     dateTime = forcedlyGetDateTime(str(givenDateTime))
     year = dateTime.year - (dateTime.month + months) // 12
@@ -200,7 +200,7 @@ def minusMonths(givenDateTime, months=None):
     return forcedlyGetDateTime(f'{year:04}-{month:02}-{day:02} {timeOf(dateTime=dateTime)}')
 
 def plusYears(givenDateTime, years=None):
-    if ObjectHelper.isNone(givenDateTime) or ObjectHelper.isNone(days):
+    if ObjectHelper.isNone(givenDateTime) or ObjectHelper.isNone(years):
         return givenDateTime
     dateTime = forcedlyGetDateTime(str(givenDateTime))
     year = dateTime.year + years
@@ -209,7 +209,7 @@ def plusYears(givenDateTime, years=None):
     return forcedlyGetDateTime(f'{year:04}-{month:02}-{day:02} {timeOf(dateTime=dateTime)}')
 
 def minusYears(givenDateTime, years=None):
-    if ObjectHelper.isNone(givenDateTime) or ObjectHelper.isNone(days):
+    if ObjectHelper.isNone(givenDateTime) or ObjectHelper.isNone(years):
         return givenDateTime
     dateTime = forcedlyGetDateTime(str(givenDateTime))
     year = dateTime.year - years
