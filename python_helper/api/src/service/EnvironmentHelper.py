@@ -8,18 +8,19 @@ OS_SEPARATOR = OS.path.sep
 
 LINUX_OS_NAME = 'linux'
 WINDOWS_OS_NAME = 'win32'
+MAC_OS_NAME = 'mac'
 
 clear = lambda: OS.system('cls')
 
 def setMaxIntToStringDigits(number):
     SYS.set_int_max_str_digits(4300)
 
-def get(environmentKey, default=None) :
+def get(environmentKey, default=None):
     environmentValue = default if ObjectHelper.isNone(environmentKey) else OS.environ.get(environmentKey)
     return environmentValue if ObjectHelper.isNotNone(environmentValue) else default
 
-def update(environmentKey, environmentValue, default=None) :
-    if ObjectHelper.isNotEmpty(environmentKey) :
+def update(environmentKey, environmentValue, default=None):
+    if ObjectHelper.isNotEmpty(environmentKey):
         associatedValue = None
         if ObjectHelper.isNotNone(environmentValue):
             associatedValue = str(StringHelper.filterString(environmentValue))
@@ -37,22 +38,22 @@ def update(environmentKey, environmentValue, default=None) :
         LogHelper.debug(update, f'arguments: environmentKey: {environmentKey}, environmentValue: {environmentValue}, default: {default}')
         raise Exception(f'Error associating environment variable "{environmentKey}" key to environment variable "{environmentValue}" value')
 
-def switch(environmentKey, environmentValue, default=None) :
+def switch(environmentKey, environmentValue, default=None):
     originalEnvironmentValue = get(environmentKey, default=default)
     update(environmentKey, environmentValue, default=default)
     return originalEnvironmentValue
 
-def reset(environmentVariables, originalEnvironmentVariables) :
+def reset(environmentVariables, originalEnvironmentVariables):
     if environmentVariables :
-        for key in environmentVariables.keys() :
+        for key in environmentVariables.keys():
             if key in originalEnvironmentVariables :
                 update(key, originalEnvironmentVariables[key])
 
-def delete(environmentKey) :
-    if ObjectHelper.isNotNone(environmentKey) :
+def delete(environmentKey):
+    if ObjectHelper.isNotNone(environmentKey):
         OS.environ.pop(environmentKey)
 
-def getSet(avoidRecursiveCall=False) :
+def getSet(avoidRecursiveCall=False):
     try :
         return {key : OS.environ[key] for key in OS.environ}
     except Exception as exception :
@@ -60,28 +61,28 @@ def getSet(avoidRecursiveCall=False) :
         return str(OS.environ)[8:-1]
 
 def isNone(environmentKey, default=True, evaluateItInsted=None):
-    if ObjectHelper.isNotNone(environmentKey) :
+    if ObjectHelper.isNotNone(environmentKey):
         return c.NONE == (
             evaluateItInsted if ObjectHelper.isNotNone(evaluateItInsted) else get(environmentKey, default=c.NONE)
         )
     return default
 
 def isNotNone(environmentKey, default=True, evaluateItInsted=None):
-    if ObjectHelper.isNotNone(environmentKey) :
+    if ObjectHelper.isNotNone(environmentKey):
         return not c.NONE == (
             evaluateItInsted if ObjectHelper.isNotNone(evaluateItInsted) else get(environmentKey, default=c.NONE)
         )
     return default
 
 def isBoolean(environmentKey, default=False, evaluateItInsted=None):
-    if ObjectHelper.isNotNone(environmentKey) :
+    if ObjectHelper.isNotNone(environmentKey):
         if ObjectHelper.isNotNone(evaluateItInsted):
             return evaluateItInsted in [c.TRUE, c.FALSE] if isNotNone(environmentKey, evaluateItInsted=evaluateItInsted) else default
         return get(environmentKey, default=default) in [c.TRUE, c.FALSE]
     return default
 
 def isTrue(environmentKey, default=False, evaluateItInsted=None):
-    if ObjectHelper.isNotNone(environmentKey) :
+    if ObjectHelper.isNotNone(environmentKey):
         if ObjectHelper.isNotNone(evaluateItInsted):
             return c.TRUE == evaluateItInsted if isBoolean(environmentKey, default=default, evaluateItInsted=evaluateItInsted) else default
         innerEvaluatItInsted = get(environmentKey, default=None)
@@ -92,7 +93,7 @@ def isTrue(environmentKey, default=False, evaluateItInsted=None):
     return default
 
 def isFalse(environmentKey, default=True, evaluateItInsted=None):
-    if ObjectHelper.isNotNone(environmentKey) :
+    if ObjectHelper.isNotNone(environmentKey):
         if ObjectHelper.isNotNone(evaluateItInsted):
             return c.FALSE == evaluateItInsted if isBoolean(environmentKey, default=default, evaluateItInsted=evaluateItInsted) else default
         innerEvaluatItInsted = get(environmentKey, default=None)
@@ -102,28 +103,28 @@ def isFalse(environmentKey, default=True, evaluateItInsted=None):
             return c.FALSE == c.FALSE if isinstance(default, bool) and not default else c.TRUE
     return default
 
-def listDirectoryContent(path) :
+def listDirectoryContent(path):
     return OS.listdir(path)
 
-def isDirectory(path) :
+def isDirectory(path):
     return OS.path.isdir(path)
 
-def isFile(path) :
+def isFile(path):
     return OS.path.isfile(path)
 
-def makeDirectory(path, accessRights=0o777) :
+def makeDirectory(path, accessRights=0o777):
     ###- accessRights = 0o777 --> write, access and read
     ###- accessRights = 0o755 --> access and read
     ###- accessRights = 0o755 --> access and read
     OS.makedirs(path, mode=accessRights)
 
-def appendPath(path) :
+def appendPath(path):
     SYS.path.append(path)
 
-def getCurrentSoutStatus(avoidRecursiveCall=False) :
+def getCurrentSoutStatus(avoidRecursiveCall=False):
     return SYS.stdout, SYS.stderr
 
-def overrideSoutStatus(stdout, stderr) :
+def overrideSoutStatus(stdout, stderr):
     SYS.stdout = stdout
     SYS.stderr = stderr
 
@@ -138,8 +139,12 @@ def flushIO():
         except Exception as e:
             print(f'------------- EnvironmentHelper.flushIO exception: {e} -------------')
 
-def isLinux() :
+def isLinux():
     return SYS.platform == LINUX_OS_NAME
 
-def isWindows() :
+def isWindows():
     return SYS.platform == WINDOWS_OS_NAME
+
+def isMacOs():
+    print(SYS.platform)
+    return SYS.platform == MAC_OS_NAME

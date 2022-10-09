@@ -38,6 +38,7 @@ def osIdentifierTest() :
     # act
     isWindows = EnvironmentHelper.isWindows()
     isLinux = EnvironmentHelper.isLinux()
+    isMacOs = EnvironmentHelper.isMacOs()
 
     # assert
     assert ObjectHelper.isNotNone(isWindows)
@@ -46,4 +47,4 @@ def osIdentifierTest() :
     assert ObjectHelper.isNativeClassInstance(isLinux)
     assert bool == type(isWindows)
     assert bool == type(isLinux)
-    assert isLinux or isWindows
+    assert isLinux or isWindows or isMacOs
