@@ -95,7 +95,7 @@ def getAttributeNameListFromInstance(instance):
     return [
         key
         for key in [*instance.__dir__()]
-        if ReflectionHelper.isAttributeName(key, instance)
+        if isAttributeName(key, instance)
     ]
 
 

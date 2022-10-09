@@ -500,3 +500,30 @@ def getName_manyCases() :
     assert None == parent_attributeNameToAsert, parent_attributeNameToAsert
     assert None == parent_staticAttributeNameToAsert, parent_staticAttributeNameToAsert
     assert parent_testFunctionNameToAsert == ReflectionHelper.getParentClass(getName_manyCases), f'{parent_testFunctionNameToAsert} == {ReflectionHelper.getName(getName_manyCases)}'
+
+
+@Test(
+    environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
+def getAttributeNameListFromInstance():
+    #arrange
+    MY_ATTRIBUTE_NAME = 'myAttribute'
+    MY_OTHER_ATTRIBUTE_NAME = 'myOtherAttribute'
+    class MyObject:
+        def __init__(self, myAttribute, myOtherAttribute=None) :
+            self.myAttribute = myAttribute
+            self.myOtherAttribute = myOtherAttribute
+        def myMethod(self):
+            return self.myAttribute
+    myObject = ReflectionHelper.instanciateItWithNoArgsConstructor(MyObject)
+
+    #act
+    attributeNameList = ReflectionHelper.getAttributeNameListFromInstance(myObject)
+
+    #assert
+    assert [MY_ATTRIBUTE_NAME, MY_OTHER_ATTRIBUTE_NAME] == attributeNameList
