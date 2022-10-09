@@ -6,13 +6,33 @@ OS = os
 SYS = sys
 OS_SEPARATOR = OS.path.sep
 
+# ┍━━━━━━━━━━━━━━━━━━━━━┯━━━━━━━━━━━━━━━━━━━━━┑
+# │ System              │ Value               │
+# ┝━━━━━━━━━━━━━━━━━━━━━┿━━━━━━━━━━━━━━━━━━━━━┥
+# │ Linux               │ linux or linux2 (*) │
+# │ Windows             │ win32               │
+# │ Windows/Cygwin      │ cygwin              │
+# │ Windows/MSYS2       │ msys                │
+# │ Mac OS X            │ darwin              │
+# │ OS/2                │ os2                 │
+# │ OS/2 EMX            │ os2emx              │
+# │ RiscOS              │ riscos              │
+# │ AtheOS              │ atheos              │
+# │ FreeBSD 7           │ freebsd7            │
+# │ FreeBSD 8           │ freebsd8            │
+# │ FreeBSD N           │ freebsdN            │
+# │ OpenBSD 6           │ openbsd6            │
+# ┕━━━━━━━━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━━━━━━━┙
+
 LINUX_OS_NAME_LIST = [
     'linux',
     'linux2'
 ]
 WINDOWS_OS_NAME_LIST = [
     'win32',
-    'win64'
+    'win64',
+    'cygwin',
+    'msys'
 ]
 MAC_OS_NAME_LIST = [
     'darwin'
@@ -164,13 +184,6 @@ def isWindows():
     return SYS.platform in WINDOWS_OS_NAME_LIST
 
 def isMacOs():
-    print('*******************************')
-    print('*******************************')
-    print('*******************************')
-    print(f'SYS.platform = {SYS.platform}')
-    print('*******************************')
-    print('*******************************')
-    print('*******************************')
     return SYS.platform in MAC_OS_NAME_LIST
 
 def isOtherOs():

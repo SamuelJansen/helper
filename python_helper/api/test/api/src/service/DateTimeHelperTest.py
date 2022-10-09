@@ -92,7 +92,7 @@ def dateTime_now() :
     givenDateTime = datetime.datetime.now()
     givenDate = datetime.datetime.now().date()
     givenTime = datetime.datetime.now().time()
-    margin = 1000
+    margin = 500
 
     # act
     # assert
