@@ -7,6 +7,8 @@ A python helper for Object, String, Setting, Reflection, etc
 pip install python-helper
 ```
 
+Stable version: `0.3.55`
+
 ---
 # How to run the tests
 Clone repository and install depentencies
