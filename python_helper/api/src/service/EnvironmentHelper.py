@@ -6,9 +6,27 @@ OS = os
 SYS = sys
 OS_SEPARATOR = OS.path.sep
 
-LINUX_OS_NAME = 'linux'
-WINDOWS_OS_NAME = 'win32'
-MAC_OS_NAME = 'darwin'
+LINUX_OS_NAME_LIST = [
+    'linux',
+    'linux2'
+]
+WINDOWS_OS_NAME_LIST = [
+    'win32',
+    'win64'
+]
+MAC_OS_NAME_LIST = [
+    'darwin'
+]
+OTHER_OS_NAME_LIST = [
+    'os2',
+    'os2emx',
+    'riscos',
+    'atheos',
+    'freebsd7',
+    'freebsd8',
+    'freebsdN',
+    'openbsd6'
+]
 
 clear = lambda: OS.system('cls')
 
@@ -140,10 +158,10 @@ def flushIO():
             print(f'------------- EnvironmentHelper.flushIO exception: {e} -------------')
 
 def isLinux():
-    return SYS.platform == LINUX_OS_NAME
+    return SYS.platform in LINUX_OS_NAME_LIST
 
 def isWindows():
-    return SYS.platform == WINDOWS_OS_NAME
+    return SYS.platform in WINDOWS_OS_NAME_LIST
 
 def isMacOs():
     print('*******************************')
@@ -153,4 +171,7 @@ def isMacOs():
     print('*******************************')
     print('*******************************')
     print('*******************************')
-    return SYS.platform == MAC_OS_NAME
+    return SYS.platform in MAC_OS_NAME_LIST
+
+def isOtherOs():
+    return SYS.platform in OTHER_OS_NAME_LIST
