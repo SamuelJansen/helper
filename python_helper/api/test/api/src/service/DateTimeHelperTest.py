@@ -87,20 +87,33 @@ def timeDelta() :
 def dateTime_now() :
     # arrange
     givenSimpleDateTime = time.time()
-    givenDateTime = date=datetime.datetime.now()
-    givenDate = date=datetime.datetime.now().date()
-    givenTime = date=datetime.datetime.now().time()
+    givenDateTime = datetime.datetime.now()
+    givenDate = datetime.datetime.now().date()
+    givenTime = datetime.datetime.now().time()
+    margin = 500
 
     # act
     # assert
-    assert datetime.datetime.now() == DateTimeHelper.dateTimeNow(), f'datetime.datetime.now() == DateTimeHelper.dateTimeNow() => {datetime.datetime.now()} == {DateTimeHelper.dateTimeNow()}'
+    assert (datetime.datetime.now() - DateTimeHelper.dateTimeNow()).microseconds < margin, f'datetime.datetime.now() == DateTimeHelper.dateTimeNow() => {datetime.datetime.now()} == {DateTimeHelper.dateTimeNow()}'
     assert datetime.datetime.now().date() == DateTimeHelper.dateOf(datetime.datetime.now()), f'datetime.datetime.now().date() == DateTimeHelper.dateOf(datetime.datetime.now()) => {datetime.datetime.now().date()} == {DateTimeHelper.dateOf(datetime.datetime.now())}'
-    assert datetime.datetime.now().time() == DateTimeHelper.timeOf(datetime.datetime.now()), f'datetime.datetime.now().time() == DateTimeHelper.timeOf(datetime.datetime.now()) => {datetime.datetime.now().time()} == {DateTimeHelper.timeOf(datetime.datetime.now())}'
+    assert (
+        (
+            datetime.datetime.now().time().second * 60000 + datetime.datetime.now().time().microsecond
+        ) - (
+            DateTimeHelper.timeNow().second * 60000 + DateTimeHelper.timeOf(datetime.datetime.now()).microsecond
+        )
+    ) < margin, f'datetime.datetime.now().time() == DateTimeHelper.timeOf(datetime.datetime.now()) => {datetime.datetime.now().time()} == {DateTimeHelper.timeOf(datetime.datetime.now())}'
     assert datetime.datetime.now().date() == DateTimeHelper.dateNow(), f'datetime.datetime.now().date() == DateTimeHelper.dateNow() => {datetime.datetime.now().date()} == {DateTimeHelper.dateNow()}'
-    assert datetime.datetime.now().time() == DateTimeHelper.timeNow(), f'datetime.datetime.now().time() == DateTimeHelper.timeNow() => {datetime.datetime.now().time()} == {DateTimeHelper.timeNow()}'
+    assert (
+        (
+            datetime.datetime.now().time().second * 60000 + datetime.datetime.now().time().microsecond
+        ) - (
+            DateTimeHelper.timeNow().second * 60000 + DateTimeHelper.timeNow().microsecond
+        )
+    ) < margin, f'datetime.datetime.now().time() == DateTimeHelper.timeNow() => {datetime.datetime.now().time()} == {DateTimeHelper.timeNow()}'
     assert datetime.datetime.timestamp(datetime.datetime.now()) == DateTimeHelper.timestampNow(), f'datetime.datetime.timestamp(datetime.datetime.now()) == DateTimeHelper.timestampNow() => {datetime.datetime.timestamp(datetime.datetime.now())} == {DateTimeHelper.timestampNow()}'
     assert datetime.datetime.fromtimestamp(givenSimpleDateTime) == DateTimeHelper.ofTimestamp(givenSimpleDateTime), f'datetime.datetime.fromtimestamp(givenSimpleDateTime) == DateTimeHelper.ofTimestamp(givenSimpleDateTime) => {datetime.datetime.fromtimestamp(givenSimpleDateTime)} == {DateTimeHelper.ofTimestamp(givenSimpleDateTime)}'
-    assert datetime.datetime.now() == DateTimeHelper.ofTimestamp(datetime.datetime.timestamp(DateTimeHelper.dateTimeNow())), f'datetime.datetime.now() == DateTimeHelper.ofTimestamp(datetime.datetime.timestamp(DateTimeHelper.dateTimeNow())) => {datetime.datetime.now()} == {DateTimeHelper.ofTimestamp(datetime.datetime.timestamp(DateTimeHelper.dateTimeNow()))}'
+    assert (datetime.datetime.now() - DateTimeHelper.ofTimestamp(datetime.datetime.timestamp(DateTimeHelper.dateTimeNow()))).microseconds < margin, f'datetime.datetime.now() == DateTimeHelper.ofTimestamp(datetime.datetime.timestamp(DateTimeHelper.dateTimeNow())) => {datetime.datetime.now()} == {DateTimeHelper.ofTimestamp(datetime.datetime.timestamp(DateTimeHelper.dateTimeNow()))}'
 
     parsed = None
     for pattern in DateTimeHelper.PATTERNS :
