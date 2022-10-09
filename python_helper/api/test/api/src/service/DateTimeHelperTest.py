@@ -93,14 +93,14 @@ def dateTime_now() :
 
     # act
     # assert
-    assert datetime.datetime.now() == DateTimeHelper.dateTimeNow()
-    assert datetime.datetime.now().date() == DateTimeHelper.dateOf(datetime.datetime.now())
-    assert datetime.datetime.now().time() == DateTimeHelper.timeOf(datetime.datetime.now())
-    assert datetime.datetime.now().date() == DateTimeHelper.dateNow()
-    assert datetime.datetime.now().time() == DateTimeHelper.timeNow()
-    assert datetime.datetime.timestamp(datetime.datetime.now()) == DateTimeHelper.timestampNow()
-    assert datetime.datetime.fromtimestamp(givenSimpleDateTime) == DateTimeHelper.ofTimestamp(givenSimpleDateTime)
-    assert datetime.datetime.now() == DateTimeHelper.ofTimestamp(datetime.datetime.timestamp(DateTimeHelper.dateTimeNow()))
+    assert datetime.datetime.now() == DateTimeHelper.dateTimeNow(), f'datetime.datetime.now() == DateTimeHelper.dateTimeNow() => {datetime.datetime.now()} == {DateTimeHelper.dateTimeNow()}'
+    assert datetime.datetime.now().date() == DateTimeHelper.dateOf(datetime.datetime.now()), f'datetime.datetime.now().date() == DateTimeHelper.dateOf(datetime.datetime.now()) => {datetime.datetime.now().date()} == {DateTimeHelper.dateOf(datetime.datetime.now())}'
+    assert datetime.datetime.now().time() == DateTimeHelper.timeOf(datetime.datetime.now()), f'datetime.datetime.now().time() == DateTimeHelper.timeOf(datetime.datetime.now()) => {datetime.datetime.now().time()} == {DateTimeHelper.timeOf(datetime.datetime.now())}'
+    assert datetime.datetime.now().date() == DateTimeHelper.dateNow(), f'datetime.datetime.now().date() == DateTimeHelper.dateNow() => {datetime.datetime.now().date()} == {DateTimeHelper.dateNow()}'
+    assert datetime.datetime.now().time() == DateTimeHelper.timeNow(), f'datetime.datetime.now().time() == DateTimeHelper.timeNow() => {datetime.datetime.now().time()} == {DateTimeHelper.timeNow()}'
+    assert datetime.datetime.timestamp(datetime.datetime.now()) == DateTimeHelper.timestampNow(), f'datetime.datetime.timestamp(datetime.datetime.now()) == DateTimeHelper.timestampNow() => {datetime.datetime.timestamp(datetime.datetime.now())} == {DateTimeHelper.timestampNow()}'
+    assert datetime.datetime.fromtimestamp(givenSimpleDateTime) == DateTimeHelper.ofTimestamp(givenSimpleDateTime), f'datetime.datetime.fromtimestamp(givenSimpleDateTime) == DateTimeHelper.ofTimestamp(givenSimpleDateTime) => {datetime.datetime.fromtimestamp(givenSimpleDateTime)} == {DateTimeHelper.ofTimestamp(givenSimpleDateTime)}'
+    assert datetime.datetime.now() == DateTimeHelper.ofTimestamp(datetime.datetime.timestamp(DateTimeHelper.dateTimeNow())), f'datetime.datetime.now() == DateTimeHelper.ofTimestamp(datetime.datetime.timestamp(DateTimeHelper.dateTimeNow())) => {datetime.datetime.now()} == {DateTimeHelper.ofTimestamp(datetime.datetime.timestamp(DateTimeHelper.dateTimeNow()))}'
 
     parsed = None
     for pattern in DateTimeHelper.PATTERNS :
