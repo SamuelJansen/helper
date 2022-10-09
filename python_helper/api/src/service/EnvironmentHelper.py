@@ -8,7 +8,7 @@ OS_SEPARATOR = OS.path.sep
 
 LINUX_OS_NAME = 'linux'
 WINDOWS_OS_NAME = 'win32'
-MAC_OS_NAME = 'mac'
+MAC_OS_NAME = 'darwin'
 
 clear = lambda: OS.system('cls')
 
@@ -146,5 +146,11 @@ def isWindows():
     return SYS.platform == WINDOWS_OS_NAME
 
 def isMacOs():
-    print(SYS.platform)
+    print('*******************************')
+    print('*******************************')
+    print('*******************************')
+    print(f'SYS.platform = {SYS.platform}')
+    print('*******************************')
+    print('*******************************')
+    print('*******************************')
     return SYS.platform == MAC_OS_NAME
