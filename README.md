@@ -1,8 +1,16 @@
 # Helper
-Object, String, Setting, etc helper
+A python helper for Object, String, Setting, Reflection, etc
+
+--- 
+# How to install
+```
+pip install python-helper
+```
 
 ---
 # How to run the tests
+Clone repository and install depentencies
+
 
 The following block at `Tests,py`
 ```python
