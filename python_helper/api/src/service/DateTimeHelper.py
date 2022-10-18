@@ -175,7 +175,7 @@ def plusDays(givenDateTime, days=None, deltaInDays=None):
     return forcedlyGetDateTime(str(givenDateTime)) + deltaInDays
 
 def minusDays(givenDateTime, days=None, deltaInDays=None):
-    if ObjectHelper.isNotNone(minutes):
+    if ObjectHelper.isNotNone(days):
         deltaInDays = timeDelta(days=days)
     return forcedlyGetDateTime(str(givenDateTime)) - deltaInDays
 
