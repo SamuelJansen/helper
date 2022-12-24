@@ -425,3 +425,19 @@ def toTitle() :
     assert EXPECTED == StringHelper.toTitle('ACBAbCdEfghAbCdEf')
     assert EXPECTED == StringHelper.toTitle('a_c_b_ab_cd_efgh_ab_cd_ef')
     assert EXPECTED == StringHelper.toTitle('a-c-b-ab-cd-efgh-ab-cd-ef')
+
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
+def toParagraphCase() :
+    # arrange
+    EXPECTED_A = 'Acbabcd. Efghabcdef'
+    EXPECTED_B = 'A c b ab cd. Efgh ab cd ef'
+
+    # act
+    # assert
+    assert EXPECTED_A == StringHelper.toParagraphCase('aCBAbCd.EfghAbCdEf')
+    assert EXPECTED_A == StringHelper.toParagraphCase('ACBAbCd. EfghAbCdEf')
+    assert EXPECTED_B == StringHelper.toParagraphCase('a_c_b_ab_cd_.Efgh_ab_Cd_ef')
+    assert EXPECTED_B == StringHelper.toParagraphCase('a-c-b-ab-cd-.Efgh-ab-cd-ef')

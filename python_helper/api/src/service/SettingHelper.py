@@ -210,6 +210,15 @@ def getSettingTree(
         ObjectHelper.isNotNone(fallbackSettingFilePath)
     ):
         # print('Not lazy load')
+        # print('Not lazy load')
+        # print('Not lazy load')
+        # print('Not lazy load')
+        # print('Not lazy load')
+        # print('Not lazy load')
+        # print('Not lazy load')
+        # print('Not lazy load')
+        # print('Not lazy load')
+        # print('Not lazy load')
         for fallbackSettingInjection in fallbackSettingInjectionList.copy() :
             for settingInjection in settingInjectionList.copy() :
                 if (

@@ -135,6 +135,10 @@ def equals(
             return True
 
 
+def notEquals(*args, **kwargs):
+    return not equals(*args, **kwargs)
+
+
 def sortIt(thing, deepMode=False):
     if isDictionary(thing):
         return {

@@ -198,7 +198,10 @@ def getAttributePointerList(instance, muteLogs=False):
 
 def getAttributeDataList(instance, muteLogs=False):
     return [
-        (getattr(instance, instanceAttributeName), instanceAttributeName)
+        (
+            getattr(instance, instanceAttributeName),
+            instanceAttributeName
+        )
         for instanceAttributeName in dir(instance)
         if isAttributeName(instanceAttributeName, instance, muteLogs=muteLogs)
     ]
@@ -206,11 +209,16 @@ def getAttributeDataList(instance, muteLogs=False):
 
 def getAttributeDataDictionary(instance, muteLogs=False):
     '''It can be a function, but not a method...'''
-    instanceDataDictionary = {}
-    for name in dir(instance):
-        if isAttributeName(name, instance, muteLogs=muteLogs):
-            instanceDataDictionary[name] = getattr(instance, name)
-    return instanceDataDictionary
+    # instanceDataDictionary = {}
+    # for name in dir(instance):
+    #     if isAttributeName(name, instance, muteLogs=muteLogs):
+    #         instanceDataDictionary[name] = getattr(instance, name)
+    # return instanceDataDictionary
+    return {
+        name: getattr(instance, name)
+        for name in dir(instance)
+        if isAttributeName(name, instance, muteLogs=muteLogs)
+    }
 
 
 def overrideSignatures(toOverride, original, forceName=None, forceModuleName=None):
@@ -245,7 +253,7 @@ def getClass(thing, typeClass=None, muteLogs=False):
 def getName(thing, typeName=None, muteLogs=False):
     name = None
     try :
-        if ObjectHelper.isEmpty(thing):
+        if ObjectHelper.isEmpty(thing): ###- shouldn't it be `if ObjectHelper.isNone(thing)`
             name = getUndefindeName(typeName)
         else :
             name = thing.__name__
@@ -259,7 +267,7 @@ def getName(thing, typeName=None, muteLogs=False):
 def getClassName(thing, typeClass=None, muteLogs=False):
     name = None
     try :
-        if ObjectHelper.isEmpty(thing):
+        if ObjectHelper.isEmpty(thing): ###- shouldn't it be `if ObjectHelper.isNone(thing)`
             name = getUndefindeName(typeClass)
         else :
             name = getName(getClass(thing, muteLogs=muteLogs), muteLogs=muteLogs)

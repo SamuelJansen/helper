@@ -1,0 +1,16 @@
+already-exists: '1'
+it:
+    contains:
+        two-consecutive-already-existing-reference: abcd--${already-exists}--hij--${already-exists}--
+        two-consecutive-setting-injection-with-missing-environment-variable-and-already-existing-reference: abcd--${MISSING:already-exists}--hij--${MISSING:already-exists}--
+        two-consecutive-setting-injection-with-missing-environment-variable: abcd${MISSING:efg}hij${MISSING:klm}
+        some-composed-key:
+            pointing-to:
+                a-late-value: abcd--x${:${it.contains.late-value}x--abcd--x${it.contains.late-value}x--abcd--}efg
+                a-late-value-with-an-environment-variable-in-between: abcd${:${LATE_ENVIRONMENT_VALUE:it.contains.late-value}--abcd--x${:it.contains.late-value}x--abcd--}efg
+        some-not-composed-key:
+            pointing-to:
+                a-late-value: abcd--x${it.contains.late-value}x--abcd--x${it.contains.late-value}x--abcd--efg
+                a-late-value-with-an-environment-and-missing-environment-variable-variable-in-between: abcd--x${LATE_ENVIRONMENT_VALUE:it.contains.late-value}x--abcd--x${MISSING:it.contains.late-value}x--abcd--efg
+                a-late-value-with-an-environment-variable-in-between: abcd--x${LATE_ENVIRONMENT_VALUE:it.contains.late-value}x--abcd--x${:it.contains.late-value}x--abcd--efg
+        late-value: -- late value --

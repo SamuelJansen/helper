@@ -27,10 +27,10 @@ def removeCharactere(character, string) :
         return filteredString.replace(character,c.BLANK)
     return string
 
-def join(stringList, character=c.BLANK):
+def join(stringList, character = c.BLANK):
     return character.join(stringList)
 
-def split(string, character=c.SPACE):
+def split(string, character = c.SPACE):
     return string.split(character)
 
 def prettyPython(
@@ -199,32 +199,69 @@ def getOnlyLetters(value):
     return join([
         char for char in join(
             str(value).replace(c.UNDERSCORE, c.SPACE).replace(c.DASH, c.SPACE).split(),
-            character=c.SPACE
+            character = c.SPACE
         ) if char in c.CHARACTERES
     ])
 
-def isUp(value):
-    return 1 == len(str(value)) and str(value) in c.UPPER_CASE_CHARACTERES
+###- deprecated
+def isUp(charactere):
+    return isUpCharactere(charactere)
+
+def isUpCharactere(charactere):
+    return 1 == len(str(charactere)) and str(charactere) in c.UPPER_CASE_CHARACTERES
 
 def fromPascalToTitle(value):
-    return join([f'{c.SPACE}{char}' if isUp(char) else char for char in str(value)], character=c.BLANK)
+    return join([f'{c.SPACE}{char}' if isUp(char) else char for char in str(value)], character = c.BLANK)
 
 def toTitle(value):
-    return join(fromPascalToTitle(getOnlyLetters(value)).title().strip().split(), character=c.SPACE)
+    return join(
+        fromPascalToTitle(
+            getOnlyLetters(value)
+        ).title().strip().split(),
+        character = c.SPACE
+    )
 
 def toPascalCase(value):
-    return join(toTitle(value).split())
+    return join(
+        toTitle(value).split()
+    )
 
 def toCamelCase(value):
     content = toPascalCase(value)
-    return join([content[:1].lower(), content[1:]])
+    return join(
+        [
+            content[:1].lower(),
+            content[1:]
+        ]
+    )
 
 def toSnakeCase(value):
-    return join(toTitle(value).lower().split(), character=c.UNDERSCORE)
+    return join(
+        toTitle(value).lower().split(),
+        character = c.UNDERSCORE
+    )
 
 def toKebabCase(value):
-    return join(toTitle(value).lower().split(), character=c.DASH)
+    return join(
+        toTitle(value).lower().split(),
+        character = c.DASH
+    )
 
 def toParagraphCase(value):
-    newValueAsString = join(join(join(str(value).split(c.DASH), character=c.SPACE).split(c.UNDERSCORE), character=c.SPACE).split(), character=c.SPACE)
-    return c.BLANK if not 0 < len(newValueAsString) else f'{newValueAsString[0].upper()}{newValueAsString[1:]}'
+    newValueAsString = join(
+        join(
+            join(
+                str(value).split(c.DASH),
+                character = c.SPACE
+            ).split(c.UNDERSCORE),
+            character = c.SPACE
+        ).split(),
+        character = c.SPACE
+    )
+    return c.BLANK if not 0 < len(newValueAsString) else f'''{join(
+        [
+            f'{segment.lower().strip()[0].upper()}{segment.lower().strip()[1:]}'
+            for segment in newValueAsString.split(c.DOT)
+        ],
+        character = c.DOT_SPACE
+    )}'''

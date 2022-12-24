@@ -527,3 +527,31 @@ def getAttributeNameListFromInstance():
 
     #assert
     assert [MY_ATTRIBUTE_NAME, MY_OTHER_ATTRIBUTE_NAME] == attributeNameList
+
+
+@Test(
+    environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
+def getAttributeDataDictionary():
+    #arrange
+    class TestClass:
+        testAttribute = 2
+        def __init__(self, anoterTestAttribute):
+            self.anoterTestAttribute = anoterTestAttribute
+    anoterTestAttributeValue = 'yolo'
+    expected = {
+        'testAttribute': 2,
+        'anoterTestAttribute': anoterTestAttributeValue
+    }
+    instante = TestClass(anoterTestAttributeValue)
+
+    #act
+    toAssert = ReflectionHelper.getAttributeDataDictionary(instante)
+
+    #assert
+    assert ObjectHelper.equals(expected, toAssert)

@@ -80,7 +80,7 @@ def mustReadSettingFile() :
     assert 'overrider configuration' == SettingHelper.getSetting('my.override-case.overrider', readdedSettingTree)
 
     assert 'delayed assignment value' == SettingHelper.getSetting('some-reference.before-its-assignment', readdedSettingTree)
-    assert 'delayed assignment value' == SettingHelper.getSetting('some-reference.much.before-its-assignment', readdedSettingTree)
+    assert 'delayed assignment value' == SettingHelper.getSetting('some-reference.much.before-its-assignment', readdedSettingTree), SettingHelper.getSetting('some-reference.much.before-its-assignment', readdedSettingTree)
     assert "'''  value  ''' with spaces" == SettingHelper.getSetting('some-key.with-an-enter-in-between-the-previous-one', readdedSettingTree)
     assert f'''Hi
                 every
@@ -106,11 +106,11 @@ def mustReadSettingFile() :
     assert 'ABCDEFGEFG-- my complex value --HIJKLMNOP' == SettingHelper.getSetting('it.contains.one-inside-of-the-other-setting-injection-with-environment-variable', readdedSettingTree)
     assert 'abcdefghijklm' == SettingHelper.getSetting('it.contains.two-consecutive-setting-injection-with-missing-environment-variable', readdedSettingTree)
     assert 'abcd-- late value ----abcd---- late value ----abcd--efg' == SettingHelper.getSetting('it.contains.some-composed-key.pointing-to.a-late-value', readdedSettingTree)
-    assert 'abcd-- late environment value ----abcd--it.contains.late-value--abcd--efg' == SettingHelper.getSetting('it.contains.some-composed-key.pointing-to.a-late-value-with-an-environment-variable-in-between', readdedSettingTree)
+    assert 'abcd-- late environment value ----abcd---- late value ----abcd--efg' == SettingHelper.getSetting('it.contains.some-composed-key.pointing-to.a-late-value-with-an-environment-variable-in-between', readdedSettingTree), SettingHelper.getSetting('it.contains.some-composed-key.pointing-to.a-late-value-with-an-environment-variable-in-between', readdedSettingTree)
     assert '-- late value --' == SettingHelper.getSetting('it.contains.late-value', readdedSettingTree)
     assert 'only environment variable value' == SettingHelper.getSetting('it.contains.environment-variable.only', readdedSettingTree)
     assert 'ABCD -- only environment variable value -- EFGH' == SettingHelper.getSetting('it.contains.environment-variable.surrounded-by-default-values', readdedSettingTree)
-    assert 'ABCD -- "some value followed by: "only environment variable value\' and some following default value\' -- EFGH' == SettingHelper.getSetting('it.contains.environment-variable.in-between-default-values', readdedSettingTree)
+    assert '''ABCD -- "some value followed by: "only environment variable value' and some following default value' -- EFGH''' == SettingHelper.getSetting('it.contains.environment-variable.in-between-default-values', readdedSettingTree), SettingHelper.getSetting('it.contains.environment-variable.in-between-default-values', readdedSettingTree)
     assert 'ABCD -- very late definiton value -- EFGH' == SettingHelper.getSetting('it.contains.refference.to-a-late-definition', readdedSettingTree)
     assert 222233444 == SettingHelper.getSetting('handle.integer', readdedSettingTree)
     assert 2.3 == SettingHelper.getSetting('handle.float', readdedSettingTree)
@@ -124,6 +124,38 @@ def mustReadSettingFile() :
     assert 'ABCD -- 222233444 -- EFGH' == SettingHelper.getSetting('some-not-string-selfreference.integer', readdedSettingTree)
     assert 'ABCD -- 2.3 -- EFGH' == SettingHelper.getSetting('some-not-string-selfreference.float', readdedSettingTree)
     assert 'ABCD -- True -- EFGH' == SettingHelper.getSetting('some-not-string-selfreference.boolean', readdedSettingTree)
+
+@Test(
+    environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        'LATE_ENVIRONMENT_VALUE' : '-- late environment value --',
+        'ONLY_ENVIRONMENT_VARIABLE' : 'only environment variable value',
+        **LOG_HELPER_SETTINGS
+    }
+)
+def mustHandleLateValue() :
+    # Arrange
+    settingFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','late-value.yml'])
+
+    # Act
+    readdedSettingTree = SettingHelper.getSettingTree(settingFilePath, keepDepthInLongString=True)
+    log.prettyPython(mustReadSettingFile, 'readdedSettingTree', readdedSettingTree, logLevel=log.STATUS)
+
+    # Assert
+    assert 'abcd--1--hij--1--' == SettingHelper.getSetting('it.contains.two-consecutive-already-existing-reference', readdedSettingTree)
+    assert 'abcd--1--hij--1--' == SettingHelper.getSetting('it.contains.two-consecutive-setting-injection-with-missing-environment-variable-and-already-existing-reference', readdedSettingTree)
+    assert 'abcdefghijklm' == SettingHelper.getSetting('it.contains.two-consecutive-setting-injection-with-missing-environment-variable', readdedSettingTree)
+
+    assert '-- late value --' == SettingHelper.getSetting('it.contains.late-value', readdedSettingTree)
+
+    assert 'abcd--x-- late value --x--abcd--x-- late value --x--abcd--efg' == SettingHelper.getSetting('it.contains.some-composed-key.pointing-to.a-late-value', readdedSettingTree)
+    assert 'abcd-- late environment value ----abcd--x-- late value --x--abcd--efg' == SettingHelper.getSetting('it.contains.some-composed-key.pointing-to.a-late-value-with-an-environment-variable-in-between', readdedSettingTree)
+
+    assert 'abcd--x-- late value --x--abcd--x-- late value --x--abcd--efg' == SettingHelper.getSetting('it.contains.some-not-composed-key.pointing-to.a-late-value', readdedSettingTree)
+    assert 'abcd--x-- late environment value --x--abcd--x-- late value --x--abcd--efg' == SettingHelper.getSetting('it.contains.some-not-composed-key.pointing-to.a-late-value-with-an-environment-and-missing-environment-variable-variable-in-between', readdedSettingTree)
+    assert 'abcd--x-- late environment value --x--abcd--x-- late value --x--abcd--efg' == SettingHelper.getSetting('it.contains.some-not-composed-key.pointing-to.a-late-value-with-an-environment-variable-in-between', readdedSettingTree)
+
 
 @Test(
     environmentVariables={
@@ -182,6 +214,9 @@ def mustNotReadSettingFile() :
     environmentVariables={
         log.ENABLE_LOGS_WITH_COLORS : True,
         SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        'MY_COMPLEX_ENV' : ' -- my complex value -- ',
+        'LATE_VALUE' : '-- late environment value --',
+        'ONLY_ENVIRONMENT_VARIABLE' : 'only environment variable value',
         **LOG_HELPER_SETTINGS
     }
 )
@@ -1432,7 +1467,7 @@ def getSettingTree_otherApplication() :
                 'some-composed-key': {
                     'pointing-to': {
                         'a-late-value': 'abcd-- late value ----abcd---- late value ----abcd--efg',
-                        'a-late-value-with-an-environment-variable-in-between': 'abcd-- late environment value ----abcd--it.contains.late-value--abcd--efg'
+                        'a-late-value-with-an-environment-variable-in-between': 'abcd-- late environment value ----abcd---- late value ----abcd--efg'
                     }
                 },
                 'late-value': '-- late value --',
@@ -1499,9 +1534,9 @@ def getSettingTree_otherApplication() :
     assert "a:b$c:d://e:f?g:h:i:j!k:l@m:n*o:p:[q:r:s:t]/(u:v:w:x)" == SettingHelper.getSetting('environment.database.value', toAssert), SettingHelper.getSetting('environment.database.value', toAssert)
     assert expected['long']['string'] == toAssert['long']['string']
     assert expected['deepest']['long']['string']['ever']['long']['string'] == toAssert['deepest']['long']['string']['ever']['long']['string']
-    assert expected['not']['idented']['long']['string'] == toAssert['not']['idented']['long']['string']
+    assert expected['not']['idented']['long']['string'] == toAssert['not']['idented']['long']['string'], f'''{expected['not']['idented']['long']['string']} == {toAssert['not']['idented']['long']['string']}'''
     assert ObjectHelper.equals(expected['some']['dictionary'], toAssert['some']['dictionary'])
-    assert ObjectHelper.equals(expected, toAssert), f'{expected} --x-- {toAssert}'
+    assert ObjectHelper.equals(expected, toAssert), f'{ObjectHelper.sortIt(expected)}\n\n --x-- \n\n{ObjectHelper.sortIt(toAssert)}'
 
 @Test(
     environmentVariables={

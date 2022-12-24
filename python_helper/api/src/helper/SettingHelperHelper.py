@@ -20,11 +20,11 @@ def getFilteredSetting(settingKey, settingValue, nodeKey, settingTree) :
             # defaultSettingValue = c.NONE
             defaultSettingValue = settingValue
         if isSettingInjection(defaultSettingValue) :
-            # print(f'        {settingKey} -> is setting injection: settingValue: {settingValue}, type: {type(settingValue)}')
+            # print(f'        ----> getSettingInjectionValue: {settingKey} -> is setting injection: defaultSettingValue: {defaultSettingValue}, type: {type(settingValue)}')
             return getSettingInjectionValue(settingKey, defaultSettingValue, nodeKey, settingTree)
-        # print(f'        {settingKey} -> not setting injection: settingValue: {settingValue}, type: {type(settingValue)}')
+        # print(f'        ----> getValue: settingKey: {settingKey} -> not setting injection: defaultSettingValue: {defaultSettingValue}, type: {type(settingValue)}')
         return getValue(StringHelper.filterString(defaultSettingValue), ignoreCollections=True)
-    # print(f'        {settingKey} -> straight: settingValue: {settingValue}, type: {type(settingValue)}')
+    # print(f'        ----> settingValue: settingKey: {settingKey} -> straight: settingValue: {settingValue}, type: {type(settingValue)}')
     return settingValue
 
 def lineAproved(settingLine) :
@@ -153,7 +153,7 @@ def settingTreeInnerLoop(
     # print(f'    isSameDepth: {isSameDepth}')
     settingKey, settingValue = getAttributeKeyValue(settingLine)
     # print(f'    settingKey: {settingKey}, settingValue: {settingValue}')
-    # print(f'    value:{settingLine}')
+    # print(f'    settingLine: {settingLine}')
 
     if containsSettingInjection(settingValue) :
         try :
@@ -176,6 +176,7 @@ def settingTreeInnerLoop(
                 SETTING_VALUE : settingValue,
                 SETTING_NODE_KEY : nodeKey
             })
+        # print(f'    if -> return {settingKey}, {settingValue}, {nodeKey}, {longStringCapturing}, {quoteType}, {longStringList}')
         return settingKey, settingValue, nodeKey, longStringCapturing, quoteType, longStringList
     else :
         # print(f'    nodeKey: {nodeKey}')
@@ -191,6 +192,7 @@ def settingTreeInnerLoop(
             isSameDepth
         )
         # print(f'----------> nodeKey: {nodeKey}')
+        # print(f'    else -> return {settingKey}, {settingValue}, {nodeKey}, {longStringCapturing}, {quoteType}, {longStringList}')
         return settingKey, filteredSettingValue, nodeKey, longStringCapturing, quoteType, longStringList
 
 def handleSettingInjection(
@@ -205,7 +207,7 @@ def handleSettingInjection(
     lazyLoad,
     isSameDepth
 ) :
-    # print(f'handleSettingInjection: settingKey: {settingKey}, settingValue: {settingValue}')
+    # print(f'handleSettingInjection: settingKey: {settingKey}, settingValue: {settingValue}, settingInjectionList: {settingInjectionList}')
     if isSettingInjection(settingValue) :
         if lazyLoad :
             settingInjectionList.append({
@@ -466,12 +468,31 @@ def getAttibuteValue(settingLine) :
     possibleValue = StringHelper.filterString(settingLine)
     return getValue(c.COLON.join(possibleValue.split(c.COLON)[1:]))
 
-def isSettingKey(possibleSettingKey) :
-    return ObjectHelper.isNotNone(possibleSettingKey) and isinstance(possibleSettingKey, str) and (
-        not isSettingInjection(possibleSettingKey) and
-        possibleSettingKey == possibleSettingKey.lower() and
-        not c.COLON in possibleSettingKey
+def isComposedUnwrapedInjectionValue(settingValue):
+    unwrapedSettingInjectionValue = getUnwrappedSettingInjection(settingValue)
+    return isSettingInjection(settingValue) and (
+        not c.COLON_SPACE in unwrapedSettingInjectionValue and
+        c.COLON in unwrapedSettingInjectionValue and
+        ObjectHelper.equals(1, unwrapedSettingInjectionValue.count(c.COLON)) and (
+            StringHelper.isNotBlank(unwrapedSettingInjectionValue.split(c.COLON)[0]) or
+            StringHelper.isNotBlank(unwrapedSettingInjectionValue.split(c.COLON)[-1])
+        ) and (
+            StringHelper.isBlank(unwrapedSettingInjectionValue.split(c.COLON)[0]) or
+            unwrapedSettingInjectionValue.split(c.COLON)[0].isupper()
+        ) and (
+            StringHelper.isBlank(unwrapedSettingInjectionValue.split(c.COLON)[-1]) or
+            unwrapedSettingInjectionValue.split(c.COLON)[-1].islower()
+        )
     )
+
+def isSettingKey(possibleSettingKey) :
+    return ObjectHelper.isNotNone(possibleSettingKey) and (
+            isinstance(possibleSettingKey, str) and
+            not isSettingInjection(possibleSettingKey) and
+            not c.COLON in possibleSettingKey and
+            not f'{2 * c.DASH}' in possibleSettingKey and
+            possibleSettingKey == possibleSettingKey.lower()
+        )
 
 def isSettingValue(settingValue) :
     return ObjectHelper.isNotEmpty(settingValue) or ObjectHelper.isCollection(settingValue)
@@ -615,9 +636,10 @@ def containsOnlyOneSettingInjection(settingValue) :
 def getSettingInjectionValueIgnoringFallbackSettingTree(settingKey, settingValue, nodeKey, settingTree, fallbackSettingTree=None) :
     return getSettingInjectionValue(settingKey, settingValue, nodeKey, settingTree)
 
-def getSettingInjectionValue(settingKey, settingValue, nodeKey, settingTree) :
+def getSettingInjectionValue(settingKey, settingValue, nodeKey, settingTree, lazyLoad=False) :
+    isComposedInjectionValue = isComposedUnwrapedInjectionValue(settingValue)
     unwrapedSettingInjectionValue = getUnwrappedSettingInjection(settingValue)
-    # print(f'getSettingInjectionValue: settingKey: {settingKey}, unwrapedSettingInjectionValue: {unwrapedSettingInjectionValue}, settingTree: {settingTree}')
+    # print(f'---> getSettingInjectionValue: settingKey: {settingKey}, unwrapedSettingInjectionValue: {unwrapedSettingInjectionValue}, settingTree: {settingTree}')
     existingValue = None
     try:
         # print(f'nodeKey: {nodeKey}, settingKey: {settingKey}, settingTree: {settingTree}')
@@ -628,12 +650,16 @@ def getSettingInjectionValue(settingKey, settingValue, nodeKey, settingTree) :
         LogHelper.log(getSettingInjectionValue, 'Error while evaluating existing value', exception)
     if ObjectHelper.isNotEmpty(existingValue) and not isSettingInjection(existingValue) and not containsSettingInjection(existingValue) and not isSettingKey(existingValue):
         # if ObjectHelper.isNotEmpty(existingValue) and not isSettingInjection(existingValue) and not containsSettingInjection(existingValue) and not isSettingKey(existingValue) and not (isinstance(existingValue) and existingValue.startswith(c.COLON)):
+        # print(f'---> ---> first return {existingValue}')
         return existingValue
     if isSettingKey(unwrapedSettingInjectionValue) :
         selfReferenceSettingValue = safelyAccessTree(unwrapedSettingInjectionValue, settingTree)
         if ObjectHelper.isNone(selfReferenceSettingValue) :
+            if lazyLoad:
+                LogHelper.log(getSettingInjectionValue, f'Not possible to associate "{nodeKey}{c.DOT}{settingKey}" key to "{unwrapedSettingInjectionValue}" value. "{unwrapedSettingInjectionValue}" value is either not defined or not delayed defined. Example: "{OPEN_SETTING_INJECTION}:{nodeKey}{c.DOT}{settingKey}{CLOSE_SETTING_INJECTION}"')
+                return unwrapedSettingInjectionValue
             raise Exception(f'Not possible to associate "{nodeKey}{c.DOT}{settingKey}" key to "{unwrapedSettingInjectionValue}" value. "{unwrapedSettingInjectionValue}" value is either not defined or not delayed defined. Example: "{OPEN_SETTING_INJECTION}:{nodeKey}{c.DOT}{settingKey}{CLOSE_SETTING_INJECTION}"')
-            # return settingValue
+        # print(f'---> ---> second return {selfReferenceSettingValue}')
         return selfReferenceSettingValue
     environmentKey = unwrapedSettingInjectionValue.split(c.COLON)[0]
     environmentValue = EnvironmentHelper.get(environmentKey)
@@ -642,10 +668,20 @@ def getSettingInjectionValue(settingKey, settingValue, nodeKey, settingTree) :
     # print(f'getSettingInjectionValue: {settingKey} --> {environmentKey}: getValue(environmentValue): {getValue(environmentValue)}, type: {type(getValue(environmentValue))}') ##remove
     # print(f'getSettingInjectionValue: {settingKey} --> {environmentKey}: environmentValue: {environmentValue}, type: {type(environmentValue)}') ##remove
     if environmentValue :
+        # print(f'---> ---> third return {getValue(environmentValue, ignoreCollections=True)}')
         return getValue(environmentValue, ignoreCollections=True)
         # return environmentValue
-    else :
-        return getFilteredSetting(settingKey, unwrapedSettingInjectionValue, nodeKey, settingTree)
+    elif isComposedInjectionValue :
+        filteredSettingInjection = getFilteredSetting(settingKey, unwrapedSettingInjectionValue, nodeKey, settingTree)
+        # print(f'---> ---> filteredSettingInjection: {filteredSettingInjection}')
+        if ObjectHelper.isNeitherNoneNorBlank(filteredSettingInjection) :
+            reWrappedSettingInjectionValue = f'{OPEN_SETTING_INJECTION}{filteredSettingInjection}{CLOSE_SETTING_INJECTION}'
+            # print(f'---> ---> settingKey: {settingKey}, reWrappedSettingInjectionValue: {reWrappedSettingInjectionValue}, nodeKey: {nodeKey}, settingTree: {settingTree}')
+            # print(f'---> ---> fourth return {getSettingInjectionValue(settingKey, reWrappedSettingInjectionValue, nodeKey, settingTree)}')
+            return getSettingInjectionValue(settingKey, reWrappedSettingInjectionValue, nodeKey, settingTree, lazyLoad=True)
+    # print(f'---> ---> settingKey: {settingKey}, unwrapedSettingInjectionValue: {unwrapedSettingInjectionValue}, nodeKey: {nodeKey}, settingTree: {settingTree}')
+    # print(f'---> ---> fith return {getFilteredSetting(settingKey, unwrapedSettingInjectionValue, nodeKey, settingTree)}')
+    return getFilteredSetting(settingKey, unwrapedSettingInjectionValue, nodeKey, settingTree)
 
 def getUnwrappedSettingInjection(settingValue) :
     if isSettingInjection(settingValue) :
