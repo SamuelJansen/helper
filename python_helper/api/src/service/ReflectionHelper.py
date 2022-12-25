@@ -278,6 +278,19 @@ def getClassName(thing, typeClass=None, muteLogs=False):
     return name
 
 
+def isClass(thing, typeClass=None, muteLogs=False):
+    itIs = False
+    try :
+        if ObjectHelper.isNone(thing):
+            itIs = False
+        else :
+            itIs = ObjectHelper.equals(str(type(thing)), str(type))
+    except Exception as exception :
+        if not muteLogs :
+            LogHelper.warning(getClassName, f'Not possible to evaluate if {thing} is a class. Returning {itIs} by default', exception=exception)
+    return itIs
+
+
 def getMethodClassName(instanceClass):
     return instanceClass.__qualname__.split(c.DOT)[0]
 

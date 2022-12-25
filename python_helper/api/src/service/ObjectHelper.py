@@ -227,7 +227,7 @@ def filterIgnoreKeyListAvoidingRecursion(objectAsDictionary, ignoreKeyList, visi
     return objectAsDictionary
 
 
-def flatmap(lists):
+def flatMap(lists):
     return [item for sublist in lists for item in sublist]
 
 

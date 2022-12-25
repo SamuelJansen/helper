@@ -555,3 +555,61 @@ def getAttributeDataDictionary():
 
     #assert
     assert ObjectHelper.equals(expected, toAssert)
+
+
+@Test(
+    environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
+def isClass():
+    #arrange
+    def myFunction(l):
+        return l
+
+    class TestClass:
+        testAttribute = 2
+        def __init__(self, anoterTestAttribute):
+            self.anoterTestAttribute = anoterTestAttribute
+
+    #act & assert
+    assert ReflectionHelper.isClass(TestClass)
+    assert ObjectHelper.isNotNone(ReflectionHelper.isClass(TestClass('e')))
+    assert not ReflectionHelper.isClass(TestClass('e'))
+
+    assert ReflectionHelper.isClass(float)
+    assert ObjectHelper.isNotNone(ReflectionHelper.isClass(1.1))
+    assert not ReflectionHelper.isClass(1.1)
+
+    assert ReflectionHelper.isClass(int)
+    assert ObjectHelper.isNotNone(ReflectionHelper.isClass(1))
+    assert not ReflectionHelper.isClass(1)
+
+    assert ReflectionHelper.isClass(str)
+    assert ObjectHelper.isNotNone(ReflectionHelper.isClass('1'))
+    assert not ReflectionHelper.isClass('1')
+
+    assert ReflectionHelper.isClass(list)
+    assert ObjectHelper.isNotNone(ReflectionHelper.isClass([1]))
+    assert not ReflectionHelper.isClass([1])
+
+    assert ReflectionHelper.isClass(tuple)
+    assert ObjectHelper.isNotNone(ReflectionHelper.isClass(tuple([1])))
+    assert not ReflectionHelper.isClass(tuple([1]))
+
+    assert ReflectionHelper.isClass(set)
+    assert ObjectHelper.isNotNone(ReflectionHelper.isClass(set([1])))
+    assert not ReflectionHelper.isClass(set([1]))
+
+    assert ReflectionHelper.isClass(dict)
+    assert ObjectHelper.isNotNone(ReflectionHelper.isClass({1:3}))
+    assert not ReflectionHelper.isClass({1:3})
+
+    assert ObjectHelper.isNotNone(ReflectionHelper.isClass(myFunction))
+    assert not ReflectionHelper.isClass(myFunction)
+
+    assert ObjectHelper.isNotNone(ReflectionHelper.isClass(range(1)))
+    assert not ReflectionHelper.isClass(range(1))
