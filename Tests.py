@@ -3,6 +3,15 @@ TestHelper.run(__file__, inspectGlobals=False)
 # TestHelper.run(
 #     __file__,
 #     runOnly = [
+#         'ModuleImportsTest.allImportedSuccesfuly'
+#     ],
+#     ignoreModules = [
+#         'ModuleImportsTest'
+#     ]
+# )
+# TestHelper.run(
+#     __file__,
+#     runOnly = [
 #         # 'ReflectionHelperTest.instanciateItWithNoArgsConstructor_withSuccess',
 #         'ReflectionHelperTest.getAttributeOrMethodByNamePath'
 #     ]

@@ -59,7 +59,7 @@ def getUnitTestBatch(inspectGlobals, globalsInstance) :
 
 def getModuleTest(inspectGlobals, logResult, globalsInstance) :
     @Test(**getGlobalsTestKwargs(inspectGlobals, globalsInstance))
-    def tddModule(testName, testModule, dataList, times, runSpecificTests, testsToRun, allShouldRun, someShouldRun, logResult) :
+    def tddModule(testName, testModule, dataList, times, runSpecificTests, testModuleNamesToRun, allShouldRun, someShouldRun, logResult) :
         import globals
         tddModuleGlobalsInstance = globals.newGlobalsInstance(testModule.__file__
             , successStatus = globalsInstance.successStatus
@@ -79,7 +79,7 @@ def getModuleTest(inspectGlobals, logResult, globalsInstance) :
         testReturns = {}
         testTime = 0
         for data in dataList :
-            testMustRun = isTestToRun(testModule, data, runSpecificTests, testsToRun)
+            testMustRun = isTestToRun(testModule, data, runSpecificTests, testModuleNamesToRun)
             LogHelper.prettyPython(tddModule, f'test attribute or method', data[0], logLevel=LogHelper.TEST)
             LogHelper.prettyPython(tddModule, f'isTestToRun', testMustRun, logLevel=LogHelper.TEST)
             if testMustRun :
@@ -105,7 +105,7 @@ def getModuleTest(inspectGlobals, logResult, globalsInstance) :
         return allDidRun, someDidRun, testTime, testReturns
     return tddModule
 
-def runModuleTests(testName, runnableTddModule, times, runSpecificTests, testsToRun, logResult, globalsInstance) :
+def runModuleTests(testName, runnableTddModule, times, runSpecificTests, testModuleNamesToRun, logResult, globalsInstance) :
     import globals
     testModule = globals.importModule(testName, required=True)
     # if ObjectHelper.isNone(testModule):
@@ -115,7 +115,7 @@ def runModuleTests(testName, runnableTddModule, times, runSpecificTests, testsTo
     #     raise exception
     dataList = ReflectionHelper.getAttributeDataList(testModule)
     LogHelper.prettyPython(runnableTddModule, f'{ReflectionHelper.getName(testModule)} tests loaded', dataList, logLevel=LogHelper.TEST)
-    allShouldRun, someShouldRun, allDidRun, someDidRun = getRunStatus(testModule, dataList, runSpecificTests, testsToRun)
+    allShouldRun, someShouldRun, allDidRun, someDidRun = getRunStatus(testModule, dataList, runSpecificTests, testModuleNamesToRun)
     testReturns = {}
     testTime = 0
     totalTestTimeStart = time.time()
@@ -124,7 +124,7 @@ def runModuleTests(testName, runnableTddModule, times, runSpecificTests, testsTo
         methodReturnException = None
         LogHelper.test(runModuleTests, f'{defaultMessage} started')
         try :
-            allDidRun, someDidRun, testTime, testReturns = runnableTddModule(testName, testModule, dataList, times, runSpecificTests, testsToRun, allShouldRun, someShouldRun, logResult)
+            allDidRun, someDidRun, testTime, testReturns = runnableTddModule(testName, testModule, dataList, times, runSpecificTests, testModuleNamesToRun, allShouldRun, someShouldRun, logResult)
             LogHelper.printSuccess(f'{defaultMessage} succeed. {getTestRuntimeInfo(times, testTime, time.time() - totalTestTimeStart)}', condition=logResult, newLine=True, margin=False)
         except Exception as exception :
             methodReturnException = exception
@@ -135,13 +135,13 @@ def runModuleTests(testName, runnableTddModule, times, runSpecificTests, testsTo
             raise methodReturnException
     return allDidRun, someDidRun, testTime, testReturns
 
-def getRunStatus(testModule, dataList, runSpecificTests, testsToRun) :
+def getRunStatus(testModule, dataList, runSpecificTests, testModuleNamesToRun) :
     allDidRun = True
     someDidRun = False
     allShouldRun = True
     someShouldRun = False
     for data in dataList :
-        if isTestToRun(testModule, data, runSpecificTests, testsToRun) :
+        if isTestToRun(testModule, data, runSpecificTests, testModuleNamesToRun) :
             someShouldRun = True
         else :
             allShouldRun = False
@@ -173,7 +173,8 @@ def getSomeDidOrDidntAsString(allDidRun, someDidRun) :
 def run(
     filePath,
     runOnly = None,
-    ignore=None,
+    ignore = None,
+    ignoreModules = None,
     times = 1,
     successStatus = True,
     errorStatus = True,
@@ -205,13 +206,14 @@ def run(
         , logStatus = logStatus
         , logsWithColors = logsWithColors or LogHelper.colorsEnabled()
     )
-    testModuleNames, testsToRun, runSpecificTests = getTestModuleNames(runOnly, ignore, globalsInstance)
+    testModuleNamesToRun, runSpecificTests = getTestModuleNames(runOnly, ignore, ignoreModules, globalsInstance)
     returns = {}
     totalTestTimeStart = time.time()
     testTime = 0
-    for testModuleName in testModuleNames :
+    print(f'\n\ntestModuleNamesToRun: {testModuleNamesToRun}\n\nrunSpecificTests: {runSpecificTests}\n\n')
+    for testModuleName in testModuleNamesToRun :
         runnableTddModule = getModuleTest(inspectGlobals, logResult, globalsInstance)
-        allDidRun, didRun, moduleTestTime, testReturns = runModuleTests(testModuleName, runnableTddModule, times, runSpecificTests, testsToRun, logResult, globalsInstance)
+        allDidRun, didRun, moduleTestTime, testReturns = runModuleTests(testModuleName, runnableTddModule, times, runSpecificTests, testModuleNamesToRun, logResult, globalsInstance)
         returns[testModuleName] = testReturns
         testTime += moduleTestTime
     totalTestTime = time.time() - totalTestTimeStart
@@ -219,51 +221,77 @@ def run(
         LogHelper.success(run, f'{globalsInstance.apiName} tests completed. {getTestRuntimeInfo(times, testTime, totalTestTime)}')
     return returns
 
-def getTestModuleNames(runOnly, ignore, globalsInstance) :
-    testsToRun = [] if ObjectHelper.isNone(runOnly) or ObjectHelper.isNotCollection(runOnly) else runOnly
+def getTestModuleNames(runOnly, ignore, ignoreModules, globalsInstance) :
     testsToIgnore = [] if ObjectHelper.isNone(ignore) or ObjectHelper.isNotCollection(ignore) else ignore
-    runSpecificTests = ObjectHelper.isNotEmpty(testsToRun)
-    LogHelper.prettyPython(getTestModuleNames, f'runSpecificTests: {runSpecificTests}, testsToRun', testsToRun, logLevel=LogHelper.TEST)
-    testModuleNames = []
-    if ObjectHelper.isEmpty(testsToRun) :
-        testQueryTree = SettingHelper.querySetting(TEST_PACKAGE, globalsInstance.apiTree)
-        LogHelper.prettyPython(getTestModuleNames, 'Test query tree', testQueryTree, logLevel=LogHelper.TEST)
-        testModuleNames += getTestModuleNamesFromQuerryTree(testQueryTree, runOnly, ignore)
-    else :
+    modulesToIgnore = [] if ObjectHelper.isNone(ignoreModules) or ObjectHelper.isNotCollection(ignoreModules) else ignoreModules
+    runSpecificTests = [] if ObjectHelper.isNone(runOnly) or ObjectHelper.isNotCollection(runOnly) else [
+        testName
+        for testName in runOnly
+        if (
+            testName not in testsToIgnore and
+            getModuleName(testName) not in modulesToIgnore
+        )
+    ]
+    testQueryTree = SettingHelper.querySetting(TEST_PACKAGE, globalsInstance.apiTree)
+    LogHelper.prettyPython(getTestModuleNames, 'Test query tree', testQueryTree, logLevel=LogHelper.TEST)
+    testModuleNamesToRun = getTestModuleNamesFromQuerryTree(testQueryTree, runSpecificTests, modulesToIgnore)
+    LogHelper.prettyPython(getTestModuleNames, f'runSpecificTests: {runSpecificTests}, testModuleNamesToRun', testModuleNamesToRun, logLevel=LogHelper.TEST)
+    if ObjectHelper.isNotEmpty(runSpecificTests) :
         for testName in testsToIgnore :
-            if testName in testsToRun :
-                testModuleNames, testsToRun, runSpecificTests .remove(testName)
-        for testName in testsToRun :
-            testNameSplitted = testName.split(c.DOT)
-            testModuleName = c.NOTHING
-            if 2 == len(testNameSplitted) :
-                testModuleName = testNameSplitted[-2]
-            if testModuleName not in testModuleNames and StringHelper.isNotBlank(testName) :
-                testModuleNames.append(testModuleName)
-    LogHelper.prettyPython(getTestModuleNames, 'Test module names', testModuleNames, logLevel=LogHelper.TEST)
-    return testModuleNames, testsToRun, runSpecificTests
+            if testName in runSpecificTests :
+                runSpecificTests.remove(testName)
+    LogHelper.prettyPython(getTestModuleNames, 'Test module names', testModuleNamesToRun, logLevel=LogHelper.TEST)
+    return testModuleNamesToRun, runSpecificTests
 
-def getTestModuleNamesFromQuerryTree(testQueryTree, runOnly, ignore) :
-    testModuleNames = []
+def getTestModuleNamesFromQuerryTree(testQueryTree, runSpecificTests, modulesToIgnore) :
+    testModuleNamesToRun = []
     for queryResultKey, queryResult in testQueryTree.items() :
         LogHelper.prettyPython(getTestModuleNamesFromQuerryTree, 'Query result', queryResult, logLevel=LogHelper.TEST)
-        updateTestModuleNames(testModuleNames, queryResult, runOnly, ignore)
-    return testModuleNames
+        updateTestModuleNames(testModuleNamesToRun, queryResult, runSpecificTests, modulesToIgnore)
+    return testModuleNamesToRun
 
-def updateTestModuleNames(testModuleNames, queryResult, runOnly, ignore) :
+def updateTestModuleNames(testModuleNamesToRun, queryResult, runSpecificTests, modulesToIgnore) :
     if not c.NOTHING == queryResult :
         for key, value in queryResult.items() :
             if c.NOTHING == value and key.endswith(TEST_DOT_PY) :
                 testModuleName = key[:-len(DOT_PY)]
-                if ObjectHelper.isNone(runOnly) or ObjectHelper.isNotNone(runOnly) and testModuleName in runOnly :
-                    testModuleNames.append(testModuleName)
+                if (
+                    StringHelper.isNotBlank(testModuleName) and
+                    testModuleName not in modulesToIgnore and
+                    (
+                        ObjectHelper.isEmpty(runSpecificTests) or
+                        isFromSpecificTestsModule(testModuleName, runSpecificTests)
+                    )
+                ) :
+                    testModuleNamesToRun.append(testModuleName)
             else :
-                updateTestModuleNames(testModuleNames, value, runOnly, ignore)
+                updateTestModuleNames(testModuleNamesToRun, value, runSpecificTests, modulesToIgnore)
 
-def isTestToRun(testModule, attributeData, runSpecificTests, testsToRun) :
+def getModuleName(testName):
+    splittedTestName = testName.split(c.DOT)
+    testModuleName = c.NOTHING
+    if 2 >= len(splittedTestName) :
+        testModuleName = splittedTestName[-2]
+    return None if ObjectHelper.isNoneOrBlank(testName) or ObjectHelper.isNoneOrBlank(testModuleName) else testModuleName
+
+def isFromSpecificTestsModule(testModuleName, runSpecificTests) :
+    for specificTestName in runSpecificTests:
+        specificTestModuleName = getModuleName(specificTestName)
+        if ObjectHelper.isNeitherNoneNorBlank(specificTestModuleName) and ObjectHelper.equals(specificTestModuleName, testModuleName) :
+            return True
+
+def isTestToRun(testModule, attributeData, runSpecificTests, testModuleNamesToRun) :
+    # print(f'isTestToRun: {testModule}, {attributeData}, {runSpecificTests}, {testModuleNamesToRun}')
+    testModuleName = ReflectionHelper.getName(testModule)
     return (
-            not runSpecificTests or
-            (runSpecificTests and f'{ReflectionHelper.getName(testModule)}{c.DOT}{attributeData[1]}' in testsToRun)
+            (
+                ObjectHelper.isEmpty(runSpecificTests) or
+                (
+                    ObjectHelper.isNotEmpty(runSpecificTests) and
+                    f'{testModuleName}{c.DOT}{attributeData[1]}' in runSpecificTests
+                )
+            ) and
+            testModuleName in testModuleNamesToRun
         ) and ReflectionHelper.getAttributeOrMethod(attributeData[0], TestAnnotation.IS_TEST_METHOD, muteLogs=True)
 
 def getTestRuntimeInfo(times, testTime, totalTestTime) :

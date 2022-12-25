@@ -72,8 +72,6 @@ def mustRun_withSuccess() :
 )
 def mustRun_withFailure() :
     # Arrange
-    def myFunction(a):
-        return a
     @Test(environmentVariables={
         SettingHelper.ACTIVE_ENVIRONMENT : None,
         **MUTED_LOG_HELPER_SETTINGS
