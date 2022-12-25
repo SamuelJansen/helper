@@ -247,7 +247,7 @@ def getWeekDayOf(dateTime=None, date=None, time=None):
     return dateTimeNow().weekday()
 
 def addTimePotiomToDateAsStringIfNeeded(date):
-    return None if ObjectHelper.isNone(date) else f'{str(date).strip()} {DateTimeHelper.DEFAULT_TIME_BEGIN}' if ObjectHelper.equals(1, len(str(date).strip().split())) else date
+    return None if ObjectHelper.isNone(date) else f'{str(date).strip()} {DEFAULT_TIME_BEGIN}' if ObjectHelper.equals(1, len(str(date).strip().split())) else date
 
 def addNoise(givenDatetime):
     return givenDatetime + timeDelta(milliseconds=RandomHelper.integer(0,999))

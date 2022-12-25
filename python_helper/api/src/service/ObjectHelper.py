@@ -227,6 +227,10 @@ def filterIgnoreKeyListAvoidingRecursion(objectAsDictionary, ignoreKeyList, visi
     return objectAsDictionary
 
 
+def flatmap(lists):
+    return [item for sublist in lists for item in sublist]
+
+
 def isEmpty(thing):
     return StringHelper.isBlank(thing) if isinstance(thing, str) else isNone(thing) or isEmptyCollection(thing)
 
