@@ -210,7 +210,7 @@ def run(
     returns = {}
     totalTestTimeStart = time.time()
     testTime = 0
-    print(f'\n\ntestModuleNamesToRun: {testModuleNamesToRun}\n\nrunSpecificTests: {runSpecificTests}\n\n')
+    # print(f'\n\ntestModuleNamesToRun: {testModuleNamesToRun}\n\nrunSpecificTests: {runSpecificTests}\n\n')
     for testModuleName in testModuleNamesToRun :
         runnableTddModule = getModuleTest(inspectGlobals, logResult, globalsInstance)
         allDidRun, didRun, moduleTestTime, testReturns = runModuleTests(testModuleName, runnableTddModule, times, runSpecificTests, testModuleNamesToRun, logResult, globalsInstance)
