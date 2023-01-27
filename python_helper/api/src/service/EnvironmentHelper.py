@@ -51,7 +51,11 @@ OTHER_OS_NAME_LIST = [
 clear = lambda: OS.system('cls')
 
 def setMaxIntToStringDigits(number):
-    SYS.set_int_max_str_digits(4300)
+    SYS.set_int_max_str_digits(number if number else 4300)
+
+def setRecursionLimit(number):
+    SYS.setrecursionlimit(number if number else 2097152)
+    # threading.stack_size(number if number else 134217728)
 
 def get(environmentKey, default=None):
     environmentValue = default if ObjectHelper.isNone(environmentKey) else OS.environ.get(environmentKey)

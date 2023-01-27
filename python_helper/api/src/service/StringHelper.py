@@ -205,13 +205,17 @@ def getOnlyLetters(value):
 
 ###- deprecated
 def isUp(charactere):
-    return isUpCharactere(charactere)
+    return isUpCharacter(charactere)
 
-def isUpCharactere(charactere):
+###- deprecated
+def areUp(characteres):
+    return getOnlyLetters(characteres).isupper()
+
+def isUpCharacter(charactere):
     return 1 == len(str(charactere)) and str(charactere) in c.UPPER_CASE_CHARACTERES
 
 def fromPascalToTitle(value):
-    return join([f'{c.SPACE}{char}' if isUp(char) else char for char in str(value)], character = c.BLANK)
+    return join([f'{c.SPACE}{char}' if isUpCharacter(char) else char for char in str(value)], character = c.BLANK)
 
 def toTitle(value):
     return join(
@@ -220,7 +224,7 @@ def toTitle(value):
         ).title().strip().split(),
         character = c.SPACE
     )
-
+    
 def toPascalCase(value):
     return join(
         toTitle(value).split()
@@ -247,7 +251,7 @@ def toKebabCase(value):
         character = c.DASH
     )
 
-def toParagraphCase(value):
+def toText(value):
     newValueAsString = join(
         join(
             join(
@@ -265,3 +269,7 @@ def toParagraphCase(value):
         ],
         character = c.DOT_SPACE
     )}'''
+
+###- deprecated
+def toParagraphCase(value):
+    return toText(value)

@@ -159,3 +159,168 @@ def getWeekDay() :
     assert datetime.datetime.now().weekday() == DateTimeHelper.getWeekDay(dateTime=dateTimeNow)
     assert datetime.datetime.now().weekday() == DateTimeHelper.getWeekDay(date=dateNow, time=timeNow)
     assert datetime.datetime.now().weekday() == DateTimeHelper.getWeekDay(date=dateNow)
+
+@Test()
+def plusMonths() :
+    # arrange
+    # act
+    # assert
+    assert DateTimeHelper.plusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=1
+    ) == DateTimeHelper.of(dateTime = '2022-10-10 10:10:10.999'), f'2022-09-10 10:10:10.999 + 1 month == 2022-10-10 10:10:10.999'
+    assert DateTimeHelper.plusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=2
+    ) == DateTimeHelper.of(dateTime = '2022-11-10 10:10:10.999'), f'2022-09-10 10:10:10.999 + 2 month == 2022-11-10 10:10:10.999'
+    assert DateTimeHelper.plusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=3
+    ) == DateTimeHelper.of(dateTime = '2022-12-10 10:10:10.999'), f'2022-09-10 10:10:10.999 + 3 month == 2022-12-10 10:10:10.999'
+    assert DateTimeHelper.plusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=4
+    ) == DateTimeHelper.of(dateTime = '2023-01-10 10:10:10.999'), f'2022-09-10 10:10:10.999 + 4 month == 2023-01-10 10:10:10.999'
+    assert DateTimeHelper.plusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=5
+    ) == DateTimeHelper.of(dateTime = '2023-02-10 10:10:10.999'), f'2022-09-10 10:10:10.999 + 5 month == 2023-02-10 10:10:10.999'
+    assert DateTimeHelper.plusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=6
+    ) == DateTimeHelper.of(dateTime = '2023-03-10 10:10:10.999'), f'2022-09-10 10:10:10.999 + 6 month == 2023-03-10 10:10:10.999'
+    assert DateTimeHelper.plusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=7
+    ) == DateTimeHelper.of(dateTime = '2023-04-10 10:10:10.999'), f'2022-09-10 10:10:10.999 + 7 month == 2023-04-10 10:10:10.999'
+    assert DateTimeHelper.plusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=8
+    ) == DateTimeHelper.of(dateTime = '2023-05-10 10:10:10.999'), f'2022-09-10 10:10:10.999 + 8 month == 2023-05-10 10:10:10.999'
+    assert DateTimeHelper.plusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=9
+    ) == DateTimeHelper.of(dateTime = '2023-06-10 10:10:10.999'), f'2022-09-10 10:10:10.999 + 9 month == 2023-06-10 10:10:10.999'
+    assert DateTimeHelper.plusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=10
+    ) == DateTimeHelper.of(dateTime = '2023-07-10 10:10:10.999'), f'2022-09-10 10:10:10.999 + 10 month == 2023-07-10 10:10:10.999'
+    assert DateTimeHelper.plusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=11
+    ) == DateTimeHelper.of(dateTime = '2023-08-10 10:10:10.999'), f'2022-09-10 10:10:10.999 + 11 month == 2023-08-10 10:10:10.999'
+    assert DateTimeHelper.plusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=12
+    ) == DateTimeHelper.of(dateTime = '2023-09-10 10:10:10.999'), f'2022-09-10 10:10:10.999 + 12 month == 2023-09-10 10:10:10.999'
+
+
+    assert DateTimeHelper.plusMonths(
+        DateTimeHelper.of(dateTime = '2022-12-10 10:10:10.999'),
+        months=0
+    ) == DateTimeHelper.of(dateTime = '2022-12-10 10:10:10.999'), f'2022-12-10 10:10:10.999 + 0 month == 2022-12-10 10:10:10.999'
+    assert DateTimeHelper.plusMonths(
+        DateTimeHelper.of(dateTime = '2022-12-10 10:10:10.999'),
+        months=1
+    ) == DateTimeHelper.of(dateTime = '2023-01-10 10:10:10.999'), f'2022-12-10 10:10:10.999 + 1 month == 2023-01-10 10:10:10.999'
+    assert DateTimeHelper.plusMonths(
+        DateTimeHelper.of(dateTime = '2023-01-10 10:10:10.999'),
+        months=0
+    ) == DateTimeHelper.of(dateTime = '2023-01-10 10:10:10.999'), f'2023-01-10 10:10:10.999 + 0 month == 2023-01-10 10:10:10.999'
+    assert DateTimeHelper.plusMonths(
+        DateTimeHelper.of(dateTime = '2023-01-10 10:10:10.999'),
+        months=1
+    ) == DateTimeHelper.of(dateTime = '2023-02-10 10:10:10.999'), f'2023-01-10 10:10:10.999 + 1 month == 2023-02-10 10:10:10.999'
+    assert DateTimeHelper.plusMonths(
+        DateTimeHelper.of(dateTime = '2023-03-10 10:10:10.999'),
+        months=34
+    ) == DateTimeHelper.of(dateTime = '2026-01-10 10:10:10.999'), f'2023-03-10 10:10:10.999 + 34 month == 2026-01-10 10:10:10.999: {DateTimeHelper.plusMonths(DateTimeHelper.of(dateTime = "2023-03-10 10:10:10.999"), months=34)}'
+
+@Test()
+def minusMonths() :
+    # arrange
+    # act
+    # assert
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=1
+    ) == DateTimeHelper.of(dateTime = '2022-08-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 1 month == 2022-08-10 10:10:10.999'
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=2
+    ) == DateTimeHelper.of(dateTime = '2022-07-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 2 month == 2022-07-10 10:10:10.999'
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=3
+    ) == DateTimeHelper.of(dateTime = '2022-06-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 3 month == 2022-06-10 10:10:10.999'
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=4
+    ) == DateTimeHelper.of(dateTime = '2022-05-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 4 month == 2022-05-10 10:10:10.999: {DateTimeHelper.minusMonths(DateTimeHelper.of(dateTime = "2022-09-10 10:10:10.999"), months=4)}'
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=5
+    ) == DateTimeHelper.of(dateTime = '2022-04-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 5 month == 2022-04-10 10:10:10.999: {DateTimeHelper.minusMonths(DateTimeHelper.of(dateTime = "2022-09-10 10:10:10.999"), months=5)}'
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=6
+    ) == DateTimeHelper.of(dateTime = '2022-03-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 6 month == 2022-03-10 10:10:10.999'
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=7
+    ) == DateTimeHelper.of(dateTime = '2022-02-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 7 month == 2022-02-10 10:10:10.999'
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=8
+    ) == DateTimeHelper.of(dateTime = '2022-01-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 8 month == 2022-01-10 10:10:10.999'
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=9
+    ) == DateTimeHelper.of(dateTime = '2021-12-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 9 month == 2021-12-10 10:10:10.999'
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=10
+    ) == DateTimeHelper.of(dateTime = '2021-11-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 10 month == 2021-11-10 10:10:10.999'
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=11
+    ) == DateTimeHelper.of(dateTime = '2021-10-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 11 month == 2021-10-10 10:10:10.999'
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=12
+    ) == DateTimeHelper.of(dateTime = '2021-09-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 12 month == 2021-09-10 10:10:10.999'
+
+
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-02-10 10:10:10.999'),
+        months=0
+    ) == DateTimeHelper.of(dateTime = '2022-02-10 10:10:10.999'), f'2022-02-10 10:10:10.999 - 0 month == 2022-02-10 10:10:10.999'
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-02-10 10:10:10.999'),
+        months=1
+    ) == DateTimeHelper.of(dateTime = '2022-01-10 10:10:10.999'), f'2022-02-10 10:10:10.999 - 0 month == 2022-01-10 10:10:10.999'
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-01-10 10:10:10.999'),
+        months=0
+    ) == DateTimeHelper.of(dateTime = '2022-01-10 10:10:10.999'), f'2022-01-10 10:10:10.999 - 0 month == 2022-01-10 10:10:10.999'
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-01-10 10:10:10.999'),
+        months=1
+    ) == DateTimeHelper.of(dateTime = '2021-12-10 10:10:10.999'), f'2022-01-10 10:10:10.999 - 1 month == 2021-12-10 10:10:10.999'
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-12-10 10:10:10.999'),
+        months=0
+    ) == DateTimeHelper.of(dateTime = '2022-12-10 10:10:10.999'), f'2022-12-10 10:10:10.999 - 0 month == 2022-12-10 10:10:10.999'
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-12-10 10:10:10.999'),
+        months=1
+    ) == DateTimeHelper.of(dateTime = '2022-11-10 10:10:10.999'), f'2022-12-10 10:10:10.999 - 1 month == 2022-11-10 10:10:10.999'
+
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=14
+    ) == DateTimeHelper.of(dateTime = '2021-07-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 14 month == 2021-07-10 10:10:10.999'
+    assert DateTimeHelper.minusMonths(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        months=34
+    ) == DateTimeHelper.of(dateTime = '2019-11-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 34 month == 2019-11-10 10:10:10.999'

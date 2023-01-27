@@ -430,14 +430,18 @@ def toTitle() :
     environmentVariables={**{}, **LOG_HELPER_SETTINGS},
     **TEST_SETTINGS
 )
-def toParagraphCase() :
+def toText() :
     # arrange
     EXPECTED_A = 'Acbabcd. Efghabcdef'
     EXPECTED_B = 'A c b ab cd. Efgh ab cd ef'
+    EXPECTED_C = 'Ef andf'
 
     # act
     # assert
-    assert EXPECTED_A == StringHelper.toParagraphCase('aCBAbCd.EfghAbCdEf')
-    assert EXPECTED_A == StringHelper.toParagraphCase('ACBAbCd. EfghAbCdEf')
-    assert EXPECTED_B == StringHelper.toParagraphCase('a_c_b_ab_cd_.Efgh_ab_Cd_ef')
-    assert EXPECTED_B == StringHelper.toParagraphCase('a-c-b-ab-cd-.Efgh-ab-cd-ef')
+    assert EXPECTED_A == StringHelper.toText('aCBAbCd.EfghAbCdEf')
+    assert EXPECTED_A == StringHelper.toText('ACBAbCd. EfghAbCdEf')
+    
+    assert EXPECTED_B == StringHelper.toText('a_c_b_ab_cd_.Efgh_ab_Cd_ef')
+    assert EXPECTED_B == StringHelper.toText('a-c-b-ab-cd-.Efgh-ab-cd-ef')
+
+    assert EXPECTED_C == StringHelper.toText('ef ANDF')
