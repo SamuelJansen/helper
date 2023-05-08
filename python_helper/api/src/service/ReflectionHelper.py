@@ -16,9 +16,9 @@ def thisIsAFunction():
     ...
 
 METHOD_TYPE_NAMES = (
-    c.TYPE_METHOD,
-    c.TYPE_BUILTIN_FUNCTION_OR_METHOD
-    # , type(thisIsAFunction).__name__ ###- it cannot be a function
+    c.TYPE_METHOD
+    , c.TYPE_BUILTIN_FUNCTION_OR_METHOD
+    , type(thisIsAFunction).__name__ ###- it cannot be a function ###- @staticmethod clashes with @Test assuming it
 )
 
 
@@ -136,8 +136,12 @@ def isNotMethod(objectInstance, name, muteLogs=False):
     return isNotMethodInstance(getAttributeOrMethod(objectInstance, name, muteLogs=muteLogs), muteLogs=muteLogs)
 
 
+def isFunction(methodInstance):
+    return isinstance(methodInstance, type(thisIsAFunction))
+
+
 def isNotFunction(methodInstance):
-    return not isinstance(methodInstance, type(thisIsAFunction))
+    return not isFunction(methodInstance)
 
 
 def instanciateItWithNoArgsConstructor(targetClass, amountOfNoneArgs=0, args=None, muteLogs=False):
@@ -204,6 +208,17 @@ def getAttributeDataList(instance, muteLogs=False):
         )
         for instanceAttributeName in dir(instance)
         if isAttributeName(instanceAttributeName, instance, muteLogs=muteLogs)
+    ]
+
+
+def getInstanceDataList(instance, muteLogs=False):
+    return [
+        (
+            getattr(instance, instanceAttributeName),
+            instanceAttributeName
+        )
+        for instanceAttributeName in dir(instance)
+        if isNotPrivate(instanceAttributeName, muteLogs=muteLogs)
     ]
 
 

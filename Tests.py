@@ -50,7 +50,8 @@ TestHelper.run(__file__, inspectGlobals=False)
 #         # 'SettingHelperTest.getSettingTree_fallbackPriority',
 #         # 'SettingHelperTest.getSettingTree_otherApplication',
 #         # 'SettingHelperTest.getSettingTree_whenThereAreNoneValuesAllOverThePlace',
-#         # 'SettingHelperTest.getBooleanSetting'
+#         # 'SettingHelperTest.getSettingTree_getBooleanSetting',
+#         # 'SettingHelperTest.getSettingTree_settingTreeHasAllDefaultSettingTreeValues'
 #     ],
 #     # testStatus = False,
 #     # logStatus = False,
@@ -85,39 +86,12 @@ TestHelper.run(__file__, inspectGlobals=False)
 # )
 # TestHelper.run(
 #     __file__,
-#     times = 100,
+#     # times = 100,
 #     runOnly = [
-#         'StringHelperTest.prettyJson_withSucces'
-#     ],
-#     testStatus = False,
-#     logStatus = False,
-#     logResult = True,
-#     inspectGlobals = False
-# )
-# TestHelper.run(
-#     __file__,
-#     times = 100,
-#     runOnly = [
-#         'StringHelperTest.prettyPython_withSucces'
-#     ],
-#     testStatus = False,
-#     logStatus = False,
-#     logResult = True,
-#     inspectGlobals = False
-# )
-# TestHelper.run(
-#     __file__,
-#     times = 10,
-#     testStatus = False,
-#     logStatus = False,
-#     logResult = True,
-#     inspectGlobals = False
-# )
-# TestHelper.run(
-#     __file__,
-#     times = 1,
-#     runOnly = [
-#         'StringHelperTest.prettifyPerformance'
+#         # 'StringHelperTest.prettyJson_withSucces',
+#         # 'StringHelperTest.prettyPython_withSucces',
+#         # 'StringHelperTest.prettifyPerformance',
+#         # 'StringHelperTest.toText_infiniteLoop'
 #     ],
 #     testStatus = False,
 #     logStatus = False,

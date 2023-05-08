@@ -440,8 +440,30 @@ def toText() :
     # assert
     assert EXPECTED_A == StringHelper.toText('aCBAbCd.EfghAbCdEf')
     assert EXPECTED_A == StringHelper.toText('ACBAbCd. EfghAbCdEf')
-    
+
     assert EXPECTED_B == StringHelper.toText('a_c_b_ab_cd_.Efgh_ab_Cd_ef')
     assert EXPECTED_B == StringHelper.toText('a-c-b-ab-cd-.Efgh-ab-cd-ef')
 
     assert EXPECTED_C == StringHelper.toText('ef ANDF')
+
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
+def toText_infiniteLoop() :
+    #arrange
+    domain = 'CreditCard'
+    expected = 'Credit card'
+    exceptionNotExpected = None
+
+    #act
+    toAssert = None
+    try:
+        toAssert = StringHelper.toText(StringHelper.toTitle(domain))
+    except Exception as exception:
+        exceptionNotExpected = exception
+
+    #assert
+    assert ObjectHelper.isNone(exceptionNotExpected), exceptionNotExpected
+    assert ObjectHelper.isNotNone(toAssert), toAssert
+    assert ObjectHelper.equals(toAssert, toAssert), f'{expected} == {toAssert}'

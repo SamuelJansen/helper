@@ -1637,7 +1637,7 @@ def getSettingTree_whenThereAreNoneValuesAllOverThePlace() :
         **LOG_HELPER_SETTINGS,
     }
 )
-def getBooleanSetting():
+def getSettingTree_getBooleanSetting():
     # arrange
     defaultFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','boolean-application.yml'])
     localFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','boolean-application-local.yml'])
@@ -1681,3 +1681,24 @@ def getBooleanSetting():
     assert bool == type(thisIsAlsoTrue), f'thisIsAlsoTrue with type bool, but is {thisIsAlsoTrue} with type {type(thisIsAlsoTrue)}'
     assert not thisIsAlsoFalse, f'thisIsAlsoFalse with type bool, but is {thisIsAlsoFalse} with type {type(thisIsAlsoFalse)}'
     assert bool == type(thisIsAlsoFalse), f'thisIsAlsoFalse with type bool, but is {thisIsAlsoFalse} with type {type(thisIsAlsoFalse)}'
+
+
+@Test(
+    environmentVariables={
+        'ENVIRONMENT_BOOLEAN_VALUE': True,
+        log.ENABLE_LOGS_WITH_COLORS : True,
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS,
+    }
+)
+def getSettingTree_settingTreeHasAllDefaultSettingTreeValues():
+    # arrange
+    defaultFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','setting-tree-has-all-default-setting-tree-values-application.yml'])
+    localFilePath = str(EnvironmentHelper.OS_SEPARATOR).join(['python_helper', 'api', 'test', 'api', 'resource','setting-tree-has-all-default-setting-tree-values-application-local.yml'])
+
+    # act
+    # , fallbackSettingTree=SettingHelper.getSettingTree(defaultFilePath, keepDepthInLongString=True)
+    toAsser = SettingHelper.getSettingTree(localFilePath, keepDepthInLongString=True, fallbackSettingFilePath=defaultFilePath)['default']['value']
+
+    #assert
+    assert 'hi' == toAsser, f'''default.value setting value should be present, but it's not. toAsser: {toAsser}'''
