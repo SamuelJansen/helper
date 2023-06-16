@@ -1,4 +1,4 @@
-from python_helper import log, SettingHelper, StringHelper, EnvironmentVariable, EnvironmentHelper, ObjectHelper, Test
+from python_helper import log, SettingHelper, StringHelper, EnvironmentHelper, ObjectHelper, Test
 
 class MyClass :
     def myMethod(self):

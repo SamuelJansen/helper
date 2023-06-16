@@ -158,10 +158,13 @@ def makeDirectory(path, accessRights=0o777):
     ###- accessRights = 0o777 --> write, access and read
     ###- accessRights = 0o755 --> access and read
     ###- accessRights = 0o755 --> access and read
-    OS.makedirs(path, mode=accessRights)
+    return OS.makedirs(path, mode=accessRights)
+
+def buildPath(*args):
+    return StringHelper.join([str(arg) for arg in args], character=OS_SEPARATOR)
 
 def appendPath(path):
-    SYS.path.append(path)
+    return SYS.path.append(path)
 
 def getCurrentSoutStatus(avoidRecursiveCall=False):
     return SYS.stdout, SYS.stderr
