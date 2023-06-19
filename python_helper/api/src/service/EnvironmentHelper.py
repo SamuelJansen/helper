@@ -154,6 +154,18 @@ def isDirectory(path):
 def isFile(path):
     return OS.path.isfile(path)
 
+def getCurrentDirectory():
+    return OS.getcwd()
+
+def getParentDirectory(path):
+    return OS.path.dirname(path)
+
+def cdDirectory(path):
+    return OS.chdir(path)
+    
+def cdBack():
+    return cdDirectory(getParentDirectory(getCurrentDirectory()))
+
 def makeDirectory(path, accessRights=0o777):
     ###- accessRights = 0o777 --> write, access and read
     ###- accessRights = 0o755 --> access and read
