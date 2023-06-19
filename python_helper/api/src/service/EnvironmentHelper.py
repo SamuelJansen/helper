@@ -145,6 +145,9 @@ def isFalse(environmentKey, default=True, evaluateItInsted=None):
             return c.FALSE == c.FALSE if isinstance(default, bool) and not default else c.TRUE
     return default
 
+def execute(commandLine):
+    return OS.system(commandLine)
+
 def listDirectoryContent(path):
     return OS.listdir(path)
 
@@ -165,6 +168,13 @@ def cdDirectory(path):
     
 def cdBack():
     return cdDirectory(getParentDirectory(getCurrentDirectory()))
+
+def cpFile(filPath, asFilePath):
+    sourceAndDestination = f'{filPath}{c.SPACE}{asFilePath}'
+    if isLinux() or isMacOs():
+        return execute(f'cp {sourceAndDestination}')  
+    if isWindows():
+        return execute(f'copy {sourceAndDestination}')
 
 def makeDirectory(path, accessRights=0o777):
     ###- accessRights = 0o777 --> write, access and read
