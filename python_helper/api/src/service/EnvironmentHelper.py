@@ -165,26 +165,25 @@ def getParentDirectory(path):
 
 def cdDirectory(path):
     return OS.chdir(path)
-    
+
 def cdBack():
     return cdDirectory(getParentDirectory(getCurrentDirectory()))
 
-def cpFile(filePath, asFilePath):
-    sourceAndDestination = f'{filePath}{Constant.SPACE}{asFilePath}'
+def copyFile(filePath, asFilePath):
+    sourceAndDestination = f'{filePath}{c.SPACE}{asFilePath}'
     if isLinux() or isMacOs():
-        return execute(f'cp {sourceAndDestination}')  
+        return execute(f'cp{c.SPACE}{sourceAndDestination}')
     if isWindows():
-        return execute(f'copy {sourceAndDestination}')
-    
+        return execute(f'copy{c.SPACE}{sourceAndDestination}')
+
 def removeFile(filePath):
     if isLinux() or isMacOs():
-        return execute(f'rm -rf {filePath}')
+        return execute(f'rm{c.SPACE}{c.DASH}rf{c.SPACE}{filePath}')
     if isWindows():
-        return execute(f'cmd /C rmdir /S /Q {filePath}')
+        return execute(f'cmd{c.SPACE}{c.FOWARD_SLASH}C{c.SPACE}rmdir{c.SPACE}{c.FOWARD_SLASH}S{c.SPACE}{c.FOWARD_SLASH}Q{c.SPACE}{filePath}')
 
 def makeDirectory(path, accessRights=0o777):
     ###- accessRights = 0o777 --> write, access and read
-    ###- accessRights = 0o755 --> access and read
     ###- accessRights = 0o755 --> access and read
     return OS.makedirs(path, mode=accessRights)
 
