@@ -169,12 +169,18 @@ def cdDirectory(path):
 def cdBack():
     return cdDirectory(getParentDirectory(getCurrentDirectory()))
 
-def cpFile(filPath, asFilePath):
-    sourceAndDestination = f'{filPath}{c.SPACE}{asFilePath}'
+def cpFile(filePath, asFilePath):
+    sourceAndDestination = f'{filePath}{Constant.SPACE}{asFilePath}'
     if isLinux() or isMacOs():
         return execute(f'cp {sourceAndDestination}')  
     if isWindows():
         return execute(f'copy {sourceAndDestination}')
+    
+def removeFile(filePath):
+    if isLinux() or isMacOs():
+        return execute(f'rm -rf {filePath}')
+    if isWindows():
+        return execute(f'cmd /C rmdir /S /Q {filePath}')
 
 def makeDirectory(path, accessRights=0o777):
     ###- accessRights = 0o777 --> write, access and read
