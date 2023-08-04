@@ -3,7 +3,7 @@ import os
 
 OS_SEPARATOR = os.path.sep
 
-version = '0.3.68'
+version = '0.3.67'
 name = 'python_helper'
 packageName = name
 repositoryName = name.replace("_", "-")
@@ -30,7 +30,8 @@ setup(
     download_url = f'{url}archive/v{version}.tar.gz',
     keywords = ['helper', 'python helper package', 'python helper', 'helper package'],
     install_requires = [
-        'colorama==0.4.4'
+        'colorama<1.0.0,>=0.4.4',
+        'python-dateutil<3.0.0,>=2.8.2'
     ],
     classifiers = [
         'Development Status :: 3 - Alpha',
