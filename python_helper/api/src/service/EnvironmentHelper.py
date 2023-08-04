@@ -221,4 +221,9 @@ def isMacOs():
     return SYS.platform in MAC_OS_NAME_LIST
 
 def isOtherOs():
-    return SYS.platform in OTHER_OS_NAME_LIST
+    return (
+        SYS.platform in OTHER_OS_NAME_LIST
+        or not isLinux()
+        or not isWindows()
+        or not isMacOs()
+    )
