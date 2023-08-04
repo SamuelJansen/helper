@@ -925,9 +925,9 @@ def equals_whenNotEquals_simpleSet() :
     
     #act
     toAssert = ObjectHelper.equals(simpleSetList, noEqualsSimpleEmptySetList, muteLogs=False)
-    print(toAssert)
 
     #assert
+    assert False == toAssert, f'{False} == {toAssert}'
     assert not toAssert, f'not {simpleSetList} == {noEqualsSimpleEmptySetList}'
 
 
@@ -987,7 +987,7 @@ def getCompleteInstanceNameList():
         car = bar
         return ObjectHelper.getCompleteInstanceNameList(car)
     # expected = ['bar', 'car', 'foo', 'doo', 'woo', 'foo']
-    expected = ['doo', 'woo', 'foo', 'bar', 'car', 'foo']
+    expected = ['doo', 'woo', 'foo', 'bar', 'car', 'foo', 'instance']
 
     #act
     toAssert = local()
@@ -996,7 +996,7 @@ def getCompleteInstanceNameList():
     assert expected == toAssert, f'{expected} == {toAssert}'
     assert ['None'] == ObjectHelper.getCompleteInstanceNameList(None), ObjectHelper.getCompleteInstanceNameList(None)
     # assert ['set', 'set', 'set'] == ObjectHelper.getCompleteInstanceNameList(set), ObjectHelper.getCompleteInstanceNameList(set)
-    assert [] == ObjectHelper.getCompleteInstanceNameList(set), ObjectHelper.getCompleteInstanceNameList(set)
+    assert ['instance'] == ObjectHelper.getCompleteInstanceNameList(set), ObjectHelper.getCompleteInstanceNameList(set)
 
 
 
@@ -1032,6 +1032,7 @@ def getInstanceName():
         bar = foo
         car = bar
         return ObjectHelper.getInstanceName(car)
+        #['doo', 'woo', 'foo', 'bar']
     expected = 'car'
 
     #act

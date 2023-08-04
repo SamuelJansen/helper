@@ -147,6 +147,7 @@ def equals(
             return areEquals
         else:
             return True
+    return False
 
 
 def notEquals(*args, **kwargs):
@@ -381,7 +382,7 @@ def getCompleteInstanceNameList(instance):
             frame.f_locals.items()
         ])
         if instanceValue is instance
-    ][:-1]
+    ]
 
 
 def getInstanceNameList(instance):
