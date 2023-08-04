@@ -402,54 +402,7 @@ def getName_manyCases() :
     parent_attributeNameToAsert = ReflectionHelper.getParentClass(Me().an)
     parent_staticAttributeNameToAsert = ReflectionHelper.getParentClass(Me().na)
     parent_testFunctionNameToAsert = ReflectionHelper.getParentClass(getName_manyCases)
-    # print(
-    #     functionNameToAsert,
-    #     instanceNameToAsert,
-    #     classNameToAsert,
-    #     methodNameToAsert,
-    #     attributeNameToAsert,
-    #     staticAttributeNameToAsert
-    # )
-    # print(
-    #     class_functionNameToAsert,
-    #     class_instanceNameToAsert,
-    #     class_classNameToAsert,
-    #     class_methodNameToAsert,
-    #     class_attributeNameToAsert,
-    #     class_staticAttributeNameToAsert
-    # )
-    # print(
-    #     type_functionNameToAsert,
-    #     type_instanceNameToAsert,
-    #     type_classNameToAsert,
-    #     type_methodNameToAsert,
-    #     type_attributeNameToAsert,
-    #     type_staticAttributeNameToAsert
-    # )
-    # print(
-    #     type_class_functionNameToAsert,
-    #     type_class_instanceNameToAsert,
-    #     type_class_classNameToAsert,
-    #     type_class_methodNameToAsert,
-    #     type_class_attributeNameToAsert,
-    #     type_class_staticAttributeNameToAsert
-    # )
-    # print(
-    #     None_functionNameToAsert,
-    #     None_instanceNameToAsert,
-    #     None_classNameToAsert,
-    #     None_methodNameToAsert,
-    #     None_attributeNameToAsert,
-    #     None_staticAttributeNameToAsert
-    # )
-    # print(
-    #     None_class_functionNameToAsert,
-    #     None_class_instanceNameToAsert,
-    #     None_class_classNameToAsert,
-    #     None_class_methodNameToAsert,
-    #     None_class_attributeNameToAsert,
-    #     None_class_staticAttributeNameToAsert
-    # )
+    
     # assert
     assert 'functionMine' == functionNameToAsert
     assert '(undefined)' == instanceNameToAsert
@@ -460,7 +413,8 @@ def getName_manyCases() :
 
     assert 'function' == class_functionNameToAsert
     assert 'Me' == class_instanceNameToAsert
-    assert 'type' == class_classNameToAsert
+    # assert 'type' == class_classNameToAsert, class_classNameToAsert
+    assert 'Me' == class_classNameToAsert, class_classNameToAsert
     assert 'method' == class_methodNameToAsert
     assert 'int' == class_attributeNameToAsert
     assert 'str' == class_staticAttributeNameToAsert
@@ -472,12 +426,18 @@ def getName_manyCases() :
     assert 'int' == type_attributeNameToAsert
     assert 'str' == type_staticAttributeNameToAsert
 
-    assert 'type' == type_class_functionNameToAsert
-    assert 'type' == type_class_instanceNameToAsert
-    assert 'type' == type_class_classNameToAsert
-    assert 'type' == type_class_methodNameToAsert
-    assert 'type' == type_class_attributeNameToAsert
-    assert 'type' == type_class_staticAttributeNameToAsert
+    # assert 'type' == type_class_functionNameToAsert
+    # assert 'type' == type_class_instanceNameToAsert
+    # assert 'type' == type_class_classNameToAsert
+    # assert 'type' == type_class_methodNameToAsert
+    # assert 'type' == type_class_attributeNameToAsert
+    # assert 'type' == type_class_staticAttributeNameToAsert
+    assert 'function' == type_class_functionNameToAsert, type_class_functionNameToAsert
+    assert 'Me' == type_class_instanceNameToAsert, type_class_instanceNameToAsert
+    assert 'type' == type_class_classNameToAsert, type_class_classNameToAsert
+    assert 'method' == type_class_methodNameToAsert, type_class_methodNameToAsert
+    assert 'int' == type_class_attributeNameToAsert, type_class_attributeNameToAsert
+    assert 'str' == type_class_staticAttributeNameToAsert, type_class_staticAttributeNameToAsert
 
     assert '(undefined)' == None_functionNameToAsert
     assert '(undefined)' == None_instanceNameToAsert
@@ -613,3 +573,32 @@ def isClass():
 
     assert ObjectHelper.isNotNone(ReflectionHelper.isClass(range(1)))
     assert not ReflectionHelper.isClass(range(1))
+
+
+@Test(
+    environmentVariables={
+        log.ENABLE_LOGS_WITH_COLORS : True,
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS
+    },
+    **TEST_SETTINGS
+)
+def getItNaked():
+    #arrange
+    A = 2
+    def getA():
+        B = A
+        return B + 1
+    F = getA()
+
+    #act and assert
+    print(ObjectHelper.getCompleteInstanceNameList(A))
+    print(ObjectHelper.getCompleteInstanceNameList(F))
+
+    print(ObjectHelper.getInstanceNameList(A))
+    print(ObjectHelper.getInstanceNameList(F))
+
+    log.debugIt(A)
+    ReflectionHelper.getItNaked(A)
+    log.debugIt(F)
+    ReflectionHelper.getItNaked(F)

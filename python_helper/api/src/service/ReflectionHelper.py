@@ -257,7 +257,8 @@ def getClass(thing, typeClass=None, muteLogs=False):
         if ObjectHelper.isEmpty(thing):
             thingClass = typeClass
         else :
-            thingClass = thing.__class__
+            # thingClass = thing.__class__
+            thingClass = thing if isClass(thing) else thing.__class__
     except Exception as exception :
         thingClass = type(None)
         if not muteLogs :
@@ -340,7 +341,7 @@ def getParentClass(instance):
     try :
         instanceParent = unsafelyGetInstanceParent(instance)
     except Exception as exception:
-        LogHelper.wrapper(getInstanceParent, 'Failed to get instance parent', exception)
+        LogHelper.wrapper(getParentClass, 'Failed to get instance parent', exception)
     return instanceParent
 
 
@@ -359,17 +360,24 @@ def unsafelyGetInstanceParent(instance):
     return getattr(instance, '__objclass__', None)
 
 
-def getItNaked(it):
+def getItNaked(it, depthSkip=0):
     printDetails(it)
     printClass(it)
+    LogHelper.debugIt(it, depthSkip=depthSkip+2)
     try :
         LogHelper.prettyPython(getAttributePointerList, 'getAttributePointerList', getAttributePointerList(it), logLevel=LogHelper.DEBUG)
     except : pass
     try :
-        LogHelper.prettyPython(getAttributeAndMethodNameList, 'getAttributeAndMethodNameList', getAttributeAndMethodNameList(it), logLevel=LogHelper.DEBUG)
+        LogHelper.prettyPython(getAttributeOrMethodNameList, 'getAttributeOrMethodNameList', getAttributeOrMethodNameList(it), logLevel=LogHelper.DEBUG)
     except : pass
     try :
         LogHelper.prettyPython(getAttributeNameList, 'getAttributeNameList', getAttributeNameList(it), logLevel=LogHelper.DEBUG)
+    except : pass
+    try :
+        LogHelper.prettyPython(getMethodNameList, 'getMethodNameList', getMethodNameList(it), logLevel=LogHelper.DEBUG)
+    except : pass
+    try :
+        LogHelper.prettyPython(getInstanceDataList, 'getInstanceDataList', getInstanceDataList(it), logLevel=LogHelper.DEBUG)
     except : pass
     try :
         LogHelper.prettyPython(getAttributeDataList, 'getAttributeDataList', getAttributeDataList(it), logLevel=LogHelper.DEBUG)

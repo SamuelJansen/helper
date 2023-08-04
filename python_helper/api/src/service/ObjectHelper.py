@@ -1,10 +1,11 @@
 from numbers import Number
 
 from python_helper.api.src.domain import Constant as c
-from python_helper.api.src.service import StringHelper, LogHelper
+from python_helper.api.src.service import StringHelper, LogHelper, EnvironmentHelper
 from python_helper.api.src.helper import ObjectHelperHelper
 
 
+NONE_VALUE_NAME = str(None)
 GENERATOR_CLASS_NAME = 'generator'
 UNKNOWN_OBJECT_CLASS_NAME = c.UNKNOWN.lower()
 
@@ -28,6 +29,19 @@ COLLECTION_CLASSES = (
 
 type = type
 
+
+def strComparator(value):
+    # return StringHelper.join([v.replace(c.SPACE, c.DASH) for v in str(value).split(c.NEW_LINE)])
+    return str(value)
+
+
+def simpleEquals(
+    expected,
+    toAssert
+):
+    return expected == toAssert
+
+    
 def equals(
     expected,
     toAssert,
@@ -194,6 +208,10 @@ def deepSort(x, deepMode=True):
         for i in x:
             sortIt(i, deepMode=deepMode)
         return x
+    
+
+def getDistinctAndOrdered(givenList):
+    return deepSort(list(set(givenList)))
 
 
 def getSortedDictionary(dictionary, deepMode=False):
@@ -340,3 +358,46 @@ def deleteCollectionEntry(entry, collection):
         deleteDictionaryEntry(entry, collection)
     elif entry in collection:
         collection.remove(entry)
+
+
+def getCompleteInstanceNameList(instance):
+    if isNone(instance):
+        return [NONE_VALUE_NAME]
+    frame = EnvironmentHelper.SYS._getframe()
+    # import inspect
+    # frame = inspect.currentframe()
+    return [
+        instanceName 
+        for instanceName, instanceValue in flatMap([
+            # f.f_locals
+            # for f in iter(lambda: frame.f_back, None)
+            frame.f_back.f_back.f_back.f_back.f_back.f_back.f_back.f_locals.items(),
+            frame.f_back.f_back.f_back.f_back.f_back.f_back.f_locals.items(),
+            frame.f_back.f_back.f_back.f_back.f_back.f_locals.items(),  
+            frame.f_back.f_back.f_back.f_back.f_locals.items(),  
+            frame.f_back.f_back.f_back.f_locals.items(),  
+            frame.f_back.f_back.f_locals.items(),  
+            frame.f_back.f_locals.items(),
+            frame.f_locals.items()
+        ])
+        if instanceValue is instance
+    ][:-1]
+
+
+def getInstanceNameList(instance):
+    accumulatedSet = set()
+    def accumulateAndReturn(value):
+        if value not in accumulatedSet:
+            accumulatedSet.add(value)
+        return value                
+    nameList = [
+        accumulateAndReturn(value)
+        for value in getCompleteInstanceNameList(instance)
+        if value not in accumulatedSet
+    ][:-1]
+    return nameList if 1 <= len(nameList) else [str(instance)]
+
+
+def getInstanceName(instance, depthSkip=0):
+    instanceNameList = getInstanceNameList(instance)
+    return instanceNameList[0] if 1 >= len(instanceNameList) else instanceNameList[- (1 + depthSkip)]

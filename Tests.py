@@ -1,5 +1,33 @@
 from python_helper import TestHelper
 TestHelper.run(__file__, inspectGlobals=False)
+
+# TestHelper.run(
+#     __file__,
+#     runOnly = [
+#         'DateTimeHelperTest.plusYears',
+#         'DateTimeHelperTest.minusYears'
+#     ]
+# )
+# TestHelper.run(
+#     __file__,
+#     runOnly = [
+#         'ObjectHelperTest.basicMethods'
+#         , 'ObjectHelperTest.mustAssertEquals'
+#         , 'ObjectHelperTest.mustIgnoreKeyCorrectly'
+#         , 'ObjectHelperTest.equal_whenListOfDictionaries_ignoreCollectionOrder'
+#         , 'ObjectHelperTest.equal_whenObjects'
+#         , 'ObjectHelperTest.sortIt'
+#         , 'ObjectHelperTest.sortIt_whenNotEquals'
+#         # , 'ObjectHelperTest.sortIt_whenSortedVisitedIdInstances'
+#         , 'ObjectHelperTest.equals_whenNotEquals_simpleSet'
+#         , 'ObjectHelperTest.equal_whenDictionary'
+#         , 'ObjectHelperTest.equal_whenSets'
+#         , 'ObjectHelperTest.getCompleteInstanceNameList'
+#         , 'ObjectHelperTest.getInstanceNameList'
+#         , 'ObjectHelperTest.getInstanceName'
+#         , 'ObjectHelperTest.equal_whenRecursive'
+#     ]
+# )
 # TestHelper.run(
 #     __file__,
 #     runOnly = [
@@ -7,13 +35,6 @@ TestHelper.run(__file__, inspectGlobals=False)
 #     ],
 #     ignoreModules = [
 #         'ModuleImportsTest'
-#     ]
-# )
-# TestHelper.run(
-#     __file__,
-#     runOnly = [
-#         # 'ReflectionHelperTest.instanciateItWithNoArgsConstructor_withSuccess',
-#         'ReflectionHelperTest.getAttributeOrMethodByNamePath'
 #     ]
 # )
 # TestHelper.run(__file__,

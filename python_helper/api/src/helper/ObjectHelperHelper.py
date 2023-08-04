@@ -1,9 +1,11 @@
 from python_helper.api.src.service import ObjectHelper, ReflectionHelper, LogHelper
 
+
 def generatorInstance():
     while True :
         yield False
         break
+
 
 def leftEqual(left, right, ignoreCollectionOrder, ignoreKeyList, ignoreCharactereList, ignoreAttributeList, ignoreAttributeValueList, visitedIdInstances, muteLogs=True):
     if ObjectHelper.isNone(left) or ObjectHelper.isNone(right):
@@ -58,3 +60,4 @@ def leftEqual(left, right, ignoreCollectionOrder, ignoreKeyList, ignoreCharacter
                 isEqual = False
                 break
         return isEqual
+    return False

@@ -23,7 +23,7 @@ def filterJson(jsonAsString, extraCharacterList=None) :
 
 def removeCharactere(character, string) :
     if isNotBlank(character) and isNotBlank(string) :
-        filteredString = c.BLANK.join(string.strip().split(character))
+        filteredString = join(split(string.strip(), character=character))
         return filteredString.replace(character,c.BLANK)
     return string
 
@@ -134,7 +134,7 @@ def filterString(string) :
     surroundedBySingleQuote = strippedString.startswith(c.SINGLE_QUOTE) and strippedString.endswith(c.SINGLE_QUOTE) and not (c.SINGLE_QUOTE*2 == strippedString or c.TRIPLE_SINGLE_QUOTE == strippedString)
     surroundedByDoubleQuote = strippedString.startswith(c.DOUBLE_QUOTE) and strippedString.endswith(c.DOUBLE_QUOTE) and not (c.DOUBLE_QUOTE*2 == strippedString or c.TRIPLE_DOUBLE_QUOTE == strippedString)
     if c.HASH_TAG in strippedString and not (surroundedBySingleQuote or surroundedByDoubleQuote) :
-        strippedString = filterString(c.HASH_TAG.join(strippedString.split(c.HASH_TAG)[:-1]))
+        strippedString = filterString(join(split(strippedString, character=c.HASH_TAG)[:-1], character=c.HASH_TAG))
     if strippedString and (
             (
                 strippedString.startswith(c.TRIPLE_SINGLE_QUOTE) and
@@ -170,7 +170,7 @@ def removeColors(thing) :
         for color in c.IMPLEMENTED_PROMP_COLORS :
             if color in thing :
                 thing = thing.replace(color,c.BLANK)
-    return thing if isinstance(thing, str) else str(string)
+    return thing if isinstance(thing, str) else str(thing)
 
 def getS(condition, es=False) :
     return c.BLANK if not condition else 'es' if es else 's'
@@ -198,10 +198,19 @@ def getToBe(condition, singular=True, tense=PRESENT, negative=False) :
 def getOnlyLetters(value):
     return join([
         char for char in join(
-            str(value).replace(c.UNDERSCORE, c.SPACE).replace(c.DASH, c.SPACE).split(),
+            split(str(value).replace(c.UNDERSCORE, c.SPACE).replace(c.DASH, c.SPACE)),
             character = c.SPACE
-        ) if char in c.CHARACTERES
+        ) if (
+            char in c.CHARACTERES and 
+            char not in [c.BLANK]
+        )
     ])
+
+def removeLeaddingCharacters(string, *characters):
+    for character in characters:
+        while string.startswith(character) and 0 < len(string):
+            string = string[1:]
+    return string
 
 ###- deprecated
 def isUp(charactere):
@@ -215,19 +224,21 @@ def isUpCharacter(charactere):
     return 1 == len(str(charactere)) and str(charactere) in c.UPPER_CASE_CHARACTERES
 
 def fromPascalToTitle(value):
-    return join([f'{c.SPACE}{char}' if isUpCharacter(char) else char for char in str(value)], character = c.BLANK)
+    return join([f'{c.SPACE}{char}' if isUpCharacter(char) else char for char in str(value)])
 
 def toTitle(value):
     return join(
-        fromPascalToTitle(
-            getOnlyLetters(value)
-        ).title().strip().split(),
+        split(
+            fromPascalToTitle(
+                getOnlyLetters(value)
+            ).title().strip()
+        ),
         character = c.SPACE
     )
     
 def toPascalCase(value):
     return join(
-        toTitle(value).split()
+        split(toTitle(value))
     )
 
 def toCamelCase(value):
@@ -241,31 +252,36 @@ def toCamelCase(value):
 
 def toSnakeCase(value):
     return join(
-        toTitle(value).lower().split(),
+        split(toTitle(value).lower()),
         character = c.UNDERSCORE
     )
 
 def toKebabCase(value):
     return join(
-        toTitle(value).lower().split(),
+        split(toTitle(value).lower()),
         character = c.DASH
     )
 
 def toText(value):
     newValueAsString = join(
-        join(
+        split(
             join(
-                str(value).split(c.DASH),
+                split(
+                    join(
+                        split(str(value), character=c.DASH),
+                        character = c.SPACE
+                    ), 
+                    character = c.UNDERSCORE
+                ),
                 character = c.SPACE
-            ).split(c.UNDERSCORE),
-            character = c.SPACE
-        ).split(),
+            )
+        ),
         character = c.SPACE
     )
     return c.BLANK if not 0 < len(newValueAsString) else f'''{join(
         [
             f'{segment.lower().strip()[0].upper()}{segment.lower().strip()[1:]}'
-            for segment in newValueAsString.split(c.DOT)
+            for segment in split(newValueAsString, character=c.DOT)
         ],
         character = c.DOT_SPACE
     )}'''

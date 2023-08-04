@@ -341,50 +341,7 @@ def mustHandleSettingValueInFallbackSettingTree() :
         not
                     fshds
                     """'''
-
-    # Act
-    readdedSettingFallbackFilePath = SettingHelper.getSettingTree(settingFallbackFilePath)
-    readdedSettingTree = SettingHelper.getSettingTree(settingFilePath, keepDepthInLongString=True, fallbackSettingTree=readdedSettingFallbackFilePath)
-    # log.prettyPython(mustHandleSettingValueInFallbackSettingTree, 'readdedSettingTree', readdedSettingTree, logLevel=log.SETTING)
-
-    # Assert
-    assert [] == SettingHelper.getSetting('reffer-to.fallback-settings.empty.list', readdedSettingTree)
-    assert 'ABCD -- [] -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.list-in-between', readdedSettingTree)
-    assert (()) == SettingHelper.getSetting('reffer-to.fallback-settings.empty.tuple', readdedSettingTree)
-    assert 'ABCD -- () -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.tuple-in-between', readdedSettingTree)
-    assert {} == SettingHelper.getSetting('reffer-to.fallback-settings.empty.set-or-dictionary', readdedSettingTree)
-    assert 'ABCD -- {} -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.set-or-dictionary-in-between', readdedSettingTree)
-    assert [
-        'a',
-        'b',
-        'c'
-    ] == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.list', readdedSettingTree)
-    assert "ABCD -- ['a', 'b', 'c'] -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.list-in-between', readdedSettingTree)
-    assert (
-        True,
-        False,
-        'None'
-    ) == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.tuple', readdedSettingTree)
-    assert "ABCD -- (True, False, 'None') -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.tuple-in-between', readdedSettingTree)
-    assert {} == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.set', readdedSettingTree)
-    assert 'ABCD -- {} -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.set-in-between', readdedSettingTree)
-    assert {
-        '1': 20,
-        '2': 10,
-        '3': 30
-    } == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.dictionary', readdedSettingTree)
-    assert "ABCD -- {'1': 20, '2': 10, '3': 30} -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.dictionary-in-between', readdedSettingTree)
-    assert "fallback value" == SettingHelper.getSetting('reffer-to.fallback-settings.string', readdedSettingTree)
-    assert "ABCD -- fallback value -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.string-in-between', readdedSettingTree)
-    assert 222233444 == SettingHelper.getSetting('reffer-to.fallback-settings.integer', readdedSettingTree)
-    assert "ABCD -- 222233444 -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.integer-in-between', readdedSettingTree)
-    assert 2.3 == SettingHelper.getSetting('reffer-to.fallback-settings.float', readdedSettingTree)
-    assert "ABCD -- 2.3 -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.float-in-between', readdedSettingTree)
-    assert True == SettingHelper.getSetting('reffer-to.fallback-settings.boolean', readdedSettingTree)
-    assert "ABCD -- True -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.boolean-in-between', readdedSettingTree)
-    assert 'None' == SettingHelper.getSetting('reffer-to.fallback-settings.none', readdedSettingTree)
-    assert "ABCD -- None -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.none-in-between', readdedSettingTree)
-    assert ObjectHelper.equals({
+    toAssertSettingTree = {
         'some-reference': {
             'much': {
                 'before-its-assignment': 'delayed assignment value'
@@ -693,8 +650,52 @@ def mustHandleSettingValueInFallbackSettingTree() :
             },
             'static-package': 'AppData\Local\Programs\Python\Python38-32\statics'
         }
-    },
-    readdedSettingTree, ignoreKeyList=['it'])
+    }
+
+    # Act
+    readdedSettingFallbackFilePath = SettingHelper.getSettingTree(settingFallbackFilePath)
+    readdedSettingTree = SettingHelper.getSettingTree(settingFilePath, keepDepthInLongString=True, fallbackSettingTree=readdedSettingFallbackFilePath)
+    log.prettyPython(mustHandleSettingValueInFallbackSettingTree, 'toAssertSettingTree', toAssertSettingTree, logLevel=log.SETTING)
+    log.prettyPython(mustHandleSettingValueInFallbackSettingTree, 'readdedSettingTree', readdedSettingTree, logLevel=log.SETTING)
+
+    # Assert
+    assert [] == SettingHelper.getSetting('reffer-to.fallback-settings.empty.list', readdedSettingTree)
+    assert 'ABCD -- [] -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.list-in-between', readdedSettingTree)
+    assert (()) == SettingHelper.getSetting('reffer-to.fallback-settings.empty.tuple', readdedSettingTree)
+    assert 'ABCD -- () -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.tuple-in-between', readdedSettingTree)
+    assert {} == SettingHelper.getSetting('reffer-to.fallback-settings.empty.set-or-dictionary', readdedSettingTree)
+    assert 'ABCD -- {} -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.empty.set-or-dictionary-in-between', readdedSettingTree)
+    assert [
+        'a',
+        'b',
+        'c'
+    ] == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.list', readdedSettingTree)
+    assert "ABCD -- ['a', 'b', 'c'] -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.list-in-between', readdedSettingTree)
+    assert (
+        True,
+        False,
+        'None'
+    ) == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.tuple', readdedSettingTree)
+    assert "ABCD -- (True, False, 'None') -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.tuple-in-between', readdedSettingTree)
+    assert {} == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.set', readdedSettingTree)
+    assert 'ABCD -- {} -- EFGH' == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.set-in-between', readdedSettingTree)
+    assert {
+        '1': 20,
+        '2': 10,
+        '3': 30
+    } == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.dictionary', readdedSettingTree)
+    assert "ABCD -- {'1': 20, '2': 10, '3': 30} -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.not-empty.dictionary-in-between', readdedSettingTree)
+    assert "fallback value" == SettingHelper.getSetting('reffer-to.fallback-settings.string', readdedSettingTree)
+    assert "ABCD -- fallback value -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.string-in-between', readdedSettingTree)
+    assert 222233444 == SettingHelper.getSetting('reffer-to.fallback-settings.integer', readdedSettingTree)
+    assert "ABCD -- 222233444 -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.integer-in-between', readdedSettingTree)
+    assert 2.3 == SettingHelper.getSetting('reffer-to.fallback-settings.float', readdedSettingTree)
+    assert "ABCD -- 2.3 -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.float-in-between', readdedSettingTree)
+    assert True == SettingHelper.getSetting('reffer-to.fallback-settings.boolean', readdedSettingTree)
+    assert "ABCD -- True -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.boolean-in-between', readdedSettingTree)
+    assert 'None' == SettingHelper.getSetting('reffer-to.fallback-settings.none', readdedSettingTree)
+    assert "ABCD -- None -- EFGH" == SettingHelper.getSetting('reffer-to.fallback-settings.none-in-between', readdedSettingTree)
+    assert ObjectHelper.equals(toAssertSettingTree, readdedSettingTree, ignoreKeyList=['it'])
 
 @Test(
     environmentVariables={
@@ -1702,3 +1703,33 @@ def getSettingTree_settingTreeHasAllDefaultSettingTreeValues():
 
     #assert
     assert 'hi' == toAsser, f'''default.value setting value should be present, but it's not. toAsser: {toAsser}'''
+
+
+@Test(
+    environmentVariables={
+        'ENVIRONMENT_BOOLEAN_VALUE': True,
+        log.ENABLE_LOGS_WITH_COLORS : True,
+        SettingHelper.ACTIVE_ENVIRONMENT : SettingHelper.LOCAL_ENVIRONMENT,
+        **LOG_HELPER_SETTINGS,
+    }
+)
+def getValueAsString():
+    # arrange
+    class Bloop:
+        def __repr__(self) -> str:
+            return 'Bloop'
+    originalValues = [ 1, '1', True, Bloop()]
+    expected = [
+        str(v)
+        for v in originalValues
+    ]
+
+    # act
+    toAssert = [
+        SettingHelper.getValueAsString(v)
+        for v in originalValues
+    ]
+
+    #assert
+    assert expected == toAssert
+    assert ObjectHelper.equals(expected, toAssert)

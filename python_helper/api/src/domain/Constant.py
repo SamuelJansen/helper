@@ -412,5 +412,5 @@ UPPER_CASE = {
     "Z"
 }
 CHARACTERES = tuple(set([*A, *E, *I, *O, *U, *C, *LOWER_CASE, *UPPER_CASE, SPACE]))
-UPPER_CASE_CHARACTERES = tuple(set([char for char in CHARACTERES if char == char.upper()]))
+UPPER_CASE_CHARACTERES = tuple(set([char for char in CHARACTERES if char == char.upper() and char == char.strip()]))
 ALL_SYMBOLS = tuple(set([*CHARACTERES, *SYMBOLS, *PUNCTUATION, *NUMBERS]))

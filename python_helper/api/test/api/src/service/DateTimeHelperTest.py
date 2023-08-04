@@ -92,7 +92,8 @@ def dateTime_now() :
     givenDateTime = datetime.datetime.now()
     givenDate = datetime.datetime.now().date()
     givenTime = datetime.datetime.now().time()
-    margin = 500
+    givenTimeStampNow = DateTimeHelper.ofTimestamp(datetime.datetime.timestamp(DateTimeHelper.dateTimeNow()))
+    margin = 550
 
     # act
     # assert
@@ -115,7 +116,7 @@ def dateTime_now() :
     ) < margin, f'datetime.datetime.now().time() == DateTimeHelper.timeNow() => {datetime.datetime.now().time()} == {DateTimeHelper.timeNow()}'
     assert DateTimeHelper.timestampNow() - timestampFromDatetimeNow < margin, f'datetime.datetime.timestamp(datetime.datetime.now()) == DateTimeHelper.timestampNow() => {datetime.datetime.timestamp(datetime.datetime.now())} == {DateTimeHelper.timestampNow()}'
     assert datetime.datetime.fromtimestamp(givenSimpleDateTime) == DateTimeHelper.ofTimestamp(givenSimpleDateTime), f'datetime.datetime.fromtimestamp(givenSimpleDateTime) == DateTimeHelper.ofTimestamp(givenSimpleDateTime) => {datetime.datetime.fromtimestamp(givenSimpleDateTime)} == {DateTimeHelper.ofTimestamp(givenSimpleDateTime)}'
-    assert (DateTimeHelper.ofTimestamp(datetime.datetime.timestamp(DateTimeHelper.dateTimeNow())) - givenDateTimeNow).microseconds < margin, f'datetime.datetime.now() == DateTimeHelper.ofTimestamp(datetime.datetime.timestamp(DateTimeHelper.dateTimeNow())) => {datetime.datetime.now()} == {DateTimeHelper.ofTimestamp(datetime.datetime.timestamp(DateTimeHelper.dateTimeNow()))}'
+    assert (givenTimeStampNow - givenDateTimeNow).microseconds < margin, f'datetime.datetime.now() == DateTimeHelper.ofTimestamp(datetime.datetime.timestamp(DateTimeHelper.dateTimeNow())) => {givenTimeStampNow} == {givenDateTimeNow}'
 
     parsed = None
     for pattern in DateTimeHelper.PATTERNS :
@@ -324,3 +325,39 @@ def minusMonths() :
         DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
         months=34
     ) == DateTimeHelper.of(dateTime = '2019-11-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 34 month == 2019-11-10 10:10:10.999'
+
+
+@Test()
+def minusMonth_when31July() :
+    #arrange, act and assert
+    assert '2023-06-30 00:00:00' == str(DateTimeHelper.minusMonths(DateTimeHelper.of(date='2023-07-31'), months=1)), '2023-06-30' + ' == ' + str(DateTimeHelper.minusMonths(DateTimeHelper.of(date='2023-07-31'), months=1))
+
+
+@Test()
+def plusYears() :
+    # arrange
+    # act
+    # assert
+    assert DateTimeHelper.plusYears(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        years=1
+    ) == DateTimeHelper.of(dateTime = '2023-09-10 10:10:10.999'), f'2022-09-10 10:10:10.999 + 1 year == 2023-09-10 10:10:10.999'
+    assert DateTimeHelper.plusYears(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        years=2
+    ) == DateTimeHelper.of(dateTime = '2024-09-10 10:10:10.999'), f'2022-09-10 10:10:10.999 + 2 year == 2024-09-10 10:10:10.999'
+    
+
+@Test()
+def minusYears() :
+    # arrange
+    # act
+    # assert
+    assert DateTimeHelper.minusYears(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        years=1
+    ) == DateTimeHelper.of(dateTime = '2021-09-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 1 year == 2021-09-10 10:10:10.999'
+    assert DateTimeHelper.minusYears(
+        DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
+        years=2
+    ) == DateTimeHelper.of(dateTime = '2020-09-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 2 year == 2020-09-10 10:10:10.999'

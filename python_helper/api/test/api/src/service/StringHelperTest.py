@@ -453,17 +453,88 @@ def toText() :
 def toText_infiniteLoop() :
     #arrange
     domain = 'CreditCard'
-    expected = 'Credit card'
+    expected = 'Credit Card'
     exceptionNotExpected = None
+    toAssert = None
+
+    someNoneValue = None
+    someNoneValueExpected = 'None'
+    noneValueExceptionNotExpected = None
+    noneValueToAssert = None
 
     #act
-    toAssert = None
     try:
         toAssert = StringHelper.toText(StringHelper.toTitle(domain))
     except Exception as exception:
         exceptionNotExpected = exception
 
+    #act
+    try:
+        noneValueToAssert = StringHelper.toText(StringHelper.toTitle(someNoneValue))
+    except Exception as exception:
+        noneValueExceptionNotExpected = exception
+
     #assert
     assert ObjectHelper.isNone(exceptionNotExpected), exceptionNotExpected
     assert ObjectHelper.isNotNone(toAssert), toAssert
     assert ObjectHelper.equals(toAssert, toAssert), f'{expected} == {toAssert}'
+    assert ObjectHelper.isNone(noneValueExceptionNotExpected), noneValueExceptionNotExpected
+    assert ObjectHelper.isNotNone(noneValueToAssert), noneValueToAssert
+    assert ObjectHelper.equals(someNoneValueExpected, noneValueToAssert), noneValueToAssert
+
+    StringHelper.toText(StringHelper.toTitle('credit card'))
+    StringHelper.toText(StringHelper.toTitle('CREDIT CARD'))
+    StringHelper.toText(StringHelper.toTitle('CREDIT_CARD'))
+    StringHelper.toText(StringHelper.toTitle('CREDIT-CARD'))
+    StringHelper.toText(StringHelper.toTitle('credit-card'))
+    StringHelper.toText(StringHelper.toTitle('credit_card'))
+    StringHelper.toText(StringHelper.toTitle('Credit Card'))
+    StringHelper.toText(StringHelper.toTitle('CreditCard'))
+    StringHelper.toText(StringHelper.toTitle('CreditCard'))
+
+
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
+def toTitle_infiniteLoop() :
+    #arrange
+    domain = 'CreditCard'
+    expected = 'Credit Card'
+    exceptionNotExpected = None
+    toAssert = None
+
+    someNoneValue = None
+    someNoneValueExpected = 'None'
+    noneValueExceptionNotExpected = None
+    noneValueToAssert = None
+
+    #act
+    try:
+        toAssert = StringHelper.toTitle(domain)
+    except Exception as exception:
+        exceptionNotExpected = exception
+
+    #act
+    try:
+        noneValueToAssert = StringHelper.toTitle(someNoneValue)
+    except Exception as exception:
+        noneValueExceptionNotExpected = exception
+
+    #assert
+    assert ObjectHelper.isNone(exceptionNotExpected), exceptionNotExpected
+    assert ObjectHelper.isNotNone(toAssert), toAssert
+    assert ObjectHelper.equals(toAssert, toAssert), f'{expected} == {toAssert}'
+    assert ObjectHelper.isNone(noneValueExceptionNotExpected), noneValueExceptionNotExpected
+    assert ObjectHelper.isNotNone(noneValueToAssert), noneValueToAssert
+    assert ObjectHelper.equals(someNoneValueExpected, noneValueToAssert), noneValueToAssert
+
+
+@Test(
+    environmentVariables={**{}, **LOG_HELPER_SETTINGS},
+    **TEST_SETTINGS
+)
+def removeLeaddingCharacters():
+    #arrange, act and assert
+    assert ObjectHelper.equals('1293', StringHelper.removeLeaddingCharacters('0091293', '0', '9')), f'''1293 == {StringHelper.removeLeaddingCharacters('0091293', '0', '9')}'''
+    assert ObjectHelper.equals('', StringHelper.removeLeaddingCharacters('0091293', '0', '9', '1', '2', '9', '3')), f'''"" == "{StringHelper.removeLeaddingCharacters('0091293', '0', '9')}"'''

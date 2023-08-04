@@ -220,3 +220,7 @@ def getTracebackMessage(muteStackTrace):
     if muteStackTrace :
         return StringHelper.join(tracebackMessage.split(c.NEW_LINE)[-2:], character=c.NEW_LINE)
     return LogHelperHelper.NO_TRACEBACK_PRESENT_MESSAGE if LogHelperHelper.NO_TRACEBACK_PRESENT == str(tracebackMessage) else tracebackMessage
+
+
+def debugIt(thing, depthSkip=0):
+    return logIt(f'{c.NEW_LINE}{ObjectHelper.getInstanceName(thing, depthSkip=depthSkip+1)}: {thing}{c.NEW_LINE}')

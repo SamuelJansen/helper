@@ -1,6 +1,9 @@
 import datetime
+from dateutil.relativedelta import relativedelta
+
 from python_helper.api.src.domain import Constant as c
 from python_helper.api.src.service import ObjectHelper, StringHelper, RandomHelper
+
 
 DEFAULT_DATETIME_PATTERN = '%Y-%m-%d %H:%M:%S'
 DEFAULT_DATE_PATTERN = '%Y-%m-%d'
@@ -183,46 +186,25 @@ def plusMonths(givenDateTime, months=None):
     if ObjectHelper.isNone(givenDateTime) or ObjectHelper.isNone(months):
         return givenDateTime
     dateTime = forcedlyGetDateTime(str(givenDateTime))
-    year = dateTime.year + (dateTime.month -1 + months) // 12
-    month = (dateTime.month -1 + months) % 12 + 1
-    month = month if month > 0 else 12
-    day = dateTime.day
-    return forcedlyGetDateTime(f'{year:04}-{month:02}-{day:02} {timeOf(dateTime=dateTime)}')
+    return forcedlyGetDateTime(f'{dateOf(dateTime=dateTime) + relativedelta(months=months)} {timeOf(dateTime=dateTime)}')
 
 def minusMonths(givenDateTime, months=None):
     return plusMonths(givenDateTime, months=-months)
-    # if ObjectHelper.isNone(givenDateTime) or ObjectHelper.isNone(months):
-    #     return givenDateTime
-    # dateTime = forcedlyGetDateTime(str(givenDateTime))
-    # year = dateTime.year - (dateTime.month -1 + months) // 12
-    # month = (dateTime.month -1 - months) % 12 + 1
-    # month = month if month > 0 else 12
-    # day = dateTime.day
-    # return forcedlyGetDateTime(f'{year:04}-{month:02}-{day:02} {timeOf(dateTime=dateTime)}')
 
 def plusYears(givenDateTime, years=None):
     if ObjectHelper.isNone(givenDateTime) or ObjectHelper.isNone(years):
         return givenDateTime
     dateTime = forcedlyGetDateTime(str(givenDateTime))
-    year = dateTime.year + years
-    month = dateTime.month
-    day = dateTime.day
-    return forcedlyGetDateTime(f'{year:04}-{month:02}-{day:02} {timeOf(dateTime=dateTime)}')
+    return forcedlyGetDateTime(f'{dateOf(dateTime=dateTime) + relativedelta(months=12*years)} {timeOf(dateTime=dateTime)}')
 
 def minusYears(givenDateTime, years=None):
-    if ObjectHelper.isNone(givenDateTime) or ObjectHelper.isNone(years):
-        return givenDateTime
-    dateTime = forcedlyGetDateTime(str(givenDateTime))
-    year = dateTime.year - years
-    month = dateTime.month
-    day = dateTime.day
-    return forcedlyGetDateTime(f'{year:04}-{month:02}-{day:02} {timeOf(dateTime=dateTime)}')
+    return plusYears(givenDateTime, years=-years)
 
 def getDefaultTimeBegin():
     return forcedlyGetTime(DEFAULT_TIME_BEGIN)
 
 def getDatetimeMonthBegin():
-    return parseToPattern(c.SPACE.join([c.DASH.join(str(dateTimeNow()).split()[0].split(c.DASH)[:-1] + ['01']), DEFAULT_TIME_BEGIN]))
+    return parseToPattern(c.SPACE.join([c.DASH.join([*str(dateTimeNow()).split()[0].split(c.DASH)[:-1], '01']), DEFAULT_TIME_BEGIN]))
 
 def getTodayDateAndTodayTime():
     dateTime = dateTimeNow()

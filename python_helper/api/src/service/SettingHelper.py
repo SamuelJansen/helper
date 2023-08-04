@@ -1,6 +1,6 @@
 from python_helper.api.src.service import StringHelper, LogHelper, ObjectHelper, EnvironmentHelper, FileHelper
 from python_helper.api.src.domain import Constant as c
-from python_helper.api.src.helper import StringHelperHelper, SettingHelperHelper
+from python_helper.api.src.helper import SettingHelperHelper
 
 global ACTIVE_ENVIRONMENT_VALUE
 ACTIVE_ENVIRONMENT_VALUE = None
@@ -48,9 +48,8 @@ def activeEnvironmentIsLocal() :
     return LOCAL_ENVIRONMENT == ACTIVE_ENVIRONMENT_VALUE
 
 def getValueAsString(value) :
-    return c.NOTHING.join([
-        value,
-        c.NOTHING
+    return StringHelper.join([
+        str(value)
     ])
 
 def extractEnvironmentVariables(environmentVariables) :
@@ -118,8 +117,8 @@ def getSettingTree(
                     currentDepth = 0
                 longStringList.append(depthStep*c.SPACE + settingLine if keepDepthInLongString else settingLine[depth:])
                 if quoteType in str(settingLine) :
-                    longStringList[-1] = c.NOTHING.join(longStringList[-1].split(quoteType))[:-1] + quoteType
-                    settingValue = c.NOTHING.join(longStringList)
+                    longStringList[-1] = StringHelper.join(longStringList[-1].split(quoteType))[:-1] + quoteType
+                    settingValue = StringHelper.join(longStringList)
                     nodeKey = SettingHelperHelper.updateSettingTreeAndReturnNodeKey(settingKey,settingValue,nodeKey,settingTree, False)
                     longStringCapturing = False
                     quoteType = None
@@ -251,30 +250,31 @@ def updateSettingTree(toUpdateSettingTree, gatheringSettingTree) :
                 elif key not in toUpdateSettingTree :
                     # print(f'        toUpdateSettingTree: key: {key}, value: {value}')
                     toUpdateSettingTree[key] = value
+    return toUpdateSettingTree
 
 
-def getSetting(nodeKey,settingTree) :
+def getSetting(nodeKey, settingTree) :
     setting = None
     try :
-        setting = SettingHelperHelper.accessTree(nodeKey,settingTree)
+        setting = SettingHelperHelper.accessTree(nodeKey, settingTree)
     except Exception as exception :
         LogHelper.failure(getSetting, f'Not possible to get {nodeKey} node key. Returning "{setting}" by default', exception)
     return setting if not isinstance(setting, str) else StringHelper.filterString(setting)
 
-def querySetting(keywordQuery,tree) :
-    if StringHelper.isBlank(keywordQuery) or ObjectHelper.isNotDictionary(tree) :
-        LogHelper.warning(querySetting,f'''Not possible to parse "{tree}". It's either is not a dictionary or "{keywordQuery}" keyword query is blank''')
+def querySetting(keywordQuery, settingTree):
+    if StringHelper.isBlank(keywordQuery) or ObjectHelper.isNotDictionary(settingTree) :
+        LogHelper.warning(querySetting,f'''Not possible to parse "{settingTree}". It's either is not a dictionary or "{keywordQuery}" keyword query is blank''')
     querySet = {}
-    SettingHelperHelper.keepSearching(keywordQuery,tree,querySet)
+    SettingHelperHelper.keepSearching(keywordQuery, settingTree, querySet)
     return querySet
 
-def printSettings(tree, name, depth=1, withColors=False):
+def printSettings(settingTree, name, depth=1, withColors=False):
     withColors = LogHelper.colorsEnabled() ###- activeEnvironmentIsLocal()
     settingKeyColor = SettingHelperHelper.getSettingKeyPrompColor(withColors)
     colonColor = SettingHelperHelper.getSettingColonPrompColor(withColors)
     print(f'{c.NEW_LINE}{settingKeyColor}{c.OPEN_LIST}{name.upper()}{c.CLOSE_LIST}{colonColor}{c.SPACE}{c.COLON}')
     SettingHelperHelper.printNodeTree(
-        tree,
+        settingTree,
         depth,
         settingKeyColor = settingKeyColor,
         settingValueColor = SettingHelperHelper.getSettingValuePrompColor(withColors),

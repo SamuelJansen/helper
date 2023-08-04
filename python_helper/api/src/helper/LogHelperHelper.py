@@ -1,6 +1,7 @@
 from python_helper.api.src.domain import Constant as c
 from python_helper.api.src.service import LogHelper, ObjectHelper, ReflectionHelper, StringHelper, DateTimeHelper
 
+
 NO_TRACEBACK_PRESENT = f'NoneType: None{c.NEW_LINE}'
 NO_TRACEBACK_PRESENT_MESSAGE = 'Exception: '
 
@@ -99,14 +100,14 @@ def softLog(origin, message, level, exception=None, muteStackTrace=False, newLin
         firstLayerColor, secondLayerColor, tirdLayerColor, resetColor, dateTimeColor = getColors(level)
         LogHelper.logIt(StringHelper.join([*getLogHeader(dateTimeColor, firstLayerColor, level), *getOriginPortion(origin, tirdLayerColor, resetColor), secondLayerColor, message, resetColor, getNewLine(newLine, exception=exception, muteStackTrace=muteStackTrace)]))
     elif not c.FALSE == getStatus(level) :
-        levelStatusError(method, level)
+        levelStatusError(origin, level)
 
 def hardLog(origin, message, exception, level, muteStackTrace=False, newLine=False) :
     if c.TRUE == getStatus(level) :
         firstLayerColor, secondLayerColor, tirdLayerColor, resetColor, dateTimeColor = getColors(level)
         LogHelper.logIt(StringHelper.join([*getLogHeader(dateTimeColor, firstLayerColor, level), *getOriginPortion(origin, tirdLayerColor, resetColor), secondLayerColor, message, *getErrorPortion(exception, muteStackTrace, firstLayerColor, secondLayerColor, tirdLayerColor, resetColor), resetColor, getNewLine(newLine, exception=exception, muteStackTrace=muteStackTrace)]))
     elif not c.FALSE == getStatus(level) :
-        levelStatusError(method, level)
+        levelStatusError(origin, level)
 
 def printMessageLog(level, message, condition=False, muteStackTrace=False, newLine=True, margin=True, exception=None) :
     if condition :
@@ -169,8 +170,8 @@ def getErrorPortion(exception, muteStackTrace, firstLayerColor, secondLayerColor
     traceBackMessageSplited = traceBackMessage.split(exceptionMessage)
     return [c.NEW_LINE, tirdLayerColor, *[t if t is not traceBackMessageSplited[-1] else t if t[-1] is not c.NEW_LINE else t[:-1] for t in traceBackMessageSplited if ObjectHelper.isNotNone(t)], secondLayerColor, exceptionMessage, resetColor]
 
-def levelStatusError(method, level) :
-    LogHelper.failure(method, f'"{level}" log level status is not properly defined: {getStatus(level)}', None)
+def levelStatusError(origin, level) :
+    LogHelper.failure(origin, f'"{level}" log level status is not properly defined: {getStatus(level)}', None)
 
 def getNewLine(newLine, exception=None, muteStackTrace=False) :
     return c.NEW_LINE if (newLine and ObjectHelper.isNone(exception)) or (ObjectHelper.isNotNone(exception) and NO_TRACEBACK_PRESENT_MESSAGE == LogHelper.getTracebackMessage(muteStackTrace)) else c.BLANK
