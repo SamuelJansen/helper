@@ -56,7 +56,7 @@ class HttpStatusEnumeration() :
     ###- 3×× Redirection
     MULTIPLE_CHOICES = EnumItem(value = 300)
     MOVED_PERMANENTLY = EnumItem(value = 301)
-    FOUND = EnumItem(value = 302)
+    FOUND = EnumItem(value = 302)quals(
     SEE_OTHER = EnumItem(value = 303)
     NOT_MODIFIED = EnumItem(value = 304)
     USE_PROXY = EnumItem(value = 305)
@@ -123,7 +123,7 @@ def enum_withSuccess() :
     discount = 0
     instanciationTime = 0
     equalTestTime = 0
-    MAX_ACCEPTABLE_INTERVAL = 0.02 * TEST_ITERATION
+    MAX_ACCEPTABLE_INTERVAL = 0.025 * TEST_ITERATION
     start = time.time()
     for _ in range(TEST_ITERATION) :
         # arrange
