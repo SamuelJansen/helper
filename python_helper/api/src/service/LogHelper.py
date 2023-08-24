@@ -223,4 +223,4 @@ def getTracebackMessage(muteStackTrace):
 
 
 def debugIt(thing, depthSkip=0):
-    return logIt(f'{ObjectHelper.getInstanceName(thing, depthSkip=depthSkip+1)}: {thing}')
+    return logIt(f'{ObjectHelper.getInstanceName(thing, depthSkip=depthSkip+1)}: {StringHelper.prettyPython(thing)}')

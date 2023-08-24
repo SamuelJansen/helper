@@ -1,7 +1,7 @@
 from numbers import Number
 
 from python_helper.api.src.domain import Constant as c
-from python_helper.api.src.service import StringHelper, LogHelper, EnvironmentHelper
+from python_helper.api.src.service import StringHelper, LogHelper, EnvironmentHelper, DateTimeHelper
 from python_helper.api.src.helper import ObjectHelperHelper
 
 
@@ -65,6 +65,8 @@ def equals(
     if isNone(expected) or isNone(toAssert):
         return expected is None and toAssert is None
     if isNativeClass(type(expected)):
+        return expected == toAssert
+    if DateTimeHelper.isNativeDateTime(expected):
         return expected == toAssert
     if isNone(visitedIdInstances):
         visitedIdInstances = []

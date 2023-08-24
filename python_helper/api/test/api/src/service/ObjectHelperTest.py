@@ -1,5 +1,5 @@
 import json
-from python_helper.api.src.service import ObjectHelper
+from python_helper.api.src.service import ObjectHelper, DateTimeHelper
 from python_helper import StringHelper, SettingHelper, Constant, log, Test, ReflectionHelper, RandomHelper
 
 LOG_HELPER_SETTINGS = {
@@ -915,6 +915,22 @@ def sortIt_whenNotEquals() :
 
     #assert
     assert not expected == toAssert, f'{expected} == {toAssert}'
+
+
+@Test()
+def equals_whenDateTime() :
+    #arrange
+    wrongDateTime = DateTimeHelper.of('2023-09-20 23:59:58')
+    correctDateTime = DateTimeHelper.of('2023-09-20 23:59:59')
+    expected = DateTimeHelper.of('2023-09-20 23:59:59')
+
+    #act
+    wrongDateTimeToAssert = ObjectHelper.equals(expected, wrongDateTime, muteLogs=False)
+    correctDateTimeToAssert = ObjectHelper.equals(expected, correctDateTime, muteLogs=False)
+
+    #assert
+    assert False == wrongDateTimeToAssert
+    assert True == correctDateTimeToAssert
 
 
 @Test()

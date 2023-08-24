@@ -361,3 +361,30 @@ def minusYears() :
         DateTimeHelper.of(dateTime = '2022-09-10 10:10:10.999'),
         years=2
     ) == DateTimeHelper.of(dateTime = '2020-09-10 10:10:10.999'), f'2022-09-10 10:10:10.999 - 2 year == 2020-09-10 10:10:10.999'
+
+
+@Test()
+def isNativeDateTime():
+    #arrange
+    isDateTimeAsString = '2022-09-10 10:10:10.999'
+    isDateAsDateTime = DateTimeHelper.of(isDateTimeAsString)
+
+    #act
+    isDateTimeAsStringToAssert = DateTimeHelper.isNativeDateTime(isDateTimeAsString)
+    isDateAsDateTimeToAssert = DateTimeHelper.isNativeDateTime(isDateAsDateTime)
+
+    #assert
+    assert True == isDateTimeAsStringToAssert
+    assert True == isDateAsDateTimeToAssert
+    assert DateTimeHelper.isNativeDateTime('2020-02-10 10:09:10.999')
+    assert DateTimeHelper.isNativeDateTime(DateTimeHelper.of('2020-02-10 10:09:10.999'))
+    assert False == DateTimeHelper.isNativeDateTime('abcd'), 'abcd is not date time'
+    assert False == DateTimeHelper.isNativeDateTime(None), f'{None} is not date time'
+    assert False == DateTimeHelper.isNativeDateTime((1,)), f'{(1,)} is not date time'
+    assert False == DateTimeHelper.isNativeDateTime(list()), f'{list()} is not date time'
+    assert False == DateTimeHelper.isNativeDateTime(set()), f'{set()} is not date time'
+    assert False == DateTimeHelper.isNativeDateTime(dict()), f'{dict()} is not date time'
+    assert False == DateTimeHelper.isNativeDateTime(1), f'{1} is not date time'
+    assert False == DateTimeHelper.isNativeDateTime(1.0), f'{1.0} is not date time'
+    assert False == DateTimeHelper.isNativeDateTime(True), f'{True} is not date time'
+    assert False == DateTimeHelper.isNativeDateTime(False), f'{False} is not date time'
