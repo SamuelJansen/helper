@@ -56,7 +56,7 @@ class HttpStatusEnumeration() :
     ###- 3×× Redirection
     MULTIPLE_CHOICES = EnumItem(value = 300)
     MOVED_PERMANENTLY = EnumItem(value = 301)
-    FOUND = EnumItem(value = 302)quals(
+    FOUND = EnumItem(value = 302)
     SEE_OTHER = EnumItem(value = 303)
     NOT_MODIFIED = EnumItem(value = 304)
     USE_PROXY = EnumItem(value = 305)
