@@ -38,17 +38,18 @@ DEFAULT_TIME_BEGIN = '00:00:00'
 DEFAULT_TIME_END = '23:59:59'
 
 
-def isNativeDateTime(givenDatetime):
+def isDateTime(givenDatetime):
     return (
-        ObjectHelper.isNotNone(givenDatetime) and 
+        isNativeDateTime(givenDatetime) or
         (
-            isinstance(givenDatetime, datetime.datetime) or
-            (
-                isinstance(givenDatetime, str) and
-                isinstance(of(givenDatetime), datetime.datetime)
-            )
+            isinstance(givenDatetime, str) and
+            isinstance(of(givenDatetime), datetime.datetime)
         )
     )
+
+
+def isNativeDateTime(givenDatetime):
+    return isinstance(givenDatetime, datetime.datetime)
 
 
 def toString(givenDatetime, pattern=DEFAULT_DATETIME_PATTERN):

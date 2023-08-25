@@ -65,9 +65,9 @@ def equals(
     if isNone(expected) or isNone(toAssert):
         return expected is None and toAssert is None
     if isNativeClass(type(expected)):
-        return expected == toAssert
+        return simpleEquals(expected, toAssert)
     if DateTimeHelper.isNativeDateTime(expected):
-        return expected == toAssert
+        return simpleEquals(expected, toAssert)
     if isNone(visitedIdInstances):
         visitedIdInstances = []
     if isDictionary(expected) and isDictionary(toAssert):
@@ -86,11 +86,11 @@ def equals(
             )),
             extraCharacterList=innerIgnoreCharactereList
         )
-        return filteredSortedExpectedResponseAsString == filteredSortedToAssertResponseAsString
+        return simpleEquals(filteredSortedExpectedResponseAsString, filteredSortedToAssertResponseAsString)
     elif isCollection(expected) and isCollection(toAssert):
         areEquals = True
         try:
-            if not len(expected) == len(toAssert):
+            if not simpleEquals(len(expected), len(toAssert)):
                 first, second = (1, 2) if len(expected)>len(toAssert) else (2, 1)
                 raise Exception(f'Argument {first} is longer than argument {second}')
             for a, b in zip(
@@ -261,7 +261,7 @@ def isNotEmpty(thing):
 
 
 def isEmptyCollection(thing):
-    return isCollection(thing) and 0 == len(thing)
+    return isCollection(thing) and simpleEquals(0, len(thing))
 
 
 def isNotEmptyCollection(thing):
@@ -301,7 +301,7 @@ def isNotDictionary(thing):
 
 
 def isDictionaryClass(thingClass):
-    return dict == thingClass
+    return simpleEquals(dict, thingClass)
 
 
 def isNotDictionaryClass(thingClass):

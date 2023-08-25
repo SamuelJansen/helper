@@ -14,7 +14,7 @@ def leftEqual(left, right, ignoreCollectionOrder, ignoreKeyList, ignoreCharacter
     leftIsCollection = ObjectHelper.isCollection(left)
     rightIsCollection = ObjectHelper.isCollection(right)
     if leftIsCollection and rightIsCollection:
-        if len(left) == len(right):
+        if ObjectHelper.simpleEquals(len(left), len(right)):
             for itemLeft, itemRight in zip(
                 left if not ignoreCollectionOrder else ObjectHelper.sortIt(left, deepMode=True),
                 right if not ignoreCollectionOrder else ObjectHelper.sortIt(right, deepMode=True)
@@ -34,14 +34,14 @@ def leftEqual(left, right, ignoreCollectionOrder, ignoreKeyList, ignoreCharacter
                     break
             return isEqual
         else:
-            return left == right
+            return ObjectHelper.simpleEquals(left, right)
     elif (leftIsCollection and not rightIsCollection) or (not leftIsCollection and rightIsCollection):
         return False
     else:
         attrinuteDataList = ReflectionHelper.getAttributeDataList(left)
         if not muteLogs :
             LogHelper.prettyPython(leftEqual, f'{left} data list', attrinuteDataList, logLevel=LogHelper.DEBUG, condition=not muteLogs)
-        if 0 == len(attrinuteDataList):
+        if ObjectHelper.simpleEquals(0, len(attrinuteDataList)):
             return False
         if not isEqual:
             return isEqual

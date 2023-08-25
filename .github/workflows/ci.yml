@@ -31,5 +31,5 @@ jobs:
     - name: Check Python version
       run: python -V
 
-    - name: Test with pytest
+    - name: Test with PythonHelper
       run: python Tests.py

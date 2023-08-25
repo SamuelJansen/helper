@@ -374,9 +374,9 @@ def isNativeDateTime():
     isDateAsDateTimeToAssert = DateTimeHelper.isNativeDateTime(isDateAsDateTime)
 
     #assert
-    assert True == isDateTimeAsStringToAssert
-    assert True == isDateAsDateTimeToAssert
-    assert DateTimeHelper.isNativeDateTime('2020-02-10 10:09:10.999')
+    assert not isDateTimeAsStringToAssert
+    assert isDateAsDateTimeToAssert
+    assert not DateTimeHelper.isNativeDateTime('2020-02-10 10:09:10.999')
     assert DateTimeHelper.isNativeDateTime(DateTimeHelper.of('2020-02-10 10:09:10.999'))
     assert False == DateTimeHelper.isNativeDateTime('abcd'), 'abcd is not date time'
     assert False == DateTimeHelper.isNativeDateTime(None), f'{None} is not date time'
@@ -388,3 +388,30 @@ def isNativeDateTime():
     assert False == DateTimeHelper.isNativeDateTime(1.0), f'{1.0} is not date time'
     assert False == DateTimeHelper.isNativeDateTime(True), f'{True} is not date time'
     assert False == DateTimeHelper.isNativeDateTime(False), f'{False} is not date time'
+
+
+@Test()
+def isDateTime():
+    #arrange
+    isDateTimeAsString = '2022-09-10 10:10:10.999'
+    isDateAsDateTime = DateTimeHelper.of(isDateTimeAsString)
+
+    #act
+    isDateTimeAsStringToAssert = DateTimeHelper.isDateTime(isDateTimeAsString)
+    isDateAsDateTimeToAssert = DateTimeHelper.isDateTime(isDateAsDateTime)
+
+    #assert
+    assert True == isDateTimeAsStringToAssert
+    assert True == isDateAsDateTimeToAssert
+    assert DateTimeHelper.isDateTime('2020-02-10 10:09:10.999')
+    assert DateTimeHelper.isDateTime(DateTimeHelper.of('2020-02-10 10:09:10.999'))
+    assert False == DateTimeHelper.isDateTime('abcd'), 'abcd is not date time'
+    assert False == DateTimeHelper.isDateTime(None), f'{None} is not date time'
+    assert False == DateTimeHelper.isDateTime((1,)), f'{(1,)} is not date time'
+    assert False == DateTimeHelper.isDateTime(list()), f'{list()} is not date time'
+    assert False == DateTimeHelper.isDateTime(set()), f'{set()} is not date time'
+    assert False == DateTimeHelper.isDateTime(dict()), f'{dict()} is not date time'
+    assert False == DateTimeHelper.isDateTime(1), f'{1} is not date time'
+    assert False == DateTimeHelper.isDateTime(1.0), f'{1.0} is not date time'
+    assert False == DateTimeHelper.isDateTime(True), f'{True} is not date time'
+    assert False == DateTimeHelper.isDateTime(False), f'{False} is not date time'
