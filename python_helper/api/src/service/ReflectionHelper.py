@@ -1,12 +1,14 @@
 import inspect, functools
 from python_helper.api.src.domain  import Constant as c
-from python_helper.api.src.service import LogHelper, ObjectHelper, StringHelper, RandomHelper
+from python_helper.api.src.service import LogHelper, ObjectHelper, StringHelper, RandomHelper, EnvironmentHelper
 
 
 MAXIMUN_ARGUMENTS = 20
 
 UNKNOWN_TYPE_NAME = f'{c.UNKNOWN.lower()} type'
 UNDEFINED = 'undefined'
+
+NONE_VALUE_NAME = str(None)
 
 class ThisIsAClass:
     def thisIsAMethod():
@@ -254,7 +256,7 @@ def overrideSignatures(toOverride, original, forceName=None, forceModuleName=Non
 def getClass(thing, typeClass=None, muteLogs=False):
     thingClass = None
     try :
-        if ObjectHelper.isEmpty(thing):
+        if ObjectHelper.isNone(thing):
             thingClass = typeClass
         else :
             # thingClass = thing.__class__
@@ -283,8 +285,8 @@ def getName(thing, typeName=None, muteLogs=False):
 def getClassName(thing, typeClass=None, muteLogs=False):
     name = None
     try :
-        if ObjectHelper.isEmpty(thing): ###- shouldn't it be `if ObjectHelper.isNone(thing)`
-            name = getUndefindeName(typeClass)
+        if ObjectHelper.isNone(thing):
+            name = NONE_VALUE_NAME
         else :
             name = getName(getClass(thing, muteLogs=muteLogs), muteLogs=muteLogs)
     except Exception as exception :
@@ -433,3 +435,68 @@ def printClass(instanceClass):
         print(f'{2 * c.TAB}{instanceClass}.__qualname__ = {instanceClass.__qualname__}')
     except :
         pass
+
+
+INNER_INSTANCE_NAME_LIST = [
+    '__inner_instance__'
+]
+
+
+def getDefaultInstanceName(innerInstanceName, __inner_instance__):
+    return f'{innerInstanceName} of class {getClassName(__inner_instance__)}: {str(__inner_instance__)}'
+
+
+
+def replaceInnerInstanceName(__inner_instance__, instanceNameList):
+    return [
+        instanceName if ObjectHelper.notEquals(innerInstanceName, instanceName) else getDefaultInstanceName(innerInstanceName, __inner_instance__)
+        for innerInstanceName in INNER_INSTANCE_NAME_LIST
+        for instanceName in instanceNameList
+    ]
+
+
+def getCompleteInstanceNameList(__inner_instance__):
+    if ObjectHelper.isNone(__inner_instance__):
+        return [NONE_VALUE_NAME]
+    frame = EnvironmentHelper.SYS._getframe()
+    # import inspect
+    # frame = inspect.currentframe()
+    return replaceInnerInstanceName(
+        __inner_instance__, 
+        [
+            instanceName 
+            for instanceName, instanceValue in ObjectHelper.flatMap([
+                # f.f_locals
+                # for f in iter(lambda: frame.f_back, None)
+                frame.f_back.f_back.f_back.f_back.f_back.f_back.f_back.f_locals.items(),
+                frame.f_back.f_back.f_back.f_back.f_back.f_back.f_locals.items(),
+                frame.f_back.f_back.f_back.f_back.f_back.f_locals.items(),  
+                frame.f_back.f_back.f_back.f_back.f_locals.items(),  
+                frame.f_back.f_back.f_back.f_locals.items(),  
+                frame.f_back.f_back.f_locals.items(),  
+                frame.f_back.f_locals.items(),
+                frame.f_locals.items()
+            ])
+            if instanceValue is __inner_instance__
+        ]
+    )
+
+
+def getInstanceNameList(__inner_instance__):
+    accumulatedSet = set()
+    def accumulateAndReturn(value):
+        if value not in accumulatedSet:
+            accumulatedSet.add(value)
+        return value                
+    nameList = [
+        accumulateAndReturn(value)
+        for value in getCompleteInstanceNameList(__inner_instance__)
+        if value not in accumulatedSet
+    ][:-1]
+    # return replaceInnerInstanceName(__inner_instance__, nameList if 1 <= len(nameList) else [str(__inner_instance__)])
+    return replaceInnerInstanceName(__inner_instance__, nameList if 1 <= len(nameList) else [getDefaultInstanceName('expression or value', __inner_instance__)])
+
+
+def getInstanceName(__inner_instance__, depthSkip=0):
+    instanceNameList = getInstanceNameList(__inner_instance__)
+    return instanceNameList[0] if 1 >= len(instanceNameList) else instanceNameList[- (1 + depthSkip)]

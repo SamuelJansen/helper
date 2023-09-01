@@ -415,3 +415,16 @@ def isDateTime():
     assert False == DateTimeHelper.isDateTime(1.0), f'{1.0} is not date time'
     assert False == DateTimeHelper.isDateTime(True), f'{True} is not date time'
     assert False == DateTimeHelper.isDateTime(False), f'{False} is not date time'
+
+
+@Test()
+def plusMonths_when_2023_01_31():
+    #arrange
+    dateTimeAsString = DateTimeHelper.of('2023-01-31 10:10:10.999')
+    expected = DateTimeHelper.of('2023-02-28 10:10:10.999')
+
+    #act
+    toAssert = DateTimeHelper.plusMonths(dateTimeAsString, months=1)
+
+    #assert
+    assert ObjectHelper.equals(expected, toAssert), f'{expected} == {toAssert}'

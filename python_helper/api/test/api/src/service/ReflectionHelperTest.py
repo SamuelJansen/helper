@@ -17,7 +17,7 @@ LOG_HELPER_SETTINGS = {
     log.SUCCESS : False,
     log.SETTING : False,
     log.DEBUG : False,
-    log.WARNING : False,
+    log.WARNING : True,
     log.WRAPPER : False,
     log.FAILURE : False,
     log.ERROR : False,
@@ -405,7 +405,7 @@ def getName_manyCases() :
     
     # assert
     assert 'functionMine' == functionNameToAsert
-    assert '(undefined)' == instanceNameToAsert
+    assert '(undefined)' == instanceNameToAsert, f'(undefined) == {instanceNameToAsert}'
     assert 'Me' == classNameToAsert
     assert 'methodIsMine' == methodNameToAsert
     assert '(undefined)' == attributeNameToAsert
@@ -413,7 +413,6 @@ def getName_manyCases() :
 
     assert 'function' == class_functionNameToAsert
     assert 'Me' == class_instanceNameToAsert
-    # assert 'type' == class_classNameToAsert, class_classNameToAsert
     assert 'Me' == class_classNameToAsert, class_classNameToAsert
     assert 'method' == class_methodNameToAsert
     assert 'int' == class_attributeNameToAsert
@@ -426,12 +425,6 @@ def getName_manyCases() :
     assert 'int' == type_attributeNameToAsert
     assert 'str' == type_staticAttributeNameToAsert
 
-    # assert 'type' == type_class_functionNameToAsert
-    # assert 'type' == type_class_instanceNameToAsert
-    # assert 'type' == type_class_classNameToAsert
-    # assert 'type' == type_class_methodNameToAsert
-    # assert 'type' == type_class_attributeNameToAsert
-    # assert 'type' == type_class_staticAttributeNameToAsert
     assert 'function' == type_class_functionNameToAsert, type_class_functionNameToAsert
     assert 'Me' == type_class_instanceNameToAsert, type_class_instanceNameToAsert
     assert 'type' == type_class_classNameToAsert, type_class_classNameToAsert
@@ -446,12 +439,12 @@ def getName_manyCases() :
     assert '(undefined)' == None_attributeNameToAsert
     assert '(undefined)' == None_staticAttributeNameToAsert
 
-    assert '(undefined)' == None_class_functionNameToAsert
-    assert '(undefined)' == None_class_instanceNameToAsert
-    assert '(undefined)' == None_class_classNameToAsert
-    assert '(undefined)' == None_class_methodNameToAsert
-    assert '(undefined)' == None_class_attributeNameToAsert
-    assert '(undefined)' == None_class_staticAttributeNameToAsert
+    assert 'None' == None_class_functionNameToAsert
+    assert 'None' == None_class_instanceNameToAsert
+    assert 'None' == None_class_classNameToAsert
+    assert 'None' == None_class_methodNameToAsert
+    assert 'None' == None_class_attributeNameToAsert
+    assert 'None' == None_class_staticAttributeNameToAsert
 
     assert None == parent_functionNameToAsert, parent_functionNameToAsert
     assert None == parent_instanceNameToAsert, parent_instanceNameToAsert
@@ -592,13 +585,93 @@ def getItNaked():
     F = getA()
 
     #act and assert
-    print(ObjectHelper.getCompleteInstanceNameList(A))
-    print(ObjectHelper.getCompleteInstanceNameList(F))
+    print(ReflectionHelper.getCompleteInstanceNameList(A))
+    print(ReflectionHelper.getCompleteInstanceNameList(F))
 
-    print(ObjectHelper.getInstanceNameList(A))
-    print(ObjectHelper.getInstanceNameList(F))
+    print(ReflectionHelper.getInstanceNameList(A))
+    print(ReflectionHelper.getInstanceNameList(F))
 
     log.debugIt(A)
     ReflectionHelper.getItNaked(A)
     log.debugIt(F)
     ReflectionHelper.getItNaked(F)
+
+
+
+@Test()
+def getCompleteInstanceNameList():
+    #arange
+    doo = []
+    woo = doo
+    foo = woo
+    def local():
+        bar = foo
+        car = bar
+        return ReflectionHelper.getCompleteInstanceNameList(car)
+    expected = ['doo', 'woo', 'foo', 'bar', 'car', 'foo', '__inner_instance__ of class list: []']
+
+    #act
+    toAssert = local()
+
+    #asser
+    assert expected == toAssert, f'{expected} == {toAssert}'
+    assert ['None'] == ReflectionHelper.getCompleteInstanceNameList(None), ReflectionHelper.getCompleteInstanceNameList(None)
+    assert ['''__inner_instance__ of class set: <class 'set'>'''] == ReflectionHelper.getCompleteInstanceNameList(set), ReflectionHelper.getCompleteInstanceNameList(set)
+
+
+
+@Test()
+def getInstanceNameList():
+    #arange
+    doo = []
+    woo = doo
+    foo = woo
+    def local():
+        bar = foo
+        car = bar
+        return ReflectionHelper.getInstanceNameList(car)
+    expected = ['doo', 'woo', 'foo', 'bar', 'car']
+
+    #act
+    toAssert = local()
+
+    #asser
+    assert expected == toAssert, f'{expected} == {toAssert}'
+    assert ['expression or value of class None: None'] == ReflectionHelper.getInstanceNameList(None), ReflectionHelper.getInstanceNameList(None)
+    assert ['''expression or value of class set: <class 'set'>'''] == ReflectionHelper.getInstanceNameList(set), ReflectionHelper.getInstanceNameList(set)
+
+
+
+@Test()
+def getInstanceName():
+    #arange
+    doo = []
+    woo = doo
+    foo = woo
+    def local():
+        bar = foo
+        car = bar
+        return ReflectionHelper.getInstanceName(car)
+        #['doo', 'woo', 'foo', 'bar']
+    expected = 'car'
+
+    #act
+    toAssert = local()
+
+    #asser
+    assert expected == toAssert, f'{expected} == {toAssert}'
+    assert 'expression or value of class None: None' == ReflectionHelper.getInstanceName(None), ReflectionHelper.getInstanceName(None)
+    assert f'expression or value of class set: {Constant.OPEN_SET}2{Constant.CLOSE_SET}' == ReflectionHelper.getInstanceName(set([2])), ReflectionHelper.getInstanceName(set([2]))
+
+
+
+@Test()
+def getInstanceName_whenExpression():
+    #arange
+    expected = '''expression or value of class list: ['my', 'elements']'''
+
+    #act
+    toAssert = ReflectionHelper.getInstanceName(['my', 'elements'])
+
+    #asser
+    assert expected == toAssert, f'{expected} == {toAssert}'

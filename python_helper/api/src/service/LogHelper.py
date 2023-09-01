@@ -222,5 +222,5 @@ def getTracebackMessage(muteStackTrace):
     return LogHelperHelper.NO_TRACEBACK_PRESENT_MESSAGE if LogHelperHelper.NO_TRACEBACK_PRESENT == str(tracebackMessage) else tracebackMessage
 
 
-def debugIt(thing, depthSkip=0):
-    return logIt(f'{ObjectHelper.getInstanceName(thing, depthSkip=depthSkip+1)}: {StringHelper.prettyPython(thing)}')
+def debugIt(unnamedExpression, asDictionary=False, depthSkip=0):
+    return logIt(f'{ReflectionHelper.getInstanceName(unnamedExpression, depthSkip=depthSkip+1)}: {StringHelper.prettyPython(unnamedExpression if not asDictionary else unnamedExpression)}')

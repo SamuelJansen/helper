@@ -14,11 +14,17 @@ TestHelper.run(__file__, inspectGlobals=False)
 #         # , 'ObjectHelperTest.equals_whenNotEquals_simpleSet'
 #         # , 'ObjectHelperTest.equal_whenDictionary'
 #         # , 'ObjectHelperTest.equal_whenSets'
-#         # , 'ObjectHelperTest.getCompleteInstanceNameList'
-#         # , 'ObjectHelperTest.getInstanceNameList'
-#         # , 'ObjectHelperTest.getInstanceName'
 #         # , 'ObjectHelperTest.equal_whenRecursive'
 #         'ObjectHelperTest.equals_whenDateTime'
+#     ]
+# )
+# TestHelper.run(
+#     __file__,
+#     runOnly = [
+#         'ReflectionHelperTest.getCompleteInstanceNameList'
+#         , 'ReflectionHelperTest.getInstanceNameList'
+#         , 'ReflectionHelperTest.getInstanceName'
+#         , 'ReflectionHelperTest.getInstanceName_whenExpression'
 #     ]
 # )
 # TestHelper.run(

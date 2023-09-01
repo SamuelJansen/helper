@@ -1,11 +1,15 @@
 from numbers import Number
+import operator
 
 from python_helper.api.src.domain import Constant as c
-from python_helper.api.src.service import StringHelper, LogHelper, EnvironmentHelper, DateTimeHelper
+from python_helper.api.src.service import StringHelper, LogHelper, ReflectionHelper, DateTimeHelper
 from python_helper.api.src.helper import ObjectHelperHelper
 
 
-NONE_VALUE_NAME = str(None)
+operator = operator
+
+
+
 GENERATOR_CLASS_NAME = 'generator'
 UNKNOWN_OBJECT_CLASS_NAME = c.UNKNOWN.lower()
 
@@ -39,7 +43,7 @@ def simpleEquals(
     expected,
     toAssert
 ):
-    return expected == toAssert
+    return expected is toAssert if isNone(expected) else expected == toAssert
 
     
 def equals(
@@ -115,48 +119,53 @@ def equals(
             areEquals = False
             LogHelper.log(equals, f'Different arguments in {expected} and {toAssert}. Returning "{areEquals}" by default', exception=exception)
     else:
-        if isNotNone(toAssert) and id(toAssert) not in visitedIdInstances :
-            areEquals = True
-            try:
-                if not muteLogs :
-                    LogHelper.prettyPython(equals, f'expected', expected, logLevel = LogHelper.DEBUG, condition=not muteLogs)
-                    LogHelper.prettyPython(equals, f'toAssert', toAssert, logLevel = LogHelper.DEBUG, condition=not muteLogs)
-                areEquals = ObjectHelperHelper.leftEqual(
-                    expected,
-                    toAssert,
-                    ignoreCollectionOrder,
-                    ignoreKeyList,
-                    ignoreCharactereList,
-                    ignoreAttributeList,
-                    ignoreAttributeValueList,
-                    visitedIdInstances,
-                    muteLogs = muteLogs
-                ) and ObjectHelperHelper.leftEqual(
-                    toAssert,
-                    expected,
-                    ignoreCollectionOrder,
-                    ignoreKeyList,
-                    ignoreCharactereList,
-                    ignoreAttributeList,
-                    ignoreAttributeValueList,
-                    visitedIdInstances,
-                    muteLogs = muteLogs
-                )
-            except Exception as exception :
-                areEquals = False
-                LogHelper.log(equals, f'Different arguments in {expected} and {toAssert}. Returning "{areEquals}" by default', exception=exception)
-            visitedIdInstances.append(id(toAssert))
-            return areEquals
-        else:
-            return True
-    return False
+        if isNotNone(toAssert):
+            if id(toAssert) not in visitedIdInstances:
+                areEquals = True
+                try:
+                    if not muteLogs :
+                        LogHelper.prettyPython(equals, f'expected', expected, logLevel = LogHelper.DEBUG, condition=not muteLogs)
+                        LogHelper.prettyPython(equals, f'toAssert', toAssert, logLevel = LogHelper.DEBUG, condition=not muteLogs)
+                    areEquals = ObjectHelperHelper.leftEqual(
+                        expected,
+                        toAssert,
+                        ignoreCollectionOrder,
+                        ignoreKeyList,
+                        ignoreCharactereList,
+                        ignoreAttributeList,
+                        ignoreAttributeValueList,
+                        visitedIdInstances,
+                        muteLogs = muteLogs
+                    ) and ObjectHelperHelper.leftEqual(
+                        toAssert,
+                        expected,
+                        ignoreCollectionOrder,
+                        ignoreKeyList,
+                        ignoreCharactereList,
+                        ignoreAttributeList,
+                        ignoreAttributeValueList,
+                        visitedIdInstances,
+                        muteLogs = muteLogs
+                    )
+                except Exception as exception :
+                    areEquals = False
+                    LogHelper.log(equals, f'Different arguments in {expected} and {toAssert}. Returning "{areEquals}" by default', exception=exception)
+                visitedIdInstances.append(id(toAssert))
+                return areEquals
+            else:
+                return True
+        return simpleEquals(expected, toAssert)
+    return simpleEquals(expected, toAssert)
 
 
 def notEquals(*args, **kwargs):
     return not equals(*args, **kwargs)
 
 
-def sortIt(thing, deepMode=False):
+def sortIt(thing, deepMode=False, byAttribute: str = None):
+    # sorted_x = sorted(x, key=operator.attrgetter('attributeName'))
+    # or
+    # x.sort(key=operator.attrgetter('attributeName'))
     if isDictionary(thing):
         return {
             key: sortIt(thing[key], deepMode=deepMode)
@@ -168,22 +177,25 @@ def sortIt(thing, deepMode=False):
                 sortIt(innerThing, deepMode=deepMode)
                 for innerThing in thing
             ],
-            deepMode=deepMode
+            deepMode = deepMode,
+            byAttribute = byAttribute
         )
     else:
         return thing
 
 
-def getSortedCollection(thing, deepMode=True):
+def getSortedCollection(thing, deepMode=False, byAttribute: str = None):
     if (
         isNotCollection(thing) or isEmpty(thing)
     ):
         return thing
-    return handleComparisson(thing, deepMode=deepMode)
+    return handleComparisson(thing, deepMode=deepMode, byAttribute=byAttribute)
 
 
-def handleComparisson(thing, deepMode=False):
+def handleComparisson(thing, deepMode=False, byAttribute: str = None):
     try:
+        if isNotNone(byAttribute):
+            return sorted(thing, key=operator.attrgetter(byAttribute if isinstance(byAttribute, str) else ReflectionHelper.getName(byAttribute)))
         return sorted(
             thing,
             key=defaultComparissonHandler(deepMode)
@@ -201,15 +213,15 @@ def defaultComparissonHandler(deepMode, deepModeProcessor=None):
     )
 
 
-def deepSort(x, deepMode=True):
+def deepSort(x):
     if isNotSet(x):
         return (
-            sortIt(x, deepMode=deepMode)
-            if isNotDictionary(x) else getSortedDictionary(x, deepMode=deepMode)
+            sortIt(x, deepMode=True)
+            if isNotDictionary(x) else getSortedDictionary(x, deepMode=True)
         )
     else:
         for i in x:
-            sortIt(i, deepMode=deepMode)
+            sortIt(i, deepMode=True)
         return x
     
 
@@ -355,52 +367,3 @@ def deleteDictionaryEntry(entryKey, dictionary):
     if entryKey in dictionary:
         dictionary.pop(entryKey)
 
-
-def deleteCollectionEntry(entry, collection):
-    if isDictionary(collection):
-        deleteDictionaryEntry(entry, collection)
-    elif entry in collection:
-        collection.remove(entry)
-
-
-def getCompleteInstanceNameList(instance):
-    if isNone(instance):
-        return [NONE_VALUE_NAME]
-    frame = EnvironmentHelper.SYS._getframe()
-    # import inspect
-    # frame = inspect.currentframe()
-    return [
-        instanceName 
-        for instanceName, instanceValue in flatMap([
-            # f.f_locals
-            # for f in iter(lambda: frame.f_back, None)
-            frame.f_back.f_back.f_back.f_back.f_back.f_back.f_back.f_locals.items(),
-            frame.f_back.f_back.f_back.f_back.f_back.f_back.f_locals.items(),
-            frame.f_back.f_back.f_back.f_back.f_back.f_locals.items(),  
-            frame.f_back.f_back.f_back.f_back.f_locals.items(),  
-            frame.f_back.f_back.f_back.f_locals.items(),  
-            frame.f_back.f_back.f_locals.items(),  
-            frame.f_back.f_locals.items(),
-            frame.f_locals.items()
-        ])
-        if instanceValue is instance
-    ]
-
-
-def getInstanceNameList(instance):
-    accumulatedSet = set()
-    def accumulateAndReturn(value):
-        if value not in accumulatedSet:
-            accumulatedSet.add(value)
-        return value                
-    nameList = [
-        accumulateAndReturn(value)
-        for value in getCompleteInstanceNameList(instance)
-        if value not in accumulatedSet
-    ][:-1]
-    return nameList if 1 <= len(nameList) else [str(instance)]
-
-
-def getInstanceName(instance, depthSkip=0):
-    instanceNameList = getInstanceNameList(instance)
-    return instanceNameList[0] if 1 >= len(instanceNameList) else instanceNameList[- (1 + depthSkip)]

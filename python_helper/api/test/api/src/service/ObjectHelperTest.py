@@ -917,6 +917,33 @@ def sortIt_whenNotEquals() :
     assert not expected == toAssert, f'{expected} == {toAssert}'
 
 
+
+@Test()
+def sortIt_whenByAttribute():
+    #arrange
+    class MyClass:
+        def __init__(self, value):
+            self.value = value
+    collection = [
+        MyClass(1),
+        MyClass(3),
+        MyClass(0),
+        MyClass(9)
+    ]
+    expected = [collection[2], collection[0], collection[1], collection[3]]
+    notExpected = [collection[0], collection[1], collection[2], collection[3]]
+
+    #act
+    toAssert = ObjectHelper.sortIt(expected, byAttribute='value')
+
+    ##assert
+    assert expected == toAssert
+    assert not notExpected == toAssert
+    assert ObjectHelper.equals(expected, toAssert)
+    assert ObjectHelper.notEquals(notExpected, toAssert)
+
+
+
 @Test()
 def equals_whenDateTime() :
     #arrange
@@ -952,6 +979,7 @@ def equal_whenDictionary() :
     #arrange
     firstDict = {'b': 'c', 'a': 'd'}
     secondDict = {'a': 'd', 'b': 'c'}
+    notExpected = {**firstDict, **{3: 3}}
 
     #act
     firstDictSorted = ObjectHelper.sortIt(firstDict)
@@ -959,6 +987,7 @@ def equal_whenDictionary() :
 
     #assert
     assert firstDictSorted == secondDictSorted, f'{firstDictSorted} == {secondDictSorted}: {firstDictSorted == secondDictSorted}'
+    assert not notExpected == secondDict
     assert ObjectHelper.equals(firstDictSorted, secondDictSorted), f'{firstDictSorted} == {secondDictSorted}: {firstDictSorted == secondDictSorted}'
 
 
@@ -989,75 +1018,6 @@ def equal_whenSets() :
     assert ObjectHelper.equals(firstSet, secondSet), f'{firstSetSorted} == {secondSetSorted}'
     assert not ObjectHelper.equals(myFirstList, mySecondList), f'{myFirstList} == {mySecondList}'
     assert ObjectHelper.equals(myFirstList, mySecondList, ignoreCollectionOrder=True), f'{myFirstList} == {mySecondList}'
-
-
-
-@Test()
-def getCompleteInstanceNameList():
-    #arange
-    doo = []
-    woo = doo
-    foo = woo
-    def local():
-        bar = foo
-        car = bar
-        return ObjectHelper.getCompleteInstanceNameList(car)
-    # expected = ['bar', 'car', 'foo', 'doo', 'woo', 'foo']
-    expected = ['doo', 'woo', 'foo', 'bar', 'car', 'foo', 'instance']
-
-    #act
-    toAssert = local()
-
-    #asser
-    assert expected == toAssert, f'{expected} == {toAssert}'
-    assert ['None'] == ObjectHelper.getCompleteInstanceNameList(None), ObjectHelper.getCompleteInstanceNameList(None)
-    # assert ['set', 'set', 'set'] == ObjectHelper.getCompleteInstanceNameList(set), ObjectHelper.getCompleteInstanceNameList(set)
-    assert ['instance'] == ObjectHelper.getCompleteInstanceNameList(set), ObjectHelper.getCompleteInstanceNameList(set)
-
-
-
-@Test()
-def getInstanceNameList():
-    #arange
-    doo = []
-    woo = doo
-    foo = woo
-    def local():
-        bar = foo
-        car = bar
-        return ObjectHelper.getInstanceNameList(car)
-    expected = ['doo', 'woo', 'foo', 'bar', 'car']
-
-    #act
-    toAssert = local()
-
-    #asser
-    assert expected == toAssert, f'{expected} == {toAssert}'
-    assert ['None'] == ObjectHelper.getInstanceNameList(None), ObjectHelper.getInstanceNameList(None)
-    assert ["<class 'set'>"] == ObjectHelper.getInstanceNameList(set), ObjectHelper.getInstanceNameList(set)
-
-
-
-@Test()
-def getInstanceName():
-    #arange
-    doo = []
-    woo = doo
-    foo = woo
-    def local():
-        bar = foo
-        car = bar
-        return ObjectHelper.getInstanceName(car)
-        #['doo', 'woo', 'foo', 'bar']
-    expected = 'car'
-
-    #act
-    toAssert = local()
-
-    #asser
-    assert expected == toAssert, f'{expected} == {toAssert}'
-    assert 'None' == ObjectHelper.getInstanceName(None), ObjectHelper.getInstanceName(None)
-    assert "<class 'set'>" == ObjectHelper.getInstanceName(set), ObjectHelper.getInstanceName(set)
 
 
 @Test()
