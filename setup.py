@@ -1,9 +1,12 @@
 from distutils.core import setup
 import os
 
+###- pip install urllib3==1.26.15 requests-toolbelt==0.10.1
+###- https://twine.readthedocs.io/en/stable/
+
 OS_SEPARATOR = os.path.sep
 
-version = '0.3.73'
+version = '0.3.74'
 name = 'python_helper'
 packageName = name
 repositoryName = name.replace("_", "-")

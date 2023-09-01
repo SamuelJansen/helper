@@ -8,6 +8,8 @@ from python_helper.api.src.helper import ObjectHelperHelper
 
 operator = operator
 
+ASC_ORDER = 'ASC'
+DESC_ORDER = 'DESC'
 
 
 GENERATOR_CLASS_NAME = 'generator'
@@ -162,40 +164,47 @@ def notEquals(*args, **kwargs):
     return not equals(*args, **kwargs)
 
 
-def sortIt(thing, deepMode=False, byAttribute: str = None):
+def sortIt(thing, deepMode=False, byAttribute: str = None, reverse: bool = False):
     # sorted_x = sorted(x, key=operator.attrgetter('attributeName'))
     # or
     # x.sort(key=operator.attrgetter('attributeName'))
     if isDictionary(thing):
         return {
-            key: sortIt(thing[key], deepMode=deepMode)
-            for key in sortIt([*thing.keys()])
+            key: sortIt(thing[key], deepMode=deepMode, byAttribute=byAttribute, reverse=reverse)
+            for key in sortIt([*thing.keys()], reverse=reverse)
         }
     elif isCollection(thing):
         return getSortedCollection(
             [
-                sortIt(innerThing, deepMode=deepMode)
+                sortIt(innerThing, deepMode=deepMode, byAttribute=byAttribute, reverse=reverse)
                 for innerThing in thing
             ],
             deepMode = deepMode,
-            byAttribute = byAttribute
+            byAttribute = byAttribute,
+            reverse = reverse
         )
     else:
         return thing
 
 
-def getSortedCollection(thing, deepMode=False, byAttribute: str = None):
+def getSortedCollection(thing, deepMode=False, byAttribute: str = None, reverse: bool = False):
     if (
         isNotCollection(thing) or isEmpty(thing)
     ):
         return thing
-    return handleComparisson(thing, deepMode=deepMode, byAttribute=byAttribute)
+    return handleComparisson(thing, deepMode=deepMode, byAttribute=byAttribute, reverse=reverse)
 
 
-def handleComparisson(thing, deepMode=False, byAttribute: str = None):
+def handleComparisson(thing, deepMode=False, byAttribute: str = None, reverse: bool = False):
     try:
         if isNotNone(byAttribute):
-            return sorted(thing, key=operator.attrgetter(byAttribute if isinstance(byAttribute, str) else ReflectionHelper.getName(byAttribute)))
+            byAttributeAsStringList = (byAttribute if isinstance(byAttribute, str) else ReflectionHelper.getName(byAttribute)).split(c.SPACE)
+            parsetAtributeName = byAttributeAsStringList[0]
+            reverseIt = reverse if not (
+                2 == len(byAttributeAsStringList) and 
+                byAttributeAsStringList[-1] in [ASC_ORDER, DESC_ORDER]
+            ) else byAttributeAsStringList[-1] == DESC_ORDER
+            return sorted(thing, key=operator.attrgetter(parsetAtributeName), reverse=reverseIt)
         return sorted(
             thing,
             key=defaultComparissonHandler(deepMode)
@@ -203,7 +212,7 @@ def handleComparisson(thing, deepMode=False, byAttribute: str = None):
     except:
         return sorted(
             thing,
-            key=defaultComparissonHandler(deepMode, deepModeProcessor=str)
+            key=defaultComparissonHandler(deepMode, deepModeProcessor=strComparator)
         )
 
 

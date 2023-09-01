@@ -917,7 +917,6 @@ def sortIt_whenNotEquals() :
     assert not expected == toAssert, f'{expected} == {toAssert}'
 
 
-
 @Test()
 def sortIt_whenByAttribute():
     #arrange
@@ -931,16 +930,26 @@ def sortIt_whenByAttribute():
         MyClass(9)
     ]
     expected = [collection[2], collection[0], collection[1], collection[3]]
+    reverseExpected = [collection[3], collection[1], collection[0], collection[2]]
     notExpected = [collection[0], collection[1], collection[2], collection[3]]
 
     #act
     toAssert = ObjectHelper.sortIt(expected, byAttribute='value')
+    reversedToAssert = ObjectHelper.sortIt(expected, byAttribute='value DESC')
 
     ##assert
     assert expected == toAssert
     assert not notExpected == toAssert
+    assert reverseExpected == reversedToAssert, f'{reverseExpected} == {reversedToAssert}'
+    assert not notExpected == reversedToAssert
     assert ObjectHelper.equals(expected, toAssert)
     assert ObjectHelper.notEquals(notExpected, toAssert)
+    assert ObjectHelper.equals(reverseExpected, reversedToAssert)
+    assert ObjectHelper.notEquals(notExpected, reversedToAssert)
+    assert expected == ObjectHelper.sortIt(expected, byAttribute='value ASC')
+    assert expected == ObjectHelper.sortIt(expected, byAttribute='value', reverse=False)
+    assert reverseExpected == ObjectHelper.sortIt(expected, byAttribute='value', reverse=True)
+    assert expected == ObjectHelper.sortIt(expected, byAttribute='value ASC', reverse=True)
 
 
 
