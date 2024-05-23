@@ -458,25 +458,20 @@ def replaceInnerInstanceName(__inner_instance__, instanceNameList):
 def getCompleteInstanceNameList(__inner_instance__):
     if ObjectHelper.isNone(__inner_instance__):
         return [NONE_VALUE_NAME]
-    frame = EnvironmentHelper.SYS._getframe()
     # import inspect
     # frame = inspect.currentframe()
+    f_back = EnvironmentHelper.SYS._getframe()
+    localsList = []
+    for _ in range(8):
+        if ObjectHelper.isNone(f_back):
+            break
+        localsList.append(f_back.f_locals.items())
+        f_back = f_back.f_back
     return replaceInnerInstanceName(
         __inner_instance__, 
         [
             instanceName 
-            for instanceName, instanceValue in ObjectHelper.flatMap([
-                # f.f_locals
-                # for f in iter(lambda: frame.f_back, None)
-                frame.f_back.f_back.f_back.f_back.f_back.f_back.f_back.f_locals.items(),
-                frame.f_back.f_back.f_back.f_back.f_back.f_back.f_locals.items(),
-                frame.f_back.f_back.f_back.f_back.f_back.f_locals.items(),  
-                frame.f_back.f_back.f_back.f_back.f_locals.items(),  
-                frame.f_back.f_back.f_back.f_locals.items(),  
-                frame.f_back.f_back.f_locals.items(),  
-                frame.f_back.f_locals.items(),
-                frame.f_locals.items()
-            ])
+            for instanceName, instanceValue in ObjectHelper.flatMap(localsList[::-1])
             if instanceValue is __inner_instance__
         ]
     )
