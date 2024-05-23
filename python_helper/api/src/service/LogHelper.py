@@ -223,4 +223,4 @@ def getTracebackMessage(muteStackTrace):
 
 
 def debugIt(unnamedExpression, asDictionary=False, depthSkip=0):
-    return logIt(f'{ReflectionHelper.getInstanceName(unnamedExpression, depthSkip=depthSkip+1)}: {StringHelper.prettyPython(unnamedExpression if not asDictionary else unnamedExpression)}')
+    return logIt(f'{ReflectionHelper.getInstanceName(unnamedExpression, depthSkip=depthSkip+1)}: {unnamedExpression if not asDictionary else StringHelper.prettyPython(unnamedExpression)}')
